@@ -196,3 +196,7 @@
 /Code/PulseNoiseWF/PulseNoiseWF/obj/x86/Debug/DesignTimeResolveAssemblyReferencesInput.cache
 /Code/WFshadingBin/WFshadingBin/obj/x86/Debug/DesignTimeResolveAssemblyReferences.cache
 /Code/WFshadingBin/WFshadingBin/obj/x86/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+*.vsidx
+/Code/WFedgeDetect1/WFedgeDetect1/obj/x86/Debug/DesignTimeResolveAssemblyReferences.cache
+/Code/WFedgeDetect1/WFedgeDetect1/obj/x86/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+/Code/WFshadBinImpulse/WFshadBinImpulse/obj/x86/Debug/DesignTimeResolveAssemblyReferencesInput.cache
