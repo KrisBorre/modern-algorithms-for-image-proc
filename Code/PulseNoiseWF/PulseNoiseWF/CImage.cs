@@ -59,20 +59,20 @@
         } //********************** end ColorToGray **********************
 
 
-        public int ColorToGray(CImage inp)
-        /* Transforms the colors of the color image "inp" in lightness=(r+g+b)/3 
+        public int ColorToGray(CImage input)
+        /* Transforms the colors of the color image "input" in lightness=(r+g+b)/3 
            and puts these values to this.Grid. --------- */
         {
             int sum, x, y, c;
-            if (inp.nBits != 24) return -1;
-            nBits = 8; width = inp.width; height = inp.height;
+            if (input.nBits != 24) return -1;
+            nBits = 8; width = input.width; height = input.height;
             Grid = new byte[width * height * 8];
             for (y = 0; y < height; y++) //=========================
             {
                 for (x = 0; x < width; x++) // =====================
                 {
                     sum = 0;
-                    for (c = 0; c < 3; c++) sum += inp.Grid[c + 3 * (x + width * y)];
+                    for (c = 0; c < 3; c++) sum += input.Grid[c + 3 * (x + width * y)];
                     Grid[y * width + x] = (byte)(sum / 3);
                 } // ========== for (x.  ====================
             }
