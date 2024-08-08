@@ -70,12 +70,12 @@ namespace WFshadingBin
         }
 
 
-        public int SigmaSimpleUni(CImage Inp, int hWind, int Toleranz)
+        public int SigmaSimpleUni(CImage input, int hWind, int Toleranz)
         // Simple sigma filter for both gray value and color images. 
         {
             int[] gvMin = new int[3], gvMax = new int[3], nPixel = new int[3], Sum = new int[3];
             int c;
-            N_Bits = Inp.N_Bits;
+            N_Bits = input.N_Bits;
             int nbyte = N_Bits / 8;
             for (int y = 0; y < height; y++) // ==================================================
             {
@@ -86,14 +86,14 @@ namespace WFshadingBin
                     for (c = 0; c < nbyte; c++)
                     {
                         Sum[c] = 0; nPixel[c] = 0;
-                        gvMin[c] = Math.Max(0, Inp.Grid[c + nbyte * (x + width * y)] - Toleranz);
-                        gvMax[c] = Math.Min(255, Inp.Grid[c + nbyte * (x + width * y)] + Toleranz);
+                        gvMin[c] = Math.Max(0, input.Grid[c + nbyte * (x + width * y)] - Toleranz);
+                        gvMax[c] = Math.Min(255, input.Grid[c + nbyte * (x + width * y)] + Toleranz);
                     }
                     for (y1 = yStart; y1 <= yEnd; y1++)
                         for (x1 = xStart; x1 <= xEnd; x1++)
                             for (c = 0; c < nbyte; c++)
                             {
-                                gv = Inp.Grid[c + nbyte * (x1 + y1 * width)];
+                                gv = input.Grid[c + nbyte * (x1 + y1 * width)];
                                 if (gv >= gvMin[c] && gv <= gvMax[c])
                                 {
                                     Sum[c] += gv;
@@ -108,7 +108,7 @@ namespace WFshadingBin
                         }
                         else
                         {
-                            this.Grid[c + nbyte * (x + width * y)] = Inp.Grid[c + nbyte * (x + width * y)];
+                            this.Grid[c + nbyte * (x + width * y)] = input.Grid[c + nbyte * (x + width * y)];
                         }
                     }
                 } //================== end for (int x... =================================
