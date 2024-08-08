@@ -1,0 +1,129 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{24E70869-44E9-496D-A210-B8564969C88E}|PulseNoiseWF\\PulseNoiseWF.csproj|c:\\users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\code\\pulsenoisewf\\pulsenoisewf\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{24E70869-44E9-496D-A210-B8564969C88E}|PulseNoiseWF\\PulseNoiseWF.csproj|solutionrelative:pulsenoisewf\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24E70869-44E9-496D-A210-B8564969C88E}|PulseNoiseWF\\PulseNoiseWF.csproj|C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\pulsenoisewf\\queue.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24E70869-44E9-496D-A210-B8564969C88E}|PulseNoiseWF\\PulseNoiseWF.csproj|solutionrelative:pulsenoisewf\\queue.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24E70869-44E9-496D-A210-B8564969C88E}|PulseNoiseWF\\PulseNoiseWF.csproj|C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\pulsenoisewf\\cpnoise.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24E70869-44E9-496D-A210-B8564969C88E}|PulseNoiseWF\\PulseNoiseWF.csproj|solutionrelative:pulsenoisewf\\cpnoise.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24E70869-44E9-496D-A210-B8564969C88E}|PulseNoiseWF\\PulseNoiseWF.csproj|C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\pulsenoisewf\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24E70869-44E9-496D-A210-B8564969C88E}|PulseNoiseWF\\PulseNoiseWF.csproj|solutionrelative:pulsenoisewf\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24E70869-44E9-496D-A210-B8564969C88E}|PulseNoiseWF\\PulseNoiseWF.csproj|C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\pulsenoisewf\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24E70869-44E9-496D-A210-B8564969C88E}|PulseNoiseWF\\PulseNoiseWF.csproj|solutionrelative:pulsenoisewf\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24E70869-44E9-496D-A210-B8564969C88E}|PulseNoiseWF\\PulseNoiseWF.csproj|C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\pulsenoisewf\\cimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24E70869-44E9-496D-A210-B8564969C88E}|PulseNoiseWF\\PulseNoiseWF.csproj|solutionrelative:pulsenoisewf\\cimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Queue.cs",
+              "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\PulseNoiseWF\\Queue.cs",
+              "RelativeDocumentMoniker": "PulseNoiseWF\\Queue.cs",
+              "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\PulseNoiseWF\\Queue.cs",
+              "RelativeToolTip": "PulseNoiseWF\\Queue.cs",
+              "ViewState": "AQIAAB4AAAAAAAAAAAAAAAgAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-09T12:06:16.802Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\PulseNoiseWF\\Program.cs",
+              "RelativeDocumentMoniker": "PulseNoiseWF\\Program.cs",
+              "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\PulseNoiseWF\\Program.cs",
+              "RelativeToolTip": "PulseNoiseWF\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-09T12:06:09.539Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Form1.cs",
+              "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\PulseNoiseWF\\Form1.cs",
+              "RelativeDocumentMoniker": "PulseNoiseWF\\Form1.cs",
+              "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\PulseNoiseWF\\Form1.cs",
+              "RelativeToolTip": "PulseNoiseWF\\Form1.cs",
+              "ViewState": "AQIAAF8BAAAAAAAAAAAAAA4AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-09T12:05:58.473Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\PulseNoiseWF\\Form1.cs",
+              "RelativeDocumentMoniker": "PulseNoiseWF\\Form1.cs",
+              "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\PulseNoiseWF\\Form1.cs [Design]",
+              "RelativeToolTip": "PulseNoiseWF\\Form1.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-09T12:05:56.625Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CPnoise.cs",
+              "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\PulseNoiseWF\\CPnoise.cs",
+              "RelativeDocumentMoniker": "PulseNoiseWF\\CPnoise.cs",
+              "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\PulseNoiseWF\\CPnoise.cs",
+              "RelativeToolTip": "PulseNoiseWF\\CPnoise.cs",
+              "ViewState": "AQIAAPgAAAAAAAAAAAAAAA0BAAAnAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-09T12:05:45.179Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CImage.cs",
+              "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\PulseNoiseWF\\CImage.cs",
+              "RelativeDocumentMoniker": "PulseNoiseWF\\CImage.cs",
+              "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\PulseNoiseWF\\PulseNoiseWF\\CImage.cs",
+              "RelativeToolTip": "PulseNoiseWF\\CImage.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-09T12:05:35.088Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

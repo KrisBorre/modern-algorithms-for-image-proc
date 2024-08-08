@@ -13,17 +13,20 @@ namespace WFedgeDetect
         }
 
         private Bitmap origBmp;
+
         public Bitmap BmpPictBox1;
         public Bitmap BmpPictBox2;
         public Bitmap BmpPictBox3;
         public CImage OrigIm;  // copy of original image
-        CImage SigmaIm;  // local mean
-        CImage ExtremIm;  // shading corrected image and the result
-        CImage CombIm;  // shading corrected image and the result
-        CImage EdgeIm;  // shading corrected image and the result
-        int nBit;
-        bool OPEN = false;
-        int nLoop, denomProg;
+
+        private CImage SigmaIm;  // local mean
+        private CImage ExtremIm;  // shading corrected image and the result
+        private CImage CombIm;  // shading corrected image and the result
+        private CImage EdgeIm;  // shading corrected image and the result
+        private int nBit;
+        private bool OPEN = false;
+        private int nLoop, denomProg;
+
         public double Scale1;
         public int marginX, marginY;
         public int Threshold;
@@ -237,7 +240,12 @@ namespace WFedgeDetect
             bmp.UnlockBits(bmpData);
         } //****************************** end GridToBitmap ****************************************
 
-
+        /// <summary>
+        /// GridToBitmap is not called
+        /// </summary>
+        /// <param name="bmp"></param>
+        /// <param name="Grid"></param>
+        /// <param name="nbyteG"></param>
         private void GridToBitmap(Bitmap bmp, byte[] Grid, int nbyteG)
         // Converts Grid with "nbytesG" bytes per pixel to Bitmap with any format.
         {
@@ -343,7 +351,6 @@ namespace WFedgeDetect
             }
             progressBar1.Visible = false;
         } //****************************** end GridToBitmapOld ****************************************
-
 
 
         private void button2_Click(object sender, EventArgs e) // Detect edges

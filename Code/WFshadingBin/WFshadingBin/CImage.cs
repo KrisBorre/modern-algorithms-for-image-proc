@@ -5,9 +5,12 @@ namespace WFshadingBin
 {
     public class CImage
     {
-        public Byte[] Grid;
+        public byte[] Grid;
         public int width, height, N_Bits;
 
+        /// <summary>
+        /// This constructor is not called
+        /// </summary>
         public CImage() { } // default constructor
 
         public CImage(int nx, int ny, int nbits) // constructor
@@ -15,16 +18,27 @@ namespace WFshadingBin
             this.width = nx;
             this.height = ny;
             this.N_Bits = nbits;
-            Grid = new byte[width * height * (N_Bits / 8)];
+            this.Grid = new byte[width * height * (N_Bits / 8)];
         }
 
+        /// <summary>
+        /// This constructor is not called
+        /// </summary>
+        /// <param name="nx"></param>
+        /// <param name="ny"></param>
+        /// <param name="nbits"></param>
+        /// <param name="img"></param>
         public CImage(int nx, int ny, int nbits, byte[] img) // constructor
         {
             this.width = nx;
             this.height = ny;
             this.N_Bits = nbits;
             this.Grid = new byte[width * height * (N_Bits / 8)];
-            for (int i = 0; i < width * height * N_Bits / 8; i++) this.Grid[i] = img[i];
+
+            for (int i = 0; i < width * height * N_Bits / 8; i++)
+            {
+                this.Grid[i] = img[i];
+            }
         }
 
 
@@ -34,7 +48,9 @@ namespace WFshadingBin
             height = inp.height;
             N_Bits = inp.N_Bits;
             for (int i = 0; i < width * height * N_Bits / 8; i++)
-                Grid[i] = inp.Grid[i];
+            {
+                this.Grid[i] = inp.Grid[i];
+            }
         }
 
         public byte MaxC(byte R, byte G, byte B)
@@ -87,8 +103,13 @@ namespace WFshadingBin
                     for (c = 0; c < nbyte; c++)
                     {
                         if (nPixel[c] > 0)
-                            Grid[c + nbyte * (x + width * y)] = (byte)((Sum[c] + nPixel[c] / 2) / nPixel[c]);
-                        else Grid[c + nbyte * (x + width * y)] = Inp.Grid[c + nbyte * (x + width * y)];
+                        {
+                            this.Grid[c + nbyte * (x + width * y)] = (byte)((Sum[c] + nPixel[c] / 2) / nPixel[c]);
+                        }
+                        else
+                        {
+                            this.Grid[c + nbyte * (x + width * y)] = Inp.Grid[c + nbyte * (x + width * y)];
+                        }
                     }
                 } //================== end for (int x... =================================
             } //==================== end for (int y... ===================================
@@ -105,7 +126,7 @@ namespace WFshadingBin
 
             fm1.progressBar1.Visible = true;
             N_Bits = 8; width = inp.width; height = inp.height;
-            Grid = new byte[width * height * 8];
+            this.Grid = new byte[width * height * 8];
 
             int y1 = 1 + height / 100;
             for (y = 0; y < height; y++) //=========================
@@ -115,7 +136,7 @@ namespace WFshadingBin
                 {
                     sum = 0;
                     for (c = 0; c < 3; c++) sum += inp.Grid[c + 3 * (x + width * y)];
-                    Grid[y * width + x] = (byte)(sum / 3);
+                    this.Grid[y * width + x] = (byte)(sum / 3);
                 } // ========== for (x.  ====================
             }
             fm1.progressBar1.Visible = false;
@@ -123,6 +144,12 @@ namespace WFshadingBin
         } //********************** end ColorToGray **********************
 
 
+        /// <summary>
+        /// ColorToGrayMC is not called
+        /// </summary>
+        /// <param name="inp"></param>
+        /// <param name="fm1"></param>
+        /// <returns></returns>
         public int ColorToGrayMC(CImage inp, Form1 fm1)
         /* Transforms the colors of the color image "inp" in lightness=MaxC(r,g,b) 
         and puts these values to this.Grid. --------- */
@@ -132,7 +159,7 @@ namespace WFshadingBin
 
             fm1.progressBar1.Visible = true;
             N_Bits = 8; width = inp.width; height = inp.height;
-            Grid = new byte[width * height * 8];
+            this.Grid = new byte[width * height * 8];
 
             int y1 = 1 + height / 100;
             for (y = 0; y < height; y++) //=========================
@@ -143,24 +170,32 @@ namespace WFshadingBin
                     gv = MaxC(inp.Grid[2 + 3 * (x + width * y)],
                             inp.Grid[1 + 3 * (x + width * y)],
                             inp.Grid[0 + 3 * (x + width * y)]);
-                    Grid[y * width + x] = (byte)gv;
+                    this.Grid[y * width + x] = (byte)gv;
                 } // ========== for (x.  ====================
             }
             fm1.progressBar1.Visible = false;
             return 1;
         } //********************** end ColorToGrayMC **********************
 
-
-        public int FastAverageM(CImage Inp, int hWind, Form1 fm1)
+        /// <summary>
+        /// chapter 2 Noise Reduction page 10
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="hWind"></param>
+        /// <param name="fm1"></param>
+        /// <returns></returns>
+        public int FastAverageM(CImage input, int hWind, Form1 fm1)
         // Filters the gray value image "Inp" and returns the result as *this."
         {
-            if (Inp.N_Bits != 8)
+            if (input.N_Bits != 8)
             {
-                MessageBox.Show("FastAverageM cannot process an image with " + Inp.N_Bits + " bits per pixel");
+                MessageBox.Show("FastAverageM cannot process an image with " + input.N_Bits + " bits per pixel");
                 return -1;
             }
-            N_Bits = 8; width = Inp.width; height = Inp.height;
-            Grid = new byte[width * height];
+            N_Bits = 8;
+            width = input.width;
+            height = input.height;
+            this.Grid = new byte[width * height];
             int[] ColSum; int[] nC;
             ColSum = new int[width];
             nC = new int[width];
@@ -171,23 +206,49 @@ namespace WFshadingBin
             for (int y = 0; y < height + hWind; y++)
             {
                 int yout = y - hWind, ysub = y - 2 * hWind - 1;
-                Sum = 0; nS = 0;
+                Sum = 0;
+                nS = 0;
 
-                int y1 = 1 + (height + hWind) / 100;
+                //int y1 = 1 + (height + hWind) / 100;
                 for (int x = 0; x < width + hWind; x++)
                 {
                     int xout = x - hWind, xsub = x - 2 * hWind - 1; // 1. and 2. addition
-                    if (y < height && x < width) { ColSum[x] += Inp.Grid[x + width * y]; nC[x]++; } // 3. and 4. addition
-                    if (ysub >= 0 && x < width) { ColSum[x] -= Inp.Grid[x + width * ysub]; nC[x]--; }
-                    if (yout >= 0 && x < width) { Sum += ColSum[x]; nS += nC[x]; }
-                    if (yout >= 0 && xsub >= 0) { Sum -= ColSum[xsub]; nS -= nC[xsub]; }
-                    if (xout >= 0 && yout >= 0) Grid[xout + width * yout] = (byte)((Sum + nS / 2) / nS);
+                    if (y < height && x < width)
+                    {
+                        ColSum[x] += input.Grid[x + width * y];
+                        nC[x]++;
+                    } // 3. and 4. addition
+                    if (ysub >= 0 && x < width)
+                    {
+                        ColSum[x] -= input.Grid[x + width * ysub];
+                        nC[x]--;
+                    }
+                    if (yout >= 0 && x < width)
+                    {
+                        Sum += ColSum[x];
+                        nS += nC[x];
+                    }
+                    if (yout >= 0 && xsub >= 0)
+                    {
+                        Sum -= ColSum[xsub];
+                        nS -= nC[xsub];
+                    }
+                    if (xout >= 0 && yout >= 0)
+                    {
+                        this.Grid[xout + width * yout] = (byte)((Sum + nS / 2) / nS);
+                    }
                 }
             }
             return 1;
         } //*************************** end FastAverageM ********************************
 
 
+        /// <summary>
+        /// FastAverageNum is not called
+        /// </summary>
+        /// <param name="Inp"></param>
+        /// <param name="fm1"></param>
+        /// <returns></returns>
         public int FastAverageNum(CImage Inp, Form1 fm1)
         // Filters the image "Inp" and returns the result as *this."
         {
@@ -197,7 +258,7 @@ namespace WFshadingBin
                 return -1;
             }
             N_Bits = 8; width = Inp.width; height = Inp.height;
-            Grid = new byte[width * height];
+            this.Grid = new byte[width * height];
             int[] ColSum; int[] nC;
             ColSum = new int[width];
             nC = new int[width];
@@ -213,7 +274,7 @@ namespace WFshadingBin
                 int yout = y - hWind, ysub = y - 2 * hWind - 1;
                 Sum = 0; nS = 0;
 
-                int y1 = 1 + (height + hWind) / 100;
+                //int y1 = 1 + (height + hWind) / 100;
                 for (int x = 0; x < width + hWind; x++)
                 {
                     int xout = x - hWind, xsub = x - 2 * hWind - 1; // 1. and 2. addition
@@ -221,7 +282,10 @@ namespace WFshadingBin
                     if (ysub >= 0 && x < width) { ColSum[x] -= Inp.Grid[x + width * ysub]; nC[x]--; }
                     if (yout >= 0 && x < width) { Sum += ColSum[x]; nS += nC[x]; }
                     if (yout >= 0 && xsub >= 0) { Sum -= ColSum[xsub]; nS -= nC[xsub]; }
-                    if (xout >= 0 && yout >= 0) Grid[xout + width * yout] = (byte)((Sum + nS / 2) / nS);
+                    if (xout >= 0 && yout >= 0)
+                    {
+                        this.Grid[xout + width * yout] = (byte)((Sum + nS / 2) / nS);
+                    }
                 }
             }
             return 1;

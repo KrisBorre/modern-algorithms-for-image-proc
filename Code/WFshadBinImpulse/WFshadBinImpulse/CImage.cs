@@ -5,7 +5,7 @@ namespace WFshadBinImpulse
 {
     public class CImage
     {
-        public Byte[] Grid;
+        public byte[] Grid;
         public int width, height, N_Bits;
 
         public CImage(int nx, int ny, int nbits) // constructor
@@ -13,9 +13,16 @@ namespace WFshadBinImpulse
             this.width = nx;
             this.height = ny;
             this.N_Bits = nbits;
-            Grid = new byte[width * height * (N_Bits / 8)];
+            this.Grid = new byte[width * height * (N_Bits / 8)];
         }
 
+        /// <summary>
+        /// This constructor is not called
+        /// </summary>
+        /// <param name="nx"></param>
+        /// <param name="ny"></param>
+        /// <param name="nbits"></param>
+        /// <param name="img"></param>
         public CImage(int nx, int ny, int nbits, byte[] img) // constructor
         {
             this.width = nx;
@@ -32,17 +39,12 @@ namespace WFshadBinImpulse
             height = inp.height;
             N_Bits = inp.N_Bits;
             for (int i = 0; i < width * height * N_Bits / 8; i++)
-                Grid[i] = inp.Grid[i];
+            {
+                this.Grid[i] = inp.Grid[i];
+            }
         }
 
-        int MaxC(int R, int G, int B)
-        {
-            int max;
-            if (R * 0.713 > G) max = (int)(R * 0.713);
-            else max = G;
-            if (B * 0.527 > max) max = (int)(B * 0.527);
-            return max;
-        }
+
 
         public int SigmaSimpleUni(CImage Inp, int hWind, int Toleranz)
         // Simple sigma filter for both gray value and color images. 
@@ -77,8 +79,13 @@ namespace WFshadBinImpulse
                     for (c = 0; c < nbyte; c++)
                     {
                         if (nPixel[c] > 0)
-                            Grid[c + nbyte * (x + width * y)] = (byte)((Sum[c] + nPixel[c] / 2) / nPixel[c]);
-                        else Grid[c + nbyte * (x + width * y)] = Inp.Grid[c + nbyte * (x + width * y)];
+                        {
+                            this.Grid[c + nbyte * (x + width * y)] = (byte)((Sum[c] + nPixel[c] / 2) / nPixel[c]);
+                        }
+                        else
+                        {
+                            this.Grid[c + nbyte * (x + width * y)] = Inp.Grid[c + nbyte * (x + width * y)];
+                        }
                     }
                 } //================== end for (int x... =================================
             } //==================== end for (int y... ===================================
@@ -97,23 +104,29 @@ namespace WFshadBinImpulse
             fm1.progressBar1.Step = 1;
             fm1.progressBar1.Visible = true;
             int width = inp.width, height = inp.height;
-            Grid = new byte[width * height * 8];
+            this.Grid = new byte[width * height * 8];
             int y1 = 1 + height / 100;
             for (y = 0; y < height; y++) //========================================
             {
                 if (y % y1 == 1) fm1.progressBar1.PerformStep();
                 for (x = 0; x < width; x++) // ====================================
                 {
-                    Light = MaxC(inp.Grid[2 + 3 * (x + width * y)],
-                                  inp.Grid[1 + 3 * (x + width * y)],
-                                  inp.Grid[0 + 3 * (x + width * y)]);
-                    Grid[y * width + x] = (byte)Light;
+                    Light = this.MaxC(inp.Grid[2 + 3 * (x + width * y)], inp.Grid[1 + 3 * (x + width * y)], inp.Grid[0 + 3 * (x + width * y)]);
+                    this.Grid[y * width + x] = (byte)Light;
                 } // ==================== for (x.  ================================
-            } // ====================== for (x.  ==================================
+            } // ====================== for (y.  ==================================
             fm1.progressBar1.Visible = false;
             return 1;
         } //************************** end ColorToGray ***************************
 
+        private int MaxC(int R, int G, int B)
+        {
+            int max;
+            if (R * 0.713 > G) max = (int)(R * 0.713);
+            else max = G;
+            if (B * 0.527 > max) max = (int)(B * 0.527);
+            return max;
+        }
 
         public int ColorToGray(CImage inp)
         /* Transforms the colors of the color image "inp" in luminance=(r+g+b)/3 
@@ -122,19 +135,29 @@ namespace WFshadBinImpulse
             int c, sum, x, y;
             if (inp.N_Bits != 24) return -1;
             N_Bits = 8; width = inp.width; height = inp.height;
-            Grid = new byte[width * height * 8];
+            this.Grid = new byte[width * height * 8];
             for (y = 0; y < height; y++) //=========================
             {
                 for (x = 0; x < width; x++) // =====================
                 {
                     sum = 0;
-                    for (c = 0; c < 3; c++) sum += inp.Grid[c + 3 * (x + width * y)];
-                    Grid[y * width + x] = (byte)(sum / 3);
+                    for (c = 0; c < 3; c++)
+                    {
+                        sum += inp.Grid[c + 3 * (x + width * y)];
+                    }
+                    this.Grid[y * width + x] = (byte)(sum / 3);
                 } // ========== for (x.  ====================
             }
             return 1;
         } //********************** end ColorToGray **********************
 
+        /// <summary>
+        /// chapter 2 Noise Reduction page 10
+        /// </summary>
+        /// <param name="Inp"></param>
+        /// <param name="hWind"></param>
+        /// <param name="fm1"></param>
+        /// <returns></returns>
         public int FastAverageM(CImage Inp, int hWind, Form1 fm1)
         // Filters the gray value image "Inp" and returns the result as *this."
         {
@@ -144,7 +167,7 @@ namespace WFshadBinImpulse
                 return -1;
             }
             N_Bits = 8; width = Inp.width; height = Inp.height;
-            Grid = new byte[width * height];
+            this.Grid = new byte[width * height];
             int[] ColSum; int[] nC;
             ColSum = new int[width];
             nC = new int[width];
@@ -162,7 +185,10 @@ namespace WFshadBinImpulse
                     if (ysub >= 0 && x < width) { ColSum[x] -= Inp.Grid[x + width * ysub]; nC[x]--; }
                     if (yout >= 0 && x < width) { Sum += ColSum[x]; nS += nC[x]; }
                     if (yout >= 0 && xsub >= 0) { Sum -= ColSum[xsub]; nS -= nC[xsub]; }
-                    if (xout >= 0 && yout >= 0) Grid[xout + width * yout] = (byte)((Sum + nS / 2) / nS);
+                    if (xout >= 0 && yout >= 0)
+                    {
+                        this.Grid[xout + width * yout] = (byte)((Sum + nS / 2) / nS);
+                    }
                 }
             }
             return 1;
@@ -173,15 +199,17 @@ namespace WFshadBinImpulse
         // If the image is an 8 bit image (nbyte==1) then it sets the bits 0 and 1 to 0.
         // Otherwise it sets the bits 0 in the red and green channels of the image.
         {
-            int i1 = 1 + width * height / 100;
+            //int i1 = 1 + width * height / 100;
             for (int i = 0; i < width * height; i++)
             {
                 if (nbyte == 1)
-                    Grid[i] = (byte)(Grid[i] - (Grid[i] % 4));
+                {
+                    this.Grid[i] = (byte)(this.Grid[i] - (this.Grid[i] % 4));
+                }
                 else
                 {
-                    Grid[nbyte * i + 2] = (byte)(Grid[nbyte * i + 2] & 254); // red channel
-                    Grid[nbyte * i + 1] = (byte)(Grid[nbyte * i + 1] & 254); // green channel
+                    this.Grid[nbyte * i + 2] = (byte)(this.Grid[nbyte * i + 2] & 254); // red channel
+                    this.Grid[nbyte * i + 1] = (byte)(this.Grid[nbyte * i + 1] & 254); // green channel
                 }
             }
             return 1;
@@ -189,5 +217,5 @@ namespace WFshadBinImpulse
 
     } //************************* end class CImage *************************************************
 
-} //*************************** end class CImage ***************************************************
+} //*************************** end namespace WFshadBinImpulse *************************************
 

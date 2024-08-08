@@ -1465,7 +1465,13 @@ namespace WFedgeDetect
         } //************************************** end CleanCombNew ********************************************
 
 
-
+        /// <summary>
+        /// FastAverageM is not called
+        /// </summary>
+        /// <param name="Inp"></param>
+        /// <param name="hWind"></param>
+        /// <param name="fm1"></param>
+        /// <returns></returns>
         public int FastAverageM(CImage Inp, int hWind, Form1 fm1)
         // Filters the gray scale image "Inp" and returns the result in 'Grid' of the
         // calling image.
@@ -1491,7 +1497,7 @@ namespace WFedgeDetect
                 int yout = y - hWind, ysub = y - 2 * hWind - 1;
                 SumWind = 0; nPixWind = 0;
 
-                int y1 = 1 + (height + hWind) / 100;
+                //int y1 = 1 + (height + hWind) / 100;
                 for (int x = 0; x < width + hWind; x++) //=======================================
                 {
                     int xout = x - hWind, xsub = x - 2 * hWind - 1; // 1. and 2. addition
@@ -1522,7 +1528,12 @@ namespace WFedgeDetect
             return 1;
         } //********************************* end FastAverageM **********************************
 
-
+        /// <summary>
+        /// FastAverageUni is not called
+        /// </summary>
+        /// <param name="Inp"></param>
+        /// <param name="hWind"></param>
+        /// <returns></returns>
         public int FastAverageUni(CImage Inp, int hWind)
         // Filters the color or grayscale image "Inp" and returns the result in
         // 'Grid' of the calling image. Each of the three color channels is being averaged.

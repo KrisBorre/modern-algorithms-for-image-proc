@@ -1954,7 +1954,13 @@ namespace WFcompressPal
             return 1;
         } //************************** end ColorToGrayMC ***************************
 
-
+        /// <summary>
+        /// chapter 2 Noise Reduction page 10
+        /// </summary>
+        /// <param name="Inp"></param>
+        /// <param name="hWind"></param>
+        /// <param name="fm1"></param>
+        /// <returns></returns>
         public int FastAverageM(CImage Inp, int hWind, Form1 fm1)
         // Filters the gray scale image "Inp" and returns the result in 'Grid' of the
         // calling image.
@@ -1980,7 +1986,7 @@ namespace WFcompressPal
                 int yout = y - hWind, ysub = y - 2 * hWind - 1;
                 SumWind = 0; nPixWind = 0;
 
-                int y1 = 1 + (height + hWind) / 100;
+                //int y1 = 1 + (height + hWind) / 100;
                 for (int x = 0; x < width + hWind; x++) //=======================================
                 {
                     int xout = x - hWind, xsub = x - 2 * hWind - 1; // 1. and 2. addition

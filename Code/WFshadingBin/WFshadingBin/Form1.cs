@@ -91,8 +91,15 @@ namespace WFshadingBin
             BinIm = new CImage(width, height, 8);
 
             SigmaIm.SigmaSimpleUni(OrigIm, 1, 30);
-            if (OrigIm.N_Bits == 24) GrayIm.ColorToGray(SigmaIm, this);
-            else GrayIm.Copy(SigmaIm);
+
+            if (OrigIm.N_Bits == 24)
+            {
+                GrayIm.ColorToGray(SigmaIm, this);
+            }
+            else
+            {
+                GrayIm.Copy(SigmaIm);
+            }
 
             Threshold1 = -1;
             Threshold = -1;
@@ -376,8 +383,9 @@ namespace WFshadingBin
             for (i = 0; i < 256; i++) if (histoDiv[i] != MaxHisto && histoDiv[i] > SecondMax) SecondMax = histoDiv[i];
             MaxHisto = SecondMax * 4 / 3;
 
-            Pen redPen = new Pen(Color.Red), yellowPen = new Pen(Color.Yellow),
-                                bluePen = new Pen(Color.Blue), greenPen = new Pen(Color.Green);
+            Pen redPen = new Pen(Color.Red);
+            //Pen yellowPen = new Pen(Color.Yellow), bluePen = new Pen(Color.Blue);
+            Pen greenPen = new Pen(Color.Green);
             SolidBrush whiteBrush = new SolidBrush(Color.White);
             Rectangle Rect1 = new Rectangle(0, 0, pictureBox4.Width, pictureBox4.Height);
             g4.FillRectangle(whiteBrush, Rect1);
