@@ -154,19 +154,19 @@ namespace WFshadBinImpulse
         /// <summary>
         /// chapter 2 Noise Reduction page 10
         /// </summary>
-        /// <param name="Inp"></param>
+        /// <param name="input"></param>
         /// <param name="hWind"></param>
         /// <param name="fm1"></param>
         /// <returns></returns>
-        public int FastAverageM(CImage Inp, int hWind, Form1 fm1)
+        public int FastAverageM(CImage input, int hWind, Form1 fm1)
         // Filters the gray value image "Inp" and returns the result as *this."
         {
-            if (Inp.N_Bits != 8)
+            if (input.N_Bits != 8)
             {
-                MessageBox.Show("FastAverageM cannot process an image with " + Inp.N_Bits + " bits per pixel");
+                MessageBox.Show("FastAverageM cannot process an image with " + input.N_Bits + " bits per pixel");
                 return -1;
             }
-            N_Bits = 8; width = Inp.width; height = Inp.height;
+            N_Bits = 8; width = input.width; height = input.height;
             this.Grid = new byte[width * height];
             int[] ColSum; int[] nC;
             ColSum = new int[width];
@@ -181,8 +181,8 @@ namespace WFshadBinImpulse
                 for (int x = 0; x < width + hWind; x++)
                 {
                     int xout = x - hWind, xsub = x - 2 * hWind - 1; // 1. and 2. addition
-                    if (y < height && x < width) { ColSum[x] += Inp.Grid[x + width * y]; nC[x]++; } // 3. and 4. addition
-                    if (ysub >= 0 && x < width) { ColSum[x] -= Inp.Grid[x + width * ysub]; nC[x]--; }
+                    if (y < height && x < width) { ColSum[x] += input.Grid[x + width * y]; nC[x]++; } // 3. and 4. addition
+                    if (ysub >= 0 && x < width) { ColSum[x] -= input.Grid[x + width * ysub]; nC[x]--; }
                     if (yout >= 0 && x < width) { Sum += ColSum[x]; nS += nC[x]; }
                     if (yout >= 0 && xsub >= 0) { Sum -= ColSum[xsub]; nS -= nC[xsub]; }
                     if (xout >= 0 && yout >= 0)
