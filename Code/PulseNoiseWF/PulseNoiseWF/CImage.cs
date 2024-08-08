@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace PulseNoiseWF
+﻿namespace PulseNoiseWF
 {
     class CImage
     {
-        public Byte[] Grid;
+        public byte[] Grid;
         public int width, height, nBits;
 
         public CImage(int nx, int ny, int nbits) // constructor
@@ -24,13 +22,15 @@ namespace PulseNoiseWF
             for (int i = 0; i < width * height * nBits / 8; i++) this.Grid[i] = img[i];
         }
 
-        public void Copy(CImage inp)
+        public void Copy(CImage input)
         {
-            width = inp.width;
-            height = inp.height;
-            nBits = inp.nBits;
+            width = input.width;
+            height = input.height;
+            nBits = input.nBits;
             for (int i = 0; i < width * height * nBits / 8; i++)
-                Grid[i] = inp.Grid[i];
+            {
+                Grid[i] = input.Grid[i];
+            }
         }
 
         public int ColorToGray(CImage inp, Form1 fm1)
@@ -79,19 +79,22 @@ namespace PulseNoiseWF
             return 1;
         } //********************** end ColorToGray **********************
 
-        public int DeleteBit0(int nbyte)
+        public void DeleteBit0(int nbyte)
         // If "this" is a 8 bit image, then sets the bits 0 and 1 of each pixel to 0.
         // If it is a 24 bit one, then sets the bit 0 of green and red chanels to 0.
         {
             for (int i = 0; i < width * height; i++)
+            {
                 if (nbyte == 1)
+                {
                     Grid[i] = (byte)(Grid[i] - (Grid[i] % 4));
+                }
                 else
                 {
                     Grid[nbyte * i + 2] = (byte)(Grid[nbyte * i + 2] & 254);
                     Grid[nbyte * i + 1] = (byte)(Grid[nbyte * i + 1] & 254);
                 }
-            return 1;
+            }
         } //********************* end DeleteBit0 ************************   
 
     } //************************ end class CImage ************************

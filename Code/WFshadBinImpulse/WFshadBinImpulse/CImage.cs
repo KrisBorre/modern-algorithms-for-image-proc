@@ -44,8 +44,6 @@ namespace WFshadBinImpulse
             }
         }
 
-
-
         public int SigmaSimpleUni(CImage Inp, int hWind, int Toleranz)
         // Simple sigma filter for both gray value and color images. 
         {
