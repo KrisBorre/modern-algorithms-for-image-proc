@@ -108,19 +108,19 @@ namespace WFsegmentAndComp
 
 
 
-        public void Copy(CImage inp, bool full)
+        public void Copy(CImage input, bool full)
         // Copies the image "inp" into "this". If full==false then the array "Grid"
         // will be alloced but its content will not be copied.
         {
             int i, size;
-            if (inp.N_Bits == 8) size = inp.width * inp.height;
-            else size = 3 * inp.width * inp.height;
-            N_Bits = inp.N_Bits;
-            width = inp.width;
-            height = inp.height;
+            if (input.N_Bits == 8) size = input.width * input.height;
+            else size = 3 * input.width * input.height;
+            N_Bits = input.N_Bits;
+            width = input.width;
+            height = input.height;
             Grid = new byte[size];
             Lab = new int[size];
-            if (full) for (i = 0; i < size; i++) Grid[i] = inp.Grid[i];
+            if (full) for (i = 0; i < size; i++) Grid[i] = input.Grid[i];
         }
 
 
