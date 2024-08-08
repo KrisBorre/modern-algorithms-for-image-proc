@@ -71,7 +71,7 @@ namespace WFsegmentAndComp
         }
 
 
-        public int ColorToGray(CImage inp, Form1 fm1)
+        public int ColorToGray(CImage input, Form1 fm1)
         /* Transforms the colors of the color image "inp" in luminance=(r+g+b)/3 
         and puts these values to this.Grid. --------- */
         {
@@ -80,16 +80,16 @@ namespace WFsegmentAndComp
                 MessageBox.Show("ColorToGray: The output image has a not suitable format; N_Bits=" + N_Bits);
                 return -1;
             }
-            if (inp.N_Bits != 24)
+            if (input.N_Bits != 24)
             {
-                MessageBox.Show("ColorToGray: The input image has a not suitable format; inp.N_Bits=" + inp.N_Bits);
+                MessageBox.Show("ColorToGray: The input image has a not suitable format; inp.N_Bits=" + input.N_Bits);
                 return -1;
             }
             int x, y;
-            if (inp.N_Bits != 24) return -1;
+            if (input.N_Bits != 24) return -1;
             fm1.progressBar1.Value = 0;
             fm1.progressBar1.Visible = true;
-            N_Bits = 8; width = inp.width; height = inp.height;
+            N_Bits = 8; width = input.width; height = input.height;
             Grid = new byte[width * height * 8];
             int y1 = 1 + nLoop * height / denomProg;
             for (y = 0; y < height; y++) //=================================================
@@ -97,21 +97,23 @@ namespace WFsegmentAndComp
                 if ((y % y1) == 0) fm1.progressBar1.PerformStep();
                 for (x = 0; x < width; x++) // =============================================
                 {
-                    Grid[y * width + x] = (byte)MaxC(inp.Grid[2 + 3 * (x + width * y)],
-                      inp.Grid[1 + 3 * (x + width * y)], inp.Grid[0 + 3 * (x + width * y)]);
+                    Grid[y * width + x] = (byte)MaxC(input.Grid[2 + 3 * (x + width * y)],
+                      input.Grid[1 + 3 * (x + width * y)], input.Grid[0 + 3 * (x + width * y)]);
                 } // ================= end for (x.  ========================================
             } // =================== end for (x.  ==========================================
             return 1;
         } //********************** end ColorToGray *****************************************
 
 
-        public int MakePalette(ref int nPal)
+        public void MakePalette(ref int nPal)
         {
             int r, g, b;
             byte Red, Green, Blue;
             int ii = 0;
             for (r = 1; r <= 8; r++) // Colors of the palette
+            {
                 for (g = 1; g <= 8; g++)
+                {
                     for (b = 1; b <= 4; b++)
                     {
                         Red = (byte)(32 * r); if (r == 8) Red = 255;
@@ -120,24 +122,28 @@ namespace WFsegmentAndComp
                         Palette[ii] = Color.FromArgb(Red, Green, Blue);
                         ii++;
                     }
+                }
+            }
             nPal = 4 * ii;
-            return 1;
         } //************************************ end MakePalette ******************************
 
 
-        public int DeleteBit0(int nbyte)
+        public void DeleteBit0(int nbyte)
         // Sets the bits 0 and 1 of a 8 bit image to 0 and returns a 1.
         // If the image is not an 8 bit one, does nothing and returns -1.
         {
             for (int i = 0; i < width * height; i++)
+            {
                 if (nbyte == 1)
+                {
                     Grid[i] &= 252;
+                }
                 else
                 {
                     Grid[nbyte * i + 2] = (byte)(Grid[nbyte * i + 2] & 254);
                     Grid[nbyte * i + 1] = (byte)(Grid[nbyte * i + 1] & 254);
                 }
-            return 1;
+            }
         }
     }
 }

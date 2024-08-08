@@ -1,36 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{3CD30B9F-8EF1-4DEC-B94A-8800ED5B1EB3}|WFshadBinImpulse\\WFshadBinImpulse.csproj|c:\\users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\code\\wfshadbinimpulse\\wfshadbinimpulse\\cimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3CD30B9F-8EF1-4DEC-B94A-8800ED5B1EB3}|WFshadBinImpulse\\WFshadBinImpulse.csproj|solutionrelative:wfshadbinimpulse\\cimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3CD30B9F-8EF1-4DEC-B94A-8800ED5B1EB3}|WFshadBinImpulse\\WFshadBinImpulse.csproj|C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\wfshadbinimpulse\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3CD30B9F-8EF1-4DEC-B94A-8800ED5B1EB3}|WFshadBinImpulse\\WFshadBinImpulse.csproj|solutionrelative:wfshadbinimpulse\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3CD30B9F-8EF1-4DEC-B94A-8800ED5B1EB3}|WFshadBinImpulse\\WFshadBinImpulse.csproj|C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\wfshadbinimpulse\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{3CD30B9F-8EF1-4DEC-B94A-8800ED5B1EB3}|WFshadBinImpulse\\WFshadBinImpulse.csproj|solutionrelative:wfshadbinimpulse\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3CD30B9F-8EF1-4DEC-B94A-8800ED5B1EB3}|WFshadBinImpulse\\WFshadBinImpulse.csproj|C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\wfshadbinimpulse\\queue.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3CD30B9F-8EF1-4DEC-B94A-8800ED5B1EB3}|WFshadBinImpulse\\WFshadBinImpulse.csproj|solutionrelative:wfshadbinimpulse\\queue.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3CD30B9F-8EF1-4DEC-B94A-8800ED5B1EB3}|WFshadBinImpulse\\WFshadBinImpulse.csproj|C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\wfshadbinimpulse\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3CD30B9F-8EF1-4DEC-B94A-8800ED5B1EB3}|WFshadBinImpulse\\WFshadBinImpulse.csproj|solutionrelative:wfshadbinimpulse\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3CD30B9F-8EF1-4DEC-B94A-8800ED5B1EB3}|WFshadBinImpulse\\WFshadBinImpulse.csproj|C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\wfshadbinimpulse\\cpnoise.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3CD30B9F-8EF1-4DEC-B94A-8800ED5B1EB3}|WFshadBinImpulse\\WFshadBinImpulse.csproj|solutionrelative:wfshadbinimpulse\\cpnoise.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\obj\\x86\\Release\\.NETFramework,Version=v4.0,Profile=Client.AssemblyAttributes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:WFshadBinImpulse\\obj\\x86\\Release\\.NETFramework,Version=v4.0,Profile=Client.AssemblyAttributes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -38,7 +9,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": -1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -53,88 +24,8 @@
               "Name": "ST:131:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Queue.cs",
-              "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\Queue.cs",
-              "RelativeDocumentMoniker": "WFshadBinImpulse\\Queue.cs",
-              "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\Queue.cs",
-              "RelativeToolTip": "WFshadBinImpulse\\Queue.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-09T12:27:18.203Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\Program.cs",
-              "RelativeDocumentMoniker": "WFshadBinImpulse\\Program.cs",
-              "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\Program.cs",
-              "RelativeToolTip": "WFshadBinImpulse\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAYAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-09T12:27:10.532Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Form1.cs",
-              "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\Form1.cs",
-              "RelativeDocumentMoniker": "WFshadBinImpulse\\Form1.cs",
-              "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\Form1.cs",
-              "RelativeToolTip": "WFshadBinImpulse\\Form1.cs",
-              "ViewState": "AQIAAJECAAAAAAAAAAAAAKoCAAA4AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003525|",
-              "WhenOpened": "2024-04-09T12:26:48.127Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Form1.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\Form1.cs",
-              "RelativeDocumentMoniker": "WFshadBinImpulse\\Form1.cs",
-              "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\Form1.cs [Design]",
-              "RelativeToolTip": "WFshadBinImpulse\\Form1.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003525|",
-              "WhenOpened": "2024-04-09T12:26:46.914Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "CPnoise.cs",
-              "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\CPnoise.cs",
-              "RelativeDocumentMoniker": "WFshadBinImpulse\\CPnoise.cs",
-              "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\CPnoise.cs",
-              "RelativeToolTip": "WFshadBinImpulse\\CPnoise.cs",
-              "ViewState": "AQIAAB8CAAAAAAAAAAAAABYAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-09T12:26:27.917Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "CImage.cs",
-              "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\CImage.cs",
-              "RelativeDocumentMoniker": "WFshadBinImpulse\\CImage.cs",
-              "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\CImage.cs",
-              "RelativeToolTip": "WFshadBinImpulse\\CImage.cs",
-              "ViewState": "AQIAACUAAAAAAAAAAAAAAC0AAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-09T12:26:10.654Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": ".NETFramework,Version=v4.0,Profile=Client.AssemblyAttributes.cs",
-              "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\obj\\x86\\Release\\.NETFramework,Version=v4.0,Profile=Client.AssemblyAttributes.cs",
-              "RelativeDocumentMoniker": "WFshadBinImpulse\\obj\\x86\\Release\\.NETFramework,Version=v4.0,Profile=Client.AssemblyAttributes.cs",
-              "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadBinImpulse\\WFshadBinImpulse\\obj\\x86\\Release\\.NETFramework,Version=v4.0,Profile=Client.AssemblyAttributes.cs",
-              "RelativeToolTip": "WFshadBinImpulse\\obj\\x86\\Release\\.NETFramework,Version=v4.0,Profile=Client.AssemblyAttributes.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-09T12:24:18.62Z"
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             }
           ]
         }
