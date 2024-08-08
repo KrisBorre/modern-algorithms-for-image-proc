@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadingBin\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FBCE54F6-4A99-4E27-9581-D3CA7C643FA0}|WFshadingBin\\WFshadingBin.csproj|c:\\users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\code\\wfshadingbin\\wfshadingbin\\cimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FBCE54F6-4A99-4E27-9581-D3CA7C643FA0}|WFshadingBin\\WFshadingBin.csproj|solutionrelative:wfshadingbin\\cimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{FBCE54F6-4A99-4E27-9581-D3CA7C643FA0}|WFshadingBin\\WFshadingBin.csproj|C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadingBin\\wfshadingbin\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FBCE54F6-4A99-4E27-9581-D3CA7C643FA0}|WFshadingBin\\WFshadingBin.csproj|solutionrelative:wfshadingbin\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FBCE54F6-4A99-4E27-9581-D3CA7C643FA0}|WFshadingBin\\WFshadingBin.csproj|c:\\users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\code\\wfshadingbin\\wfshadingbin\\cimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FBCE54F6-4A99-4E27-9581-D3CA7C643FA0}|WFshadingBin\\WFshadingBin.csproj|solutionrelative:wfshadingbin\\cimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{FBCE54F6-4A99-4E27-9581-D3CA7C643FA0}|WFshadingBin\\WFshadingBin.csproj|C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadingBin\\wfshadingbin\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
@@ -30,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -58,13 +58,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Form1.cs",
               "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadingBin\\WFshadingBin\\Form1.cs",
               "RelativeDocumentMoniker": "WFshadingBin\\Form1.cs",
               "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadingBin\\WFshadingBin\\Form1.cs",
               "RelativeToolTip": "WFshadingBin\\Form1.cs",
-              "ViewState": "AQIAAEUAAAAAAAAAAAAiwFwAAAAdAAAA",
+              "ViewState": "AQIAAN4AAAAAAAAAAAAhwPYAAAAjAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-09T13:13:58.367Z",
               "EditorCaption": ""
@@ -83,13 +83,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "CImage.cs",
               "DocumentMoniker": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadingBin\\WFshadingBin\\CImage.cs",
               "RelativeDocumentMoniker": "WFshadingBin\\CImage.cs",
               "ToolTip": "C:\\Users\\kris_\\source\\repos\\modern-algorithms-for-image-proc\\Code\\WFshadingBin\\WFshadingBin\\CImage.cs",
               "RelativeToolTip": "WFshadingBin\\CImage.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAJAAAA",
+              "ViewState": "AQIAAIcAAAAAAAAAAAAhwLwAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-09T13:13:45.398Z",
               "EditorCaption": ""
