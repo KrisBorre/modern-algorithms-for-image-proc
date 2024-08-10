@@ -4,6 +4,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
+// Shading correction
+// page 66
 namespace WFshadingBin
 {
     public partial class Form1 : Form
