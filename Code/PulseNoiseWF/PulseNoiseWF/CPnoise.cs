@@ -25,7 +25,7 @@ namespace PulseNoiseWF
 
         ~CPnoise() { }
 
-        public bool getCond(int i, int x, int y, double marginX, double marginY, double Scale, Form1 fm1)
+        public bool getCondition(int i, int x, int y, double marginX, double marginY, double Scale, Form1 fm1)
         { // Calculates bounds of the rectangle defined by global "fm1.v" and returns the condition
           // that the point (x, y) lies inside the rectangle.
             double fxmin = (fm1.v[i].X - marginX) / Scale; // "marginX" is the space of pictureBox1 left of image (may be 0)
@@ -84,7 +84,7 @@ namespace PulseNoiseWF
                 {
                     Condition = false;
                     for (int k = 0; k < Number; k += 2)
-                        Condition = Condition || getCond(k, x, y, marginX, marginY, Scale, fm1);
+                        Condition = Condition || getCondition(k, x, y, marginX, marginY, Scale, fm1);
                     if (Condition) continue;
                     i = x + y * Image.width; // Index of the pixel (x, y)
                     if (COLOR)
@@ -100,8 +100,8 @@ namespace PulseNoiseWF
             return 1;
         } //******************************** end Sort *********************************************************
 
-        public int Neighb(CImage Image, int W, int n)
-        // Returns the index of the nth neighboor of the pixel W. If the neighboor
+        public int Neighbor(CImage Image, int W, int n)
+        // Returns the index of the nth neighbor of the pixel W. If the neighbor
         // is outside the grid, then it returns -1.
         {
             int dx, dy, x, y, xn, yn;
@@ -113,7 +113,7 @@ namespace PulseNoiseWF
             return xn + Image.width * yn;
         }
 
-
+        // not called
         unsafe public int PositionInIndex(int lightNeb, int Neib)
         {
             for (int i = 0; i < nPixel[lightNeb]; i++)
@@ -126,6 +126,7 @@ namespace PulseNoiseWF
             return (int)((R + G + B) / 3);
         }
 
+        // not called
         public int MessReturn(string s)
         {
             if (MessageBox.Show(s, "Return", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
@@ -171,7 +172,7 @@ namespace PulseNoiseWF
                 nextIndex = Q1.Get();
                 for (int n = 0; n <= maxNeib; n++) // == all neighbors of nextIndex =====================
                 {
-                    Neib = Neighb(Image, nextIndex, n); // the index of the nth neighbor of nextIndex 
+                    Neib = Neighbor(Image, nextIndex, n); // the index of the nth neighbor of nextIndex 
                     if (Neib < 0) continue; // Neib<0 means outside the image
                     if (COLOR)
                     {
@@ -372,7 +373,7 @@ namespace PulseNoiseWF
                 nextIndex = Q1.Get();
                 for (int n = 0; n <= maxNeib; n++) //======== all neighbors of nextIndex ================
                 {
-                    Neib = Neighb(Image, nextIndex, n); // the index of the nth neighbor of nextIndex 
+                    Neib = Neighbor(Image, nextIndex, n); // the index of the nth neighbor of nextIndex 
                     if (Neib < 0) continue; // Neib<0 means outside the image
                     if (COLOR)
                     {

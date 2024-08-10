@@ -3,7 +3,7 @@
     class Queue
     {
         public int input, output, Len, full;
-        public int[] Array;
+        private int[] Array;
 
         ~Queue() { }
 

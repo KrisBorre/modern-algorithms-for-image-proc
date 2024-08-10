@@ -150,7 +150,7 @@ namespace WFluminance
             for (int ind1 = 0; ind1 < 7; ind1++) // color boxes
             {
                 color = Color.FromArgb(R[ind1], G[ind1], B[ind1]);
-                myBrush1 = new System.Drawing.SolidBrush(color);
+                myBrush1 = new SolidBrush(color);
                 rect = new Rectangle(widthGray, heightColor * ind1, widthColor, heightColor);
                 g1.FillRectangle(myBrush1, rect);
                 pictureBox1.Image = BmpPictBox1;
@@ -159,7 +159,7 @@ namespace WFluminance
 
             ind = 7;  // big gray box
             color = Color.FromArgb(R[ind], G[ind], B[ind]);
-            myBrush1 = new System.Drawing.SolidBrush(color);
+            myBrush1 = new SolidBrush(color);
             rect = new Rectangle(0, 0, widthGray, pictureBox1.Height);
             g1.FillRectangle(myBrush1, rect);
             CreateLabelsGrid(numCol, numRow, labWidth, heightColor);
@@ -180,7 +180,7 @@ namespace WFluminance
             panel1.Controls[46].Text = Mean[ind1].ToString();
             panel1.Controls[55].Text = MaxC[ind1].ToString();
             Color color = Color.FromArgb(R[ind1], G[ind1], B[ind1]);
-            SolidBrush myBrush1 = new System.Drawing.SolidBrush(color);
+            SolidBrush myBrush1 = new SolidBrush(color);
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
             g1.FillRectangle(myBrush1, rect);
             pictureBox1.Refresh(); // Image = BmpPictBox1;
@@ -198,7 +198,7 @@ namespace WFluminance
             panel1.Controls[47].Text = Mean[ind1].ToString();
             panel1.Controls[56].Text = MaxC[ind1].ToString();
             Color color = Color.FromArgb(R[ind1], G[ind1], B[ind1]);
-            SolidBrush myBrush1 = new System.Drawing.SolidBrush(color);
+            SolidBrush myBrush1 = new SolidBrush(color);
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
             g1.FillRectangle(myBrush1, rect);
             pictureBox1.Image = BmpPictBox1;
@@ -217,7 +217,7 @@ namespace WFluminance
             panel1.Controls[57].Text = MaxC[ind1].ToString();
 
             Color color = Color.FromArgb(R[ind1], G[ind1], B[ind1]);
-            SolidBrush myBrush1 = new System.Drawing.SolidBrush(color);
+            SolidBrush myBrush1 = new SolidBrush(color);
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
             g1.FillRectangle(myBrush1, rect);
             pictureBox1.Image = BmpPictBox1;
@@ -237,7 +237,7 @@ namespace WFluminance
             panel1.Controls[58].Text = MaxC[ind1].ToString();
 
             Color color = Color.FromArgb(R[ind1], G[ind1], B[ind1]);
-            SolidBrush myBrush1 = new System.Drawing.SolidBrush(color);
+            SolidBrush myBrush1 = new SolidBrush(color);
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
             g1.FillRectangle(myBrush1, rect);
             pictureBox1.Image = BmpPictBox1;
@@ -255,7 +255,7 @@ namespace WFluminance
             panel1.Controls[50].Text = Mean[ind1].ToString();
             panel1.Controls[59].Text = MaxC[ind1].ToString();
             Color color = Color.FromArgb(R[ind1], G[ind1], B[ind1]);
-            SolidBrush myBrush1 = new System.Drawing.SolidBrush(color);
+            SolidBrush myBrush1 = new SolidBrush(color);
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
             g1.FillRectangle(myBrush1, rect);
             pictureBox1.Image = BmpPictBox1;
@@ -274,7 +274,7 @@ namespace WFluminance
             panel1.Controls[51].Text = Mean[ind1].ToString();
             panel1.Controls[60].Text = MaxC[ind1].ToString();
             Color color = Color.FromArgb(R[ind1], G[ind1], B[ind1]);
-            SolidBrush myBrush1 = new System.Drawing.SolidBrush(color);
+            SolidBrush myBrush1 = new SolidBrush(color);
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
             g1.FillRectangle(myBrush1, rect);
 
@@ -291,7 +291,7 @@ namespace WFluminance
             panel1.Controls[52].Text = Mean[ind1].ToString();
             panel1.Controls[61].Text = MaxC[ind1].ToString();
             Color color = Color.FromArgb(R[ind1], G[ind1], B[ind1]);
-            SolidBrush myBrush1 = new System.Drawing.SolidBrush(color);
+            SolidBrush myBrush1 = new SolidBrush(color);
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
             g1.FillRectangle(myBrush1, rect);
 
@@ -301,7 +301,7 @@ namespace WFluminance
         {
             int Comp = (int)numericUpDown8.Value;  // lightness of first gray box in pictBox2
             gray = Color.FromArgb(Comp, Comp, Comp);
-            SolidBrush myBrush3 = new System.Drawing.SolidBrush(gray);
+            SolidBrush myBrush3 = new SolidBrush(gray);
             Rectangle rect1 = new Rectangle(startGray, 40, widthColor2, 40);
             g2.FillRectangle(myBrush3, rect1);
             pictureBox2.Image = BmpPictBox2;
@@ -312,7 +312,7 @@ namespace WFluminance
         {
             int Comp = (int)numericUpDown9.Value;
             gray2 = Color.FromArgb(Comp, Comp, Comp);
-            SolidBrush myBrush4 = new System.Drawing.SolidBrush(gray2);
+            SolidBrush myBrush4 = new SolidBrush(gray2);
             Rectangle rect1 = new Rectangle(startGray, 80, widthColor2, 40);
             g2.FillRectangle(myBrush4, rect1);
             pictureBox2.Image = BmpPictBox2;
@@ -323,7 +323,7 @@ namespace WFluminance
         {
             int Comp = (int)numericUpDown10.Value;
             gray3 = Color.FromArgb(Comp, Comp, Comp);
-            SolidBrush myBrush4 = new System.Drawing.SolidBrush(gray3);
+            SolidBrush myBrush4 = new SolidBrush(gray3);
             Rectangle rect1 = new Rectangle(startGray, 120, widthColor2, 40);
             g2.FillRectangle(myBrush4, rect1);
             pictureBox2.Image = BmpPictBox2;
@@ -334,7 +334,7 @@ namespace WFluminance
         {
             int Comp = (int)numericUpDown11.Value;
             gray3 = Color.FromArgb(Comp, Comp, Comp);
-            SolidBrush myBrush4 = new System.Drawing.SolidBrush(gray3);
+            SolidBrush myBrush4 = new SolidBrush(gray3);
             Rectangle rect1 = new Rectangle(startGray, 160, widthColor2, 40);
             g2.FillRectangle(myBrush4, rect1);
             pictureBox2.Image = BmpPictBox2;
@@ -345,7 +345,7 @@ namespace WFluminance
         {
             int Comp = (int)numericUpDown12.Value;
             gray3 = Color.FromArgb(Comp, Comp, Comp);
-            SolidBrush myBrush4 = new System.Drawing.SolidBrush(gray3);
+            SolidBrush myBrush4 = new SolidBrush(gray3);
             Rectangle rect1 = new Rectangle(startGray, 200, widthColor2, 40);
             g2.FillRectangle(myBrush4, rect1);
             pictureBox2.Image = BmpPictBox2;
@@ -406,7 +406,6 @@ namespace WFluminance
                 }
             }
 
-
             pictureBox2.Image = BmpPictBox2;
 
             SolidBrush brush = new SolidBrush(Color.LightGray);
@@ -414,52 +413,52 @@ namespace WFluminance
             g2.FillRectangle(brush, rect);
 
             Color color2 = Color.FromArgb(255, 0, 0); // red box
-            SolidBrush myBrush2 = new System.Drawing.SolidBrush(color2);
+            SolidBrush myBrush2 = new SolidBrush(color2);
             rect = new Rectangle(startColor, 40, 80, 40);
             g2.FillRectangle(myBrush2, rect);
 
             gray = Color.FromArgb(180, 180, 180); // gray box
-            myBrush2 = new System.Drawing.SolidBrush(gray);
+            myBrush2 = new SolidBrush(gray);
             rect = new Rectangle(startGray, 40, 80, 40);
             g2.FillRectangle(myBrush2, rect);
 
             color2 = Color.FromArgb(255, 200, 200);
-            myBrush2 = new System.Drawing.SolidBrush(color2);
+            myBrush2 = new SolidBrush(color2);
             rect = new Rectangle(startColor, 80, 80, 40);
             g2.FillRectangle(myBrush2, rect);
 
             gray2 = Color.FromArgb(182, 182, 182);
-            myBrush2 = new System.Drawing.SolidBrush(gray2);
+            myBrush2 = new SolidBrush(gray2);
             rect = new Rectangle(startGray, 80, 80, 40);
             g2.FillRectangle(myBrush2, rect);
 
             color2 = Color.FromArgb(175, 120, 0);
-            myBrush2 = new System.Drawing.SolidBrush(color2);
+            myBrush2 = new SolidBrush(color2);
             rect = new Rectangle(startColor, 120, 80, 40);
             g2.FillRectangle(myBrush2, rect);
 
             gray3 = Color.FromArgb(120, 120, 120);
-            myBrush2 = new System.Drawing.SolidBrush(gray3);
+            myBrush2 = new SolidBrush(gray3);
             rect = new Rectangle(startGray, 120, 80, 40);
             g2.FillRectangle(myBrush2, rect);
 
             color2 = Color.FromArgb(160, 0, 222);
-            myBrush2 = new System.Drawing.SolidBrush(color2);
+            myBrush2 = new SolidBrush(color2);
             rect = new Rectangle(startColor, 160, 80, 40);
             g2.FillRectangle(myBrush2, rect);
 
             gray3 = Color.FromArgb(120, 120, 120);
-            myBrush2 = new System.Drawing.SolidBrush(gray3);
+            myBrush2 = new SolidBrush(gray3);
             rect = new Rectangle(startGray, 160, 80, 40);
             g2.FillRectangle(myBrush2, rect);
 
             color2 = Color.FromArgb(160, 0, 160);
-            myBrush2 = new System.Drawing.SolidBrush(color2);
+            myBrush2 = new SolidBrush(color2);
             rect = new Rectangle(startColor, 200, 80, 40);
             g2.FillRectangle(myBrush2, rect);
 
             gray3 = Color.FromArgb(120, 120, 120);
-            myBrush2 = new System.Drawing.SolidBrush(gray3);
+            myBrush2 = new SolidBrush(gray3);
             rect = new Rectangle(startGray, 200, 80, 40);
             g2.FillRectangle(myBrush2, rect);
             pictureBox2.Image = BmpPictBox2;

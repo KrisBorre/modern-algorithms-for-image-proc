@@ -16,14 +16,16 @@ namespace PulseNoiseWF
 
         private Bitmap origBmp;
         private Bitmap Result; // result of processing
-        CImage Orig;  // copy of original image
-        CImage Work;  // work image
+        private CImage Orig;  // copy of original image
+        private CImage Work;  // work image
+
         public Point[] v = new Point[20]; // corners of excluded rectangles, used in CPnoise Sort
-        int Number, // number of defined elements "v"
+
+        private int Number, // number of defined elements "v"
           maxNumber = 8;
-        bool Drawn = false, OPEN = false, BMP_Graph;
-        public string OpenImageFile;
-        public Graphics g;
+        private bool Drawn = false, OPEN = false, BMP_Graph;
+        private string OpenImageFile;
+        private Graphics g;
 
         private void button1_Click(object sender, EventArgs e) // Open image
         {
@@ -113,7 +115,6 @@ namespace PulseNoiseWF
             }
             progressBar1.Visible = false;
         } //****************************** end BitmapToGridOld ****************************************
-
 
 
         private void BitmapToGrid(Bitmap bmp, byte[] Grid)
@@ -213,7 +214,7 @@ namespace PulseNoiseWF
             progressBar1.Visible = false;
         } //****************************** end GridToBitmap ****************************************
 
-        public int MaxC(int R, int G, int B)
+        private int MaxC(int R, int G, int B)
         {
             int max;
             if (R * 0.713 > G) max = (int)(R * 0.713);
@@ -260,7 +261,7 @@ namespace PulseNoiseWF
             for (minLight = 0; minLight < 256; minLight++) if (histo[minLight] != 0) break;
             CPnoise PN = new CPnoise(histo, 1000, 4000);
 
-            PN.Sort(Work, histo, Number, pictureBox1.Width, pictureBox1.Height, this);
+            PN.Sort(Image: Work, histo: histo, Number: Number, picBox1Width: pictureBox1.Width, picBox1Height: pictureBox1.Height, fm1: this);
             progressBar1.Visible = false;
 
             int maxSizeD = 0;
@@ -291,7 +292,7 @@ namespace PulseNoiseWF
             pictureBox2.Image = Result;
 
             g = pictureBox1.CreateGraphics();
-            Pen myPen = new System.Drawing.Pen(System.Drawing.Color.Blue);
+            Pen myPen = new Pen(Color.Blue);
             for (int n = 0; n < Number; n += 2)
             {
                 g.DrawLine(myPen, v[n + 1].X, v[n + 0].Y, v[n + 1].X, v[n + 1].Y);
@@ -303,7 +304,6 @@ namespace PulseNoiseWF
             button2.Visible = true;
 
         } //***************************** end Impulse noise ***********************
-
 
 
         private void button2_Click(object sender, EventArgs e) // Save image
@@ -371,7 +371,7 @@ namespace PulseNoiseWF
             else
                 MessageBox.Show("Number=" + Number + " is too high");
 
-            myPen = new System.Drawing.Pen(System.Drawing.Color.Blue);
+            myPen = new Pen(Color.Blue);
             if ((Number & 1) == 0)
                 for (int n = 0; n < Number; n += 2)
                 {

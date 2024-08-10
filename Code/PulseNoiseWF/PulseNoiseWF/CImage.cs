@@ -5,6 +5,7 @@
         public byte[] Grid;
         public int width, height, nBits;
 
+        // not called
         public CImage(int nx, int ny, int nbits) // constructor
         {
             this.width = nx;
@@ -33,6 +34,7 @@
             }
         }
 
+        // not called
         public int ColorToGray(CImage inp, Form1 fm1)
         /* Transforms the colors of the color image "inp" in lightness=(r+g+b)/3 
            and puts these values to this.Grid. --------- */
@@ -58,7 +60,7 @@
             return 1;
         } //********************** end ColorToGray **********************
 
-
+        // not called
         public int ColorToGray(CImage input)
         /* Transforms the colors of the color image "input" in lightness=(r+g+b)/3 
            and puts these values to this.Grid. --------- */
