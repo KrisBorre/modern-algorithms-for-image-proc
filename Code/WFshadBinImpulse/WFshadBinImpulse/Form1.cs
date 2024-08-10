@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
+// page 81
 namespace WFshadBinImpulse
 {
     public partial class Form1 : Form

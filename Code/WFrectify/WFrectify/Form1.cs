@@ -4,6 +4,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
+// Straightening Photos of Paintings
+// page 188
 namespace WFrectify
 {
     public partial class Form1 : Form

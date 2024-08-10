@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
+// page 127
 namespace WFcompressPal
 {
     public partial class Form1 : Form

@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
+// page 87
 namespace WFedgeDetect
 {
     public partial class Form1 : Form

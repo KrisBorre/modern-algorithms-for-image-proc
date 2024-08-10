@@ -4,7 +4,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
-
+// Image Compression
+// page 127
 namespace WFrestoreLin
 {
     public partial class Form1 : Form
