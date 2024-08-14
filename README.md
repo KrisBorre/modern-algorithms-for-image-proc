@@ -17,3 +17,5 @@ See the file Contributing.md for more information on how you can contribute to t
 
 
 ![mona_lisa_without_pulse_noise](https://github.com/user-attachments/assets/b93b1c23-9895-4ecd-9c57-ecc5dac123ba)
+
+![PiecewiseLinearContrastEnhancementMonaLisa](https://github.com/user-attachments/assets/e65e3aea-ef3a-4916-8d8d-1960f791be54)
