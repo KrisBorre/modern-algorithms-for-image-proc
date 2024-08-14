@@ -14,7 +14,7 @@ namespace PulseNoiseWF
         {
             InitializeComponent();
 
-            this.Text = "Pulse Noise Reduction";
+            this.Text = "Impulse Noise (also called salt-and-pepper noise) Reduction";
         }
 
         private Bitmap origBmp;
