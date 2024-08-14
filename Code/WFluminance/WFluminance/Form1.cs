@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
+// chapter 3: Contrast Enhancement
 // page 49
 namespace WFluminance
 {
@@ -18,21 +19,21 @@ namespace WFluminance
         static int[] R = new int[8]; //{ 0,   160, 174, 122, 0,   0,   0,   121 };
         static int[] G = new int[8]; //{ 0,   0,   0,   122, 124, 122, 0,   121 };
         static int[] B = new int[8]; //{ 242, 160, 0,   0,   0,   122, 242, 121 };
-        Bitmap BmpPictBox1, BmpPictBox2;
-        Graphics g1, g2;
-        int unit, widthForm, widthGray, widthColor, widthGray2, widthColor2, heightColor; // color boxes
-        int startColor, startGray; // boxes in pictureBox2
-        int labWidth, numCol, numRow; // panel
-        Color gray, gray2, gray3;
-        int[] Max = new int[8];
-        int[] MaxMin = new int[8];
-        int[] Mean = new int[8];
-        int[] MaxC = new int[8];
-
+        private Bitmap BmpPictBox1, BmpPictBox2;
+        private Graphics g1, g2;
+        private int unit, widthForm, widthGray, widthColor, widthGray2, widthColor2, heightColor; // color boxes
+        private int startColor, startGray; // boxes in pictureBox2
+        private int labWidth, numCol, numRow; // panel
+        private Color gray, gray2, gray3;
+        private int[] Max = new int[8];
+        private int[] MaxMin = new int[8];
+        private int[] Mean = new int[8];
+        private int[] MaxC = new int[8];
 
         private void MakeColors()
         {
             for (int ii = 0; ii < 8; ii++)
+            {
                 switch (ii)
                 {
                     case 0: R[ii] = 0; G[ii] = 0; B[ii] = V[0]; break;
@@ -44,10 +45,11 @@ namespace WFluminance
                     case 6: R[ii] = 0; G[ii] = 0; B[ii] = V[6]; break;
                     case 7: R[ii] = V[7]; G[ii] = V[7]; B[ii] = V[7]; break;
                 }
+            }
         }
 
 
-        public void MakeMethods()
+        private void MakeMethods()
         {
             for (int k = 0; k < 8; k++)
             {
@@ -67,22 +69,17 @@ namespace WFluminance
             int ind;
             Label[,] LabelGrid = new Label[numCol, numRow];
 
-            for (int k = 0; k < 8; k++)
-            {
-                Max[k] = Math.Max(R[k], Math.Max(G[k], B[k]));
-                int min = Math.Min(R[k], Math.Min(G[k], B[k]));
-                MaxMin[k] = (min + Max[k]) / 2;
-                Mean[k] = (int)(((0.2126 * R[k]) + (0.7152 * G[k]) + (0.0722 * B[k])));
-                MaxC[k] = Math.Max((int)(0.713 * R[k]), Math.Max((int)(1.00 * G[k]), (int)(0.527 * B[k])));
+            this.MakeMethods();
 
-            }
             for (int x = 0; x < numCol; x++)
+            {
                 for (int y = 0; y < numRow; y++)
                 {
                     ind = x + numCol * y;
                     LabelGrid[x, y] = new Label();
                     LabelGrid[x, y].SetBounds(x * labWidth, y * labHeight + 6, labWidth, labHeight);
                     if (y == 0)
+                    {
                         switch (ind)
                         {
                             case 0: LabelGrid[x, y].Text = "R"; break;
@@ -93,6 +90,7 @@ namespace WFluminance
                             case 5: LabelGrid[x, y].Text = "Y"; break;
                             case 6: LabelGrid[x, y].Text = "MC"; break;
                         }
+                    }
                     else
                     {
                         switch (x)
@@ -107,8 +105,8 @@ namespace WFluminance
                         }
                     }
                     panel1.Controls.Add(LabelGrid[x, y]);
-
                 }
+            }
         } //******************************* end CreateLabelsGrid *************************************
 
 
@@ -156,7 +154,6 @@ namespace WFluminance
                 pictureBox1.Image = BmpPictBox1;
             }
 
-
             ind = 7;  // big gray box
             color = Color.FromArgb(R[ind], G[ind], B[ind]);
             myBrush1 = new SolidBrush(color);
@@ -202,7 +199,6 @@ namespace WFluminance
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
             g1.FillRectangle(myBrush1, rect);
             pictureBox1.Image = BmpPictBox1;
-
         }
 
         private void numericUpDown3_ValueChanged(object sender, EventArgs e)
@@ -215,13 +211,11 @@ namespace WFluminance
             panel1.Controls[39].Text = MaxMin[ind1].ToString();
             panel1.Controls[48].Text = Mean[ind1].ToString();
             panel1.Controls[57].Text = MaxC[ind1].ToString();
-
             Color color = Color.FromArgb(R[ind1], G[ind1], B[ind1]);
             SolidBrush myBrush1 = new SolidBrush(color);
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
             g1.FillRectangle(myBrush1, rect);
             pictureBox1.Image = BmpPictBox1;
-
         }
 
         private void numericUpDown4_ValueChanged(object sender, EventArgs e)
@@ -241,7 +235,6 @@ namespace WFluminance
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
             g1.FillRectangle(myBrush1, rect);
             pictureBox1.Image = BmpPictBox1;
-
         }
 
         private void numericUpDown5_ValueChanged(object sender, EventArgs e)
@@ -259,7 +252,6 @@ namespace WFluminance
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
             g1.FillRectangle(myBrush1, rect);
             pictureBox1.Image = BmpPictBox1;
-
         }
 
         private void numericUpDown6_ValueChanged(object sender, EventArgs e)
@@ -277,7 +269,6 @@ namespace WFluminance
             SolidBrush myBrush1 = new SolidBrush(color);
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
             g1.FillRectangle(myBrush1, rect);
-
         }
 
         private void numericUpDown7_ValueChanged(object sender, EventArgs e)
@@ -294,7 +285,6 @@ namespace WFluminance
             SolidBrush myBrush1 = new SolidBrush(color);
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
             g1.FillRectangle(myBrush1, rect);
-
         }
 
         private void numericUpDown8_ValueChanged_1(object sender, EventArgs e)
@@ -305,7 +295,6 @@ namespace WFluminance
             Rectangle rect1 = new Rectangle(startGray, 40, widthColor2, 40);
             g2.FillRectangle(myBrush3, rect1);
             pictureBox2.Image = BmpPictBox2;
-
         }
 
         private void numericUpDown9_ValueChanged_1(object sender, EventArgs e)
@@ -316,7 +305,6 @@ namespace WFluminance
             Rectangle rect1 = new Rectangle(startGray, 80, widthColor2, 40);
             g2.FillRectangle(myBrush4, rect1);
             pictureBox2.Image = BmpPictBox2;
-
         }
 
         private void numericUpDown10_ValueChanged_1(object sender, EventArgs e)
@@ -327,7 +315,6 @@ namespace WFluminance
             Rectangle rect1 = new Rectangle(startGray, 120, widthColor2, 40);
             g2.FillRectangle(myBrush4, rect1);
             pictureBox2.Image = BmpPictBox2;
-
         }
 
         private void numericUpDown11_ValueChanged_1(object sender, EventArgs e)
@@ -338,7 +325,6 @@ namespace WFluminance
             Rectangle rect1 = new Rectangle(startGray, 160, widthColor2, 40);
             g2.FillRectangle(myBrush4, rect1);
             pictureBox2.Image = BmpPictBox2;
-
         }
 
         private void numericUpDown12_ValueChanged_1(object sender, EventArgs e)
@@ -349,9 +335,7 @@ namespace WFluminance
             Rectangle rect1 = new Rectangle(startGray, 200, widthColor2, 40);
             g2.FillRectangle(myBrush4, rect1);
             pictureBox2.Image = BmpPictBox2;
-
         }
-
 
         private void button2_Click(object sender, EventArgs e) // Start box 2
         {
@@ -394,8 +378,8 @@ namespace WFluminance
 
             for (int i = 0; i < 5; i++)
             {
-                P = new Point(pictureBox2.Location.X + 30,
-                                  pictureBox2.Location.Y + 55 + heightColor * i);
+                P = new Point(pictureBox2.Location.X + 30, pictureBox2.Location.Y + 55 + heightColor * i);
+
                 switch (i + 1)
                 {
                     case 1: label1.Location = P; label1.Text = "MC=182"; break;

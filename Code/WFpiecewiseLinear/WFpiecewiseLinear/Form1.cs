@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
+// chapter 3: Contrast Enhancement
 // page 54
 namespace WFpiecewiseLinear
 {
@@ -12,22 +13,29 @@ namespace WFpiecewiseLinear
         public Form1()
         {
             InitializeComponent();
+            this.Text = "Piecewise Linear Contrast Enhancement"; 
         }
 
         private Bitmap origBmp;
         private Bitmap ContrastBmp;
         private Bitmap BmpPictBox3;
-        CImage origIm; // original image
-        CImage origGrayIm; // gray level copy for histogram
-        CImage contrastIm; // contrast enhanced image
-        int MaxHist, MinGV, MaxGV, nbyte, width, height;
-        int[] LUT = new int[256];
-        int[] histo = new int[256];
-        public String OpenImageFile;
-        Graphics g2, g3;
-        int cntClick, X1, Y1, X2, Y2;
+        private CImage originalImage; // original image
+        private CImage origGrayImage; // gray level copy for histogram
+        private CImage contrastEnhancedImage; // contrast enhanced image
+        private int MaxHist, MinGV, MaxGV, nbyte, width, height;
+        private int[] LUT = new int[256];
+        private int[] histo = new int[256];
+
+        // Waarom is dit publiek?
+        public string OpenImageFile;
+
+        private Graphics g2, g3;
+        private int cntClick, X1, Y1, X2, Y2;
+
+        // Waarom is dit publiek?
         public Pen myPen, bluePen;
-        bool BMP_Graph;
+
+        private bool BMP_Graph;
 
         private void button1_Click(object sender, EventArgs e) // Open image
         {
@@ -54,9 +62,9 @@ namespace WFpiecewiseLinear
             width = origBmp.Width;
             height = origBmp.Height;
 
-            origIm = new CImage(width, height, 24);
-            origGrayIm = new CImage(width, height, 8);  // grayscale version of origIm
-            contrastIm = new CImage(width, height, 24);
+            originalImage = new CImage(width, height, 24);
+            origGrayImage = new CImage(width, height, 8);  // grayscale version of origIm
+            contrastEnhancedImage = new CImage(width, height, 24);
 
             label3.Text = "Opened image:" + openFileDialog1.FileName;
             label3.Visible = true;
@@ -84,9 +92,9 @@ namespace WFpiecewiseLinear
                         color = origBmp.GetPixel(i % width, i / width);
                         for (int c = 0; c < nbyte; c++)
                         {
-                            if (c == 0) origIm.Grid[nbyte * i] = color.B;
-                            if (c == 1) origIm.Grid[nbyte * i + 1] = color.G;
-                            if (c == 2) origIm.Grid[nbyte * i + 2] = color.R;
+                            if (c == 0) originalImage.Grid[nbyte * i] = color.B;
+                            if (c == 1) originalImage.Grid[nbyte * i + 1] = color.G;
+                            if (c == 2) originalImage.Grid[nbyte * i + 2] = color.R;
                         }
                     }
                 } //=============================== end for ( int y... =========================
@@ -94,7 +102,7 @@ namespace WFpiecewiseLinear
             else if (origBmp.PixelFormat == PixelFormat.Format24bppRgb)
             {
                 BMP_Graph = true;
-                BitmapToGrid(origBmp, origIm.Grid);
+                BitmapToGrid(origBmp, originalImage.Grid);
             }
             else
             {
@@ -118,9 +126,9 @@ namespace WFpiecewiseLinear
             }
 
             // Calculating the histogram:
-            origGrayIm.ColorToGrayMC(origIm, this);
+            origGrayImage.ColorToGrayMC(originalImage, this);
             for (int gv = 0; gv < 256; gv++) histo[gv] = 0;
-            for (int i = 0; i < width * height; i++) histo[origGrayIm.Grid[i]]++;
+            for (int i = 0; i < width * height; i++) histo[origGrayImage.Grid[i]]++;
             MaxHist = 0;
             for (int gv = 0; gv < 256; gv++) if (histo[gv] > MaxHist) MaxHist = histo[gv];
             MinGV = 255;
@@ -167,11 +175,11 @@ namespace WFpiecewiseLinear
             g3.DrawLine(bluePen, MaxGV, 0, yy, 0);
             if (BMP_Graph) pictureBox3.Image = BmpPictBox3;
             // nbyte = 3;  origIm and contrastIm are both 24-bit images
-            for (int i = 0; i < nbyte * width * height; i++) contrastIm.Grid[i] = (byte)LUT[(int)origIm.Grid[i]];
+            for (int i = 0; i < nbyte * width * height; i++) contrastEnhancedImage.Grid[i] = (byte)LUT[(int)originalImage.Grid[i]];
 
             //ContrastBmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
             progressBar1.Visible = true;
-            GridToBitmap(ContrastBmp, contrastIm.Grid);
+            GridToBitmap(ContrastBmp, contrastEnhancedImage.Grid);
             cntClick = 0;
             if (BMP_Graph) pictureBox3.Image = BmpPictBox3;
             pictureBox2.Image = ContrastBmp;
@@ -261,7 +269,7 @@ namespace WFpiecewiseLinear
             // Calculating contrastIm:
             int[] GV = new int[3];
             int arg, colOld, colNew;
-            for (int i = 0; i < nbyte * width * height; i++) contrastIm.Grid[i] = 0;
+            for (int i = 0; i < nbyte * width * height; i++) contrastEnhancedImage.Grid[i] = 0;
 
             if (cntClick == 2)
             {
@@ -269,19 +277,19 @@ namespace WFpiecewiseLinear
                 {
                     for (int x = 0, xn = 0; x < width; x++, xn += nbyte)
                     {
-                        int lum = origGrayIm.Grid[x + y];
+                        int lum = origGrayImage.Grid[x + y];
                         for (int c = 0; c < nbyte; c++)
                         {
-                            colOld = origIm.Grid[c + xn + yn]; // xn + yn = nbyte*(x + width * y);
+                            colOld = originalImage.Grid[c + xn + yn]; // xn + yn = nbyte*(x + width * y);
                             arg = (lum << 8) | colOld;
                             colNew = bigLUT[arg];
                             if (colNew > 255) colNew = 255;
-                            contrastIm.Grid[c + xn + yn] = (byte)colNew;
+                            contrastEnhancedImage.Grid[c + xn + yn] = (byte)colNew;
                         }
                     }
                 } //=============================== end for (int y = 0 ... ======================
                   // Calculating "ContrastBmp":
-                GridToBitmap(ContrastBmp, contrastIm.Grid);
+                GridToBitmap(ContrastBmp, contrastEnhancedImage.Grid);
             }
             progressBar1.Visible = false;
             pictureBox2.Image = ContrastBmp;
@@ -396,8 +404,7 @@ namespace WFpiecewiseLinear
                         return;
                     }
                     origBmp.Dispose();
-                    File.Replace(tmpFileName, OpenImageFile,
-                                  OpenImageFile.Insert(OpenImageFile.IndexOf("."), "BackUp"));
+                    File.Replace(tmpFileName, OpenImageFile, OpenImageFile.Insert(OpenImageFile.IndexOf("."), "BackUp"));
                     // Replaces the contents of 'OpenImageFile' with the contents of the file 'tmpFileName', 
                     // deleting 'tmpFileName', and creating a backup of the 'OpenImageFile'.
                     origBmp = new Bitmap(OpenImageFile);

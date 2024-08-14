@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
+// chapter2: Noise eduction
 // page 41
 namespace PulseNoiseWF
 {
@@ -12,6 +13,8 @@ namespace PulseNoiseWF
         public Form1()
         {
             InitializeComponent();
+
+            this.Text = "Pulse Noise Reduction";
         }
 
         private Bitmap origBmp;
@@ -183,7 +186,9 @@ namespace PulseNoiseWF
                 int[] Y = { 2, 2, 2, 5, 5, 5, 6 };
                 for (int i = 0; i < 7; i++)
                     for (int c = 0; c < 3; c++)
+                    {
                         Grid[c + 3 * (X[i] + bmp.Width * Y[i])] = 0;
+                    }
             }
 
             progressBar1.Visible = true;
@@ -214,6 +219,13 @@ namespace PulseNoiseWF
             progressBar1.Visible = false;
         } //****************************** end GridToBitmap ****************************************
 
+        /// <summary>
+        /// returns the lightness of a pixel with color
+        /// </summary>
+        /// <param name="R"></param>
+        /// <param name="G"></param>
+        /// <param name="B"></param>
+        /// <returns></returns>
         private int MaxC(int R, int G, int B)
         {
             int max;
