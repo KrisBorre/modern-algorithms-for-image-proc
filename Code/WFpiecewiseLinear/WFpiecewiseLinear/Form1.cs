@@ -37,7 +37,7 @@ namespace WFpiecewiseLinear
 
         private bool BMP_Graph;
 
-        private void button1_Click(object sender, EventArgs e) // Open image
+        private void buttonOpenImage_Click(object sender, EventArgs e) // Open image
         {
             label1.Visible = false;
             label2.Visible = false;
@@ -427,7 +427,7 @@ namespace WFpiecewiseLinear
         } //****************************** end GridToBitmap ****************************************
 
 
-        private void button2_Click(object sender, EventArgs e)  // Save result
+        private void buttonSaveResult_Click(object sender, EventArgs e)  // Save result
         {
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF)|*.BMP;*.JPG;*.GIF|All files (*.*)|*.*";

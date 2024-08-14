@@ -28,8 +28,8 @@
     /// </summary>
     private void InitializeComponent()
     {
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.buttonOpenImage = new System.Windows.Forms.Button();
+            this.buttonSaveResult = new System.Windows.Forms.Button();
             this.pictureBoxOriginalImage = new System.Windows.Forms.PictureBox();
             this.pictureBoxContrastEnhancedImage = new System.Windows.Forms.PictureBox();
             this.pictureBoxHistogram = new System.Windows.Forms.PictureBox();
@@ -42,25 +42,25 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHistogram)).BeginInit();
             this.SuspendLayout();
             // 
-            // button1
+            // buttonOpenImage
             // 
-            this.button1.Location = new System.Drawing.Point(255, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Open image";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonOpenImage.Location = new System.Drawing.Point(255, 12);
+            this.buttonOpenImage.Name = "buttonOpenImage";
+            this.buttonOpenImage.Size = new System.Drawing.Size(75, 23);
+            this.buttonOpenImage.TabIndex = 0;
+            this.buttonOpenImage.Text = "Open image";
+            this.buttonOpenImage.UseVisualStyleBackColor = true;
+            this.buttonOpenImage.Click += new System.EventHandler(this.buttonOpenImage_Click);
             // 
-            // button2
+            // buttonSaveResult
             // 
-            this.button2.Location = new System.Drawing.Point(846, 12);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Save result";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.buttonSaveResult.Location = new System.Drawing.Point(846, 12);
+            this.buttonSaveResult.Name = "buttonSaveResult";
+            this.buttonSaveResult.Size = new System.Drawing.Size(75, 23);
+            this.buttonSaveResult.TabIndex = 1;
+            this.buttonSaveResult.Text = "Save result";
+            this.buttonSaveResult.UseVisualStyleBackColor = true;
+            this.buttonSaveResult.Click += new System.EventHandler(this.buttonSaveResult_Click);
             // 
             // pictureBoxOriginalImage
             // 
@@ -141,8 +141,8 @@
             this.Controls.Add(this.pictureBoxHistogram);
             this.Controls.Add(this.pictureBoxContrastEnhancedImage);
             this.Controls.Add(this.pictureBoxOriginalImage);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonSaveResult);
+            this.Controls.Add(this.buttonOpenImage);
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOriginalImage)).EndInit();
@@ -155,8 +155,8 @@
 
     #endregion
 
-    private System.Windows.Forms.Button button1;
-    private System.Windows.Forms.Button button2;
+    private System.Windows.Forms.Button buttonOpenImage;
+    private System.Windows.Forms.Button buttonSaveResult;
     private System.Windows.Forms.PictureBox pictureBoxOriginalImage;
     private System.Windows.Forms.PictureBox pictureBoxContrastEnhancedImage;
     private System.Windows.Forms.PictureBox pictureBoxHistogram;
