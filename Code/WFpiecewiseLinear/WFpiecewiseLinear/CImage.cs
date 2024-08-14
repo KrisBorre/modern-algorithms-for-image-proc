@@ -104,9 +104,7 @@
             {
                 for (x = 0; x < NX; x++) // =====================
                 {
-                    gv = MaxC(inp.Grid[2 + 3 * (x + NX * y)],
-                              inp.Grid[1 + 3 * (x + NX * y)],
-                              inp.Grid[0 + 3 * (x + NX * y)]);
+                    gv = MaxC(inp.Grid[2 + 3 * (x + NX * y)], inp.Grid[1 + 3 * (x + NX * y)], inp.Grid[0 + 3 * (x + NX * y)]);
                     Grid[y * NX + x] = (byte)gv;
                 } // ========== for (x.  ====================
             }
