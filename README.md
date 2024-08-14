@@ -15,4 +15,5 @@ Release v1.0 corresponds to the code in the published book, without corrections 
 
 See the file Contributing.md for more information on how you can contribute to this repository.
 
-![mona_lisa_without_pulse_noise](https://github.com/user-attachments/assets/06cbdfb0-6034-499f-be5f-23293c5ad439)
+
+![mona_lisa_without_pulse_noise](https://github.com/user-attachments/assets/b93b1c23-9895-4ecd-9c57-ecc5dac123ba)
