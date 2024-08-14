@@ -82,7 +82,7 @@
         /// <param name="G"></param>
         /// <param name="B"></param>
         /// <returns></returns>
-        public byte MaxC(byte R, byte G, byte B)
+        private byte MaxC(byte R, byte G, byte B)
         {
             int maximum;
             if (0.713 * R > G) maximum = (int)(0.713 * R);
@@ -104,7 +104,7 @@
             {
                 for (x = 0; x < NX; x++) // =====================
                 {
-                    gv = MaxC(inp.Grid[2 + 3 * (x + NX * y)], inp.Grid[1 + 3 * (x + NX * y)], inp.Grid[0 + 3 * (x + NX * y)]);
+                    gv = this.MaxC(inp.Grid[2 + 3 * (x + NX * y)], inp.Grid[1 + 3 * (x + NX * y)], inp.Grid[0 + 3 * (x + NX * y)]);
                     Grid[y * NX + x] = (byte)gv;
                 } // ========== for (x.  ====================
             }

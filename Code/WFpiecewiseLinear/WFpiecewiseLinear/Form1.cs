@@ -16,24 +16,24 @@ namespace WFpiecewiseLinear
             this.Text = "Piecewise Linear Contrast Enhancement";
         }
 
+        private int MinimumGrayValue;
+        private int MaximumGrayValue;
+
         private Bitmap OriginalBitmap;
         private Bitmap ContrastEnhancedBitmap;
         private Bitmap HistogramBitmap;
         private CImage originalCImage;
         private CImage origGrayLevelCImage; // gray level copy for histogram
         private CImage contrastEnhancedCImage;
-        private int MaxHist, MinGV, MaxGV, nbyte, width, height;
-        private int[] LUT = new int[256];
-        private int[] histo = new int[256];
+        private int MaximumHistogramFrequecy, nbyte, width, height;
 
-        // Waarom is dit publiek?
-        public string OpenImageFile;
+        private int[] LUT = new int[256];
+        private int[] histogram_frequency = new int[256];
+
+        private string OpenImageFile;
 
         private Graphics histogramGraphics;
         private int cntClick, X1, Y1, X2, Y2;
-
-        // Waarom is dit publiek?
-        public Pen myPen, bluePen;
 
         private bool BMP_Graph;
 
@@ -129,79 +129,90 @@ namespace WFpiecewiseLinear
             // Calculating the histogram:
             origGrayLevelCImage.ColorToGrayMC(originalCImage, this);
 
-            for (int gv = 0; gv < 256; gv++)
+            for (int gray_value = 0; gray_value < 256; gray_value++)
             {
-                histo[gv] = 0;
+                histogram_frequency[gray_value] = 0;
             }
             for (int i = 0; i < width * height; i++)
             {
-                histo[origGrayLevelCImage.Grid[i]]++;
+                histogram_frequency[origGrayLevelCImage.Grid[i]]++;
             }
 
-            MaxHist = 0;
-
-            for (int gv = 0; gv < 256; gv++)
+            // Here we determine the Maximum Histogram Frequency.
+            MaximumHistogramFrequecy = 0;
+            for (int gray_value = 0; gray_value < 256; gray_value++)
             {
-                if (histo[gv] > MaxHist) MaxHist = histo[gv];
+                if (histogram_frequency[gray_value] > MaximumHistogramFrequecy)
+                {
+                    MaximumHistogramFrequecy = histogram_frequency[gray_value];
+                }
             }
 
-            MinGV = 255;
-            MaxGV = 0;
+            MinimumGrayValue = 255;
+            MaximumGrayValue = 0;
 
-            for (MinGV = 0; MinGV < 256; MinGV++)
+            // Here we determine the actual minimum gray value and the actual maximum gray value.
+            for (MinimumGrayValue = 0; MinimumGrayValue < 256; MinimumGrayValue++)
             {
-                if (histo[MinGV] > 0) break;
+                if (histogram_frequency[MinimumGrayValue] > 0) break;
             }
-            for (MaxGV = 255; MaxGV >= 0; MaxGV--)
+            for (MaximumGrayValue = 255; MaximumGrayValue >= 0; MaximumGrayValue--)
             {
-                if (histo[MaxGV] > 0) break;
+                if (histogram_frequency[MaximumGrayValue] > 0) break;
             }
 
             // Drawing the histogram:
             SolidBrush myBrush = new SolidBrush(Color.LightGray);
             Rectangle rect = new Rectangle(0, 0, 256, 256);
             histogramGraphics.FillRectangle(myBrush, rect);
-            myPen = new Pen(Color.Red);
+            Pen redPen = new Pen(Color.Red);
             Pen greenPen = new Pen(Color.Green);
-            for (int gv = 0; gv < 256; gv++)
+            for (int gray_value = 0; gray_value < 256; gray_value++)
             {
-                int hh = histo[gv] * 255 / MaxHist;
-                if (histo[gv] > 0 && hh < 1) hh = 1;
-                histogramGraphics.DrawLine(myPen, gv, 255, gv, 255 - hh);
-                if (gv == MinGV || gv == MaxGV)
+                int hh = histogram_frequency[gray_value] * 255 / MaximumHistogramFrequecy;
+                if (histogram_frequency[gray_value] > 0 && hh < 1) hh = 1;
+                histogramGraphics.DrawLine(redPen, gray_value, 255, gray_value, 255 - hh);
+
+                if (gray_value == MinimumGrayValue || gray_value == MaximumGrayValue)
                 {
-                    histogramGraphics.DrawLine(greenPen, gv, 255, gv, 255 - hh);
+                    histogramGraphics.DrawLine(greenPen, gray_value, 255, gray_value, 255 - hh);
                 }
             }
 
-            //if (BMP_Graph)
-            //{
-            //    pictureBoxHistogram.Image = HistogramBitmap;
-            //}
-
             // Calculating the standard LUT:
             int[] LUT = new int[256];
-            int X = (MinGV + MaxGV) / 2;
+            int X = (MinimumGrayValue + MaximumGrayValue) / 2;
             int Y = 128;
-            for (int gv = 0; gv < 256; gv++)
+
+            for (int gray_value = 0; gray_value < 256; gray_value++)
             {
-                if (gv <= MinGV) LUT[gv] = 0;
-                if (gv > MinGV && gv <= X) LUT[gv] = (gv - MinGV) * Y / (X - MinGV);
-                if (gv > X && gv <= MaxGV) LUT[gv] = Y + (gv - X) * (255 - Y) / (MaxGV - X);
-                if (gv >= MaxGV) LUT[gv] = 255;
+                if (gray_value <= MinimumGrayValue)
+                {
+                    LUT[gray_value] = 0;
+                }
+
+                if (gray_value > MinimumGrayValue && gray_value <= X)
+                {
+                    LUT[gray_value] = (gray_value - MinimumGrayValue) * Y / (X - MinimumGrayValue);
+                }
+
+                if (gray_value > X && gray_value <= MaximumGrayValue)
+                {
+                    LUT[gray_value] = Y + (gray_value - X) * (255 - Y) / (MaximumGrayValue - X);
+                }
+
+                if (gray_value >= MaximumGrayValue)
+                {
+                    LUT[gray_value] = 255;
+                }
             }
 
             int yy = 255;
             Pen bluePen = new Pen(Color.Blue);
-            histogramGraphics.DrawLine(bluePen, 0, yy, MinGV, yy);
-            histogramGraphics.DrawLine(bluePen, MinGV, yy, X, yy - Y);
-            histogramGraphics.DrawLine(bluePen, X, yy - Y, MaxGV, 0);
-            histogramGraphics.DrawLine(bluePen, MaxGV, 0, yy, 0);
-
-            //if (BMP_Graph)
-            //{
-            //    pictureBoxHistogram.Image = HistogramBitmap;
-            //}
+            histogramGraphics.DrawLine(pen: bluePen, x1: 0, y1: yy, x2: MinimumGrayValue, y2: yy);
+            histogramGraphics.DrawLine(bluePen, MinimumGrayValue, yy, X, yy - Y);
+            histogramGraphics.DrawLine(bluePen, X, yy - Y, MaximumGrayValue, 0);
+            histogramGraphics.DrawLine(bluePen, MaximumGrayValue, 0, yy, 0);
 
             // nbyte = 3;  origIm and contrastIm are both 24-bit images
             for (int i = 0; i < nbyte * width * height; i++)
@@ -239,31 +250,43 @@ namespace WFpiecewiseLinear
             if (cntClick == 1)
             {
                 X1 = e.X;
-                if (X1 < MinGV) X1 = MinGV;
-                if (X1 > MaxGV) X1 = MaxGV;
+                if (X1 < MinimumGrayValue) X1 = MinimumGrayValue;
+                if (X1 > MaximumGrayValue) X1 = MaximumGrayValue;
                 Y1 = 255 - e.Y; // (X, Y) is the clicked point in the graph of the LUT
                 if (X1 != oldX || Y1 != oldY) //-------------------------------------------------------
                 {
                     // Calculating the LUT for X1 and Y1:
-                    for (int gv = 0; gv <= X1; gv++)
+                    for (int gray_value = 0; gray_value <= X1; gray_value++)
                     {
-                        if (gv <= MinGV) LUT[gv] = 0;
-                        if (gv > MinGV && gv <= X1) LUT[gv] = (gv - MinGV) * Y1 / (X1 - MinGV);
-                        if (LUT[gv] > 255) LUT[gv] = 255;
+                        if (gray_value <= MinimumGrayValue)
+                        {
+                            LUT[gray_value] = 0;
+                        }
+
+                        if (gray_value > MinimumGrayValue && gray_value <= X1)
+                        {
+                            LUT[gray_value] = (gray_value - MinimumGrayValue) * Y1 / (X1 - MinimumGrayValue);
+                        }
+
+                        if (LUT[gray_value] > 255)
+                        {
+                            LUT[gray_value] = 255;
+                        }
                     }
                 }
 
                 histogramGraphics.FillRectangle(myBrush, rect);
 
-                for (int gv = 0; gv < 256; gv++)
+                for (int gray_value = 0; gray_value < 256; gray_value++)
                 {
-                    int hh = histo[gv] * 255 / MaxHist;
-                    if (histo[gv] > 0 && hh < 1) hh = 1;
-                    histogramGraphics.DrawLine(redPen, gv, 255, gv, 255 - hh);
+                    int hh = histogram_frequency[gray_value] * 255 / MaximumHistogramFrequecy;
+                    if (histogram_frequency[gray_value] > 0 && hh < 1) hh = 1;
+                    histogramGraphics.DrawLine(pen: redPen, x1: gray_value, y1: 255, x2: gray_value, y2: 255 - hh);
                 }
+
                 yy = 255;
-                histogramGraphics.DrawLine(bluePen, 0, yy - LUT[0], MinGV, yy - LUT[0]);
-                histogramGraphics.DrawLine(bluePen, MinGV, yy - LUT[0], X1, yy - LUT[X1]);
+                histogramGraphics.DrawLine(pen: bluePen, x1: 0, y1: yy - LUT[0], x2: MinimumGrayValue, y2: yy - LUT[0]);
+                histogramGraphics.DrawLine(pen: bluePen, x1: MinimumGrayValue, y1: yy - LUT[0], x2: X1, y2: yy - LUT[X1]);
                 oldX = X1;
                 oldY = Y1;
             } //------------------------ end if (cntClick == 1) --------------------------------------
@@ -271,39 +294,75 @@ namespace WFpiecewiseLinear
             if (cntClick == 2)
             {
                 X2 = e.X;
-                if (X2 < MinGV) X2 = MinGV;
-                if (X2 > MaxGV) X2 = MaxGV;
-                if (X2 < X1) X2 = X1 + 1;
+                if (X2 < MinimumGrayValue)
+                {
+                    X2 = MinimumGrayValue;
+                }
+                if (X2 > MaximumGrayValue)
+                {
+                    X2 = MaximumGrayValue;
+                }
+
+                if (X2 < X1)
+                {
+                    X2 = X1 + 1;
+                }
+
                 Y2 = 255 - e.Y; // (X2, Y2) is the second clicked point in the graph of the LUT
-                if (Y2 < Y1) Y2 = Y1 + 1;
+
+                if (Y2 < Y1)
+                {
+                    Y2 = Y1 + 1;
+                }
 
                 if (X2 != oldX || Y2 != oldY) //-------------------------------------------------------
                 {
                     // Calculating the LUT for X2 and Y2:
-                    for (int gv = X1 + 1; gv < 256; gv++)
+                    for (int gray_value = X1 + 1; gray_value < 256; gray_value++)
                     {
-                        if (gv > X1 && gv <= X2) LUT[gv] = Y1 + (gv - X1) * (Y2 - Y1) / (X2 - X1);
-                        if (gv > X2 && gv <= MaxGV) LUT[gv] = Y2 + (gv - X2) * (255 - Y2) / (MaxGV - X2);
-                        if (LUT[gv] > 255) LUT[gv] = 255;
-                        if (gv >= MaxGV) LUT[gv] = 255;
+                        if (gray_value > X1 && gray_value <= X2)
+                        {
+                            LUT[gray_value] = Y1 + (gray_value - X1) * (Y2 - Y1) / (X2 - X1);
+                        }
+
+                        if (gray_value > X2 && gray_value <= MaximumGrayValue)
+                        {
+                            LUT[gray_value] = Y2 + (gray_value - X2) * (255 - Y2) / (MaximumGrayValue - X2);
+                        }
+
+                        if (LUT[gray_value] > 255)
+                        {
+                            LUT[gray_value] = 255;
+                        }
+
+                        if (gray_value >= MaximumGrayValue)
+                        {
+                            LUT[gray_value] = 255;
+                        }
                     }
                 }
 
                 yy = 255;
-                histogramGraphics.DrawLine(bluePen, X1, yy - LUT[X1], X2, yy - LUT[X2]);
-                histogramGraphics.DrawLine(bluePen, X2, yy - LUT[X2], MaxGV, 0);
-                histogramGraphics.DrawLine(bluePen, MaxGV, 0, 255, 0);
+                histogramGraphics.DrawLine(pen: bluePen, x1: X1, y1: yy - LUT[X1], x2: X2, y2: yy - LUT[X2]);
+                histogramGraphics.DrawLine(bluePen, X2, yy - LUT[X2], MaximumGrayValue, 0);
+                histogramGraphics.DrawLine(bluePen, MaximumGrayValue, 0, 255, 0);
+
                 oldX = X2;
                 oldY = Y2;
             } //------------------------------- end if (cntClick == 2) ------------------------------
 
-            if (BMP_Graph) pictureBoxHistogram.Refresh();
+            if (BMP_Graph)
+            {
+                pictureBoxHistogram.Refresh();
+            }
+
             if (cntClick == 2)
             {
                 makeBigLUT(LUT);
             }
+
             // Calculating contrastEnhancedImage:
-            int[] GV = new int[3];
+            //int[] GV = new int[3];
             int arg, colOld, colNew;
             for (int i = 0; i < nbyte * width * height; i++)
             {
