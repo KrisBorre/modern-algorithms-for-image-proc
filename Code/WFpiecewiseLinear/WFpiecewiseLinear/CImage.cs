@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace WFpiecewiseLinear
+﻿namespace WFpiecewiseLinear
 {
     class CImage
     {
-        public Byte[] Grid;
-        public int NX, NY, N_Bits;
+        public byte[] Grid;
+        private int NX, NY, N_Bits;
 
         public CImage(int nx, int ny, int nbits) // constructor
         {
@@ -15,6 +13,7 @@ namespace WFpiecewiseLinear
             Grid = new byte[NX * NY * (N_Bits / 8)];
         }
 
+        // not called
         public CImage(int nx, int ny, int nbits, byte[] img) // constructor
         {
             this.NX = nx;
@@ -24,6 +23,7 @@ namespace WFpiecewiseLinear
             for (int i = 0; i < NX * NY * N_Bits / 8; i++) this.Grid[i] = img[i];
         }
 
+        // not called
         public void Copy(CImage inp)
         {
             NX = inp.NX;
@@ -33,6 +33,7 @@ namespace WFpiecewiseLinear
                 Grid[i] = inp.Grid[i];
         }
 
+        // not called
         public int ColorToGray(CImage inp, Form1 fm1)
         /* Transforms the colors of the color image "inp" in luminance=(r+g+b)/3 
         and puts these values to this.Grid. --------- */
@@ -53,7 +54,7 @@ namespace WFpiecewiseLinear
             return 1;
         } //********************** end ColorToGray **********************
 
-
+        // not called
         public int ColorToGray(CImage inp)
         /* Transforms the colors of the color image "inp" in luminance=(r+g+b)/3 
         and puts these values to this.Grid. --------- */
@@ -74,14 +75,20 @@ namespace WFpiecewiseLinear
             return 1;
         } //********************** end ColorToGray **********************
 
-
+        /// <summary>
+        /// returns the lightness of a pixel with color
+        /// </summary>
+        /// <param name="R"></param>
+        /// <param name="G"></param>
+        /// <param name="B"></param>
+        /// <returns></returns>
         public byte MaxC(byte R, byte G, byte B)
         {
-            int max;
-            if (0.713 * R > G) max = (int)(0.713 * R);
-            else max = G;
-            if (0.527 * B > max) max = (int)(0.527 * B);
-            return (byte)max;
+            int maximum;
+            if (0.713 * R > G) maximum = (int)(0.713 * R);
+            else maximum = G;
+            if (0.527 * B > maximum) maximum = (int)(0.527 * B);
+            return (byte)maximum;
         }
 
 

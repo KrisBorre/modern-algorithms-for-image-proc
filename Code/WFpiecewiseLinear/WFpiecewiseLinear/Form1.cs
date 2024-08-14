@@ -13,15 +13,15 @@ namespace WFpiecewiseLinear
         public Form1()
         {
             InitializeComponent();
-            this.Text = "Piecewise Linear Contrast Enhancement"; 
+            this.Text = "Piecewise Linear Contrast Enhancement";
         }
 
         private Bitmap origBmp;
         private Bitmap ContrastBmp;
         private Bitmap BmpPictBox3;
-        private CImage originalImage; // original image
-        private CImage origGrayImage; // gray level copy for histogram
-        private CImage contrastEnhancedImage; // contrast enhanced image
+        private CImage originalImage;
+        private CImage origGrayLevelImage; // gray level copy for histogram
+        private CImage contrastEnhancedImage;
         private int MaxHist, MinGV, MaxGV, nbyte, width, height;
         private int[] LUT = new int[256];
         private int[] histo = new int[256];
@@ -49,7 +49,7 @@ namespace WFpiecewiseLinear
                 {
                     OpenImageFile = openFileDialog1.FileName;
                     origBmp = new Bitmap(OpenImageFile);
-                    pictureBox1.Image = origBmp;
+                    pictureBoxOriginalImage.Image = origBmp;
                 }
                 catch (Exception ex)
                 {
@@ -63,12 +63,11 @@ namespace WFpiecewiseLinear
             height = origBmp.Height;
 
             originalImage = new CImage(width, height, 24);
-            origGrayImage = new CImage(width, height, 8);  // grayscale version of origIm
+            origGrayLevelImage = new CImage(width, height, 8);  // grayscale version of origIm
             contrastEnhancedImage = new CImage(width, height, 24);
 
             label3.Text = "Opened image:" + openFileDialog1.FileName;
             label3.Visible = true;
-
 
             progressBar1.Visible = true;
             progressBar1.Value = 0;
@@ -85,7 +84,11 @@ namespace WFpiecewiseLinear
                 else jump = 2;
                 for (int y = 0; y < height; y++) //==============================================
                 {
-                    if ((y % jump) == jump - 1) progressBar1.PerformStep();
+                    if ((y % jump) == jump - 1)
+                    {
+                        progressBar1.PerformStep();
+                    }
+
                     for (int x = 0; x < width; x++)
                     {
                         int i = x + width * y;
@@ -111,9 +114,9 @@ namespace WFpiecewiseLinear
             }
 
             ContrastBmp = new Bitmap(origBmp.Width, origBmp.Height, PixelFormat.Format24bppRgb);
-            pictureBox2.Image = ContrastBmp;
+            pictureBoxContrastEnhancedImage.Image = ContrastBmp;
             BmpPictBox3 = new Bitmap(256, 256);
-            pictureBox2.Image = BmpPictBox3;
+            //pictureBox2.Image = BmpPictBox3;
             if (BMP_Graph)
             {
                 g2 = Graphics.FromImage(ContrastBmp);
@@ -121,22 +124,40 @@ namespace WFpiecewiseLinear
             }
             else
             {
-                g2 = pictureBox2.CreateGraphics();
-                g3 = pictureBox3.CreateGraphics();
+                g2 = pictureBoxContrastEnhancedImage.CreateGraphics();
+                g3 = pictureBoxHistogram.CreateGraphics();
             }
 
             // Calculating the histogram:
-            origGrayImage.ColorToGrayMC(originalImage, this);
-            for (int gv = 0; gv < 256; gv++) histo[gv] = 0;
-            for (int i = 0; i < width * height; i++) histo[origGrayImage.Grid[i]]++;
+            origGrayLevelImage.ColorToGrayMC(originalImage, this);
+
+            for (int gv = 0; gv < 256; gv++)
+            {
+                histo[gv] = 0;
+            }
+            for (int i = 0; i < width * height; i++)
+            {
+                histo[origGrayLevelImage.Grid[i]]++;
+            }
+
             MaxHist = 0;
-            for (int gv = 0; gv < 256; gv++) if (histo[gv] > MaxHist) MaxHist = histo[gv];
+
+            for (int gv = 0; gv < 256; gv++)
+            {
+                if (histo[gv] > MaxHist) MaxHist = histo[gv];
+            }
+
             MinGV = 255;
             MaxGV = 0;
+
             for (MinGV = 0; MinGV < 256; MinGV++)
+            {
                 if (histo[MinGV] > 0) break;
+            }
             for (MaxGV = 255; MaxGV >= 0; MaxGV--)
+            {
                 if (histo[MaxGV] > 0) break;
+            }
 
             // Drawing the histogram:
             SolidBrush myBrush = new SolidBrush(Color.LightGray);
@@ -150,10 +171,11 @@ namespace WFpiecewiseLinear
                 if (histo[gv] > 0 && hh < 1) hh = 1;
                 g3.DrawLine(myPen, gv, 255, gv, 255 - hh);
                 if (gv == MinGV || gv == MaxGV)
+                {
                     g3.DrawLine(greenPen, gv, 255, gv, 255 - hh);
-
+                }
             }
-            if (BMP_Graph) pictureBox3.Image = BmpPictBox3;
+            if (BMP_Graph) pictureBoxHistogram.Image = BmpPictBox3;
 
             // Calculating the standard LUT:
             int[] LUT = new int[256];
@@ -173,16 +195,18 @@ namespace WFpiecewiseLinear
             g3.DrawLine(bluePen, MinGV, yy, X, yy - Y);
             g3.DrawLine(bluePen, X, yy - Y, MaxGV, 0);
             g3.DrawLine(bluePen, MaxGV, 0, yy, 0);
-            if (BMP_Graph) pictureBox3.Image = BmpPictBox3;
+            if (BMP_Graph) pictureBoxHistogram.Image = BmpPictBox3;
             // nbyte = 3;  origIm and contrastIm are both 24-bit images
-            for (int i = 0; i < nbyte * width * height; i++) contrastEnhancedImage.Grid[i] = (byte)LUT[(int)originalImage.Grid[i]];
+            for (int i = 0; i < nbyte * width * height; i++)
+            {
+                contrastEnhancedImage.Grid[i] = (byte)LUT[(int)originalImage.Grid[i]];
+            }
 
-            //ContrastBmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
             progressBar1.Visible = true;
             GridToBitmap(ContrastBmp, contrastEnhancedImage.Grid);
             cntClick = 0;
-            if (BMP_Graph) pictureBox3.Image = BmpPictBox3;
-            pictureBox2.Image = ContrastBmp;
+            if (BMP_Graph) pictureBoxHistogram.Image = BmpPictBox3;
+            pictureBoxContrastEnhancedImage.Image = ContrastBmp;
             label1.Visible = true;
             progressBar1.Visible = false;
         } //******************************* end Open image ******************************************
@@ -261,15 +285,18 @@ namespace WFpiecewiseLinear
                 oldY = Y2;
             } //------------------------------- end if (cntClick == 2) ------------------------------
 
-            if (BMP_Graph) pictureBox3.Refresh();
+            if (BMP_Graph) pictureBoxHistogram.Refresh();
             if (cntClick == 2)
             {
                 makeBigLUT(LUT);
             }
-            // Calculating contrastIm:
+            // Calculating contrastEnhancedImage:
             int[] GV = new int[3];
             int arg, colOld, colNew;
-            for (int i = 0; i < nbyte * width * height; i++) contrastEnhancedImage.Grid[i] = 0;
+            for (int i = 0; i < nbyte * width * height; i++)
+            {
+                contrastEnhancedImage.Grid[i] = 0;
+            }
 
             if (cntClick == 2)
             {
@@ -277,7 +304,7 @@ namespace WFpiecewiseLinear
                 {
                     for (int x = 0, xn = 0; x < width; x++, xn += nbyte)
                     {
-                        int lum = origGrayImage.Grid[x + y];
+                        int lum = origGrayLevelImage.Grid[x + y];
                         for (int c = 0; c < nbyte; c++)
                         {
                             colOld = originalImage.Grid[c + xn + yn]; // xn + yn = nbyte*(x + width * y);
@@ -292,7 +319,7 @@ namespace WFpiecewiseLinear
                 GridToBitmap(ContrastBmp, contrastEnhancedImage.Grid);
             }
             progressBar1.Visible = false;
-            pictureBox2.Image = ContrastBmp;
+            pictureBoxContrastEnhancedImage.Image = ContrastBmp;
             if (cntClick == 2) label2.Visible = true;
         } //******************************** end pictureBox3_MouseDown **************************
 
@@ -318,7 +345,11 @@ namespace WFpiecewiseLinear
             else jump = 2;
             for (int y = 0; y < bmp.Height; y++)
             {
-                if ((y % jump) == jump - 1) progressBar1.PerformStep();
+                if ((y % jump) == jump - 1)
+                {
+                    progressBar1.PerformStep();
+                }
+
                 for (int x = 0; x < bmp.Width; x++)
                 {
                     if (nbyte == 1)  // nbyte is global according to the PixelFormat of "bmp"
@@ -329,16 +360,23 @@ namespace WFpiecewiseLinear
                         Grid[3 * (x + bmp.Width * y) + 2] = color.R;
                     }
                     else
+                    {
                         for (int c = 0; c < nbyte; c++)
                         {
                             Grid[c + nbyte * (x + bmp.Width * y)] = rgbValues[c + nbyte * x + Math.Abs(bmpData.Stride) * y];
                         }
+                    }
                 }
             }
             bmp.UnlockBits(bmpData);
         } //****************************** end BitmapToGrid ****************************************
 
-
+        /// <summary>
+        /// Calculates the bitmap;
+        /// Precondition: bmp is not null.
+        /// </summary>
+        /// <param name="bmp">is the output</param>
+        /// <param name="Grid">is used as input</param>
         public void GridToBitmap(Bitmap bmp, byte[] Grid)
         {
             int nbyte;
@@ -361,7 +399,11 @@ namespace WFpiecewiseLinear
             progressBar1.Visible = true;
             for (int y = 0; y < bmp.Height; y++)
             {
-                if ((y % jump) == jump - 1) progressBar1.PerformStep();
+                if ((y % jump) == jump - 1)
+                {
+                    progressBar1.PerformStep();
+                }
+
                 for (int x = 0; x < bmp.Width; x++)
                 {
                     if (nbyte == 1)  // nbyte is global according to the PixelFormat of "bmp"
@@ -372,11 +414,12 @@ namespace WFpiecewiseLinear
                         rgbValues[3 * (x + Math.Abs(bmpData.Stride) * y) + 2] = color.R;
                     }
                     else
+                    {
                         for (int c = 0; c < nbyte; c++)
                         {
-                            rgbValues[c + nbyte * x + Math.Abs(bmpData.Stride) * y] =
-                            Grid[c + nbyte * (x + bmp.Width * y)];
+                            rgbValues[c + nbyte * x + Math.Abs(bmpData.Stride) * y] = Grid[c + nbyte * (x + bmp.Width * y)];
                         }
+                    }
                 }
             }
             System.Runtime.InteropServices.Marshal.Copy(rgbValues, 0, ptr, bytes);
@@ -395,20 +438,27 @@ namespace WFpiecewiseLinear
                 {
                     tmpFileName = OpenImageFile.Insert(OpenImageFile.IndexOf("."), "$$$");
                     if (dialog.FileName.Contains(".jpg"))
+                    {
                         ContrastBmp.Save(tmpFileName, ImageFormat.Jpeg); // saving tmpFile
-                    else
-                      if (dialog.FileName.Contains(".bmp")) ContrastBmp.Save(tmpFileName, ImageFormat.Bmp);
+                    }
                     else
                     {
-                        MessageBox.Show("The file " + dialog.FileName + " has an inappropriate extension. Returning.");
-                        return;
+                        if (dialog.FileName.Contains(".bmp"))
+                        {
+                            ContrastBmp.Save(tmpFileName, ImageFormat.Bmp);
+                        }
+                        else
+                        {
+                            MessageBox.Show("The file " + dialog.FileName + " has an inappropriate extension. Returning.");
+                            return;
+                        }
                     }
                     origBmp.Dispose();
                     File.Replace(tmpFileName, OpenImageFile, OpenImageFile.Insert(OpenImageFile.IndexOf("."), "BackUp"));
                     // Replaces the contents of 'OpenImageFile' with the contents of the file 'tmpFileName', 
                     // deleting 'tmpFileName', and creating a backup of the 'OpenImageFile'.
                     origBmp = new Bitmap(OpenImageFile);
-                    pictureBox1.Image = origBmp;
+                    pictureBoxOriginalImage.Image = origBmp;
                 }
                 else
                 {
@@ -426,22 +476,26 @@ namespace WFpiecewiseLinear
         } //********************************* end Save result ******************************
 
 
-        int[] bigLUT = new int[66000];
+        private int[] bigLUT = new int[66000];
+
         private void makeBigLUT(int[] LUT) // Making bigLUT
         {
             progressBar1.Visible = true;
             progressBar1.Value = 0;
-            for (int colOld = 0; colOld < 256; colOld++)  // colOld is the old color intensity
+            for (int old_color_intensity = 0; old_color_intensity < 256; old_color_intensity++)
             {
-                if ((colOld % 5) == 0) progressBar1.PerformStep();
-                for (int lightOld = 1; lightOld < 256; lightOld++) // lightOld is the old lightness
+                if ((old_color_intensity % 5) == 0)
                 {
-                    int colNew = colOld * LUT[lightOld] / lightOld;
-                    int arg = (lightOld << 8) | colOld;
-                    bigLUT[arg] = colNew;
+                    progressBar1.PerformStep();
+                }
+
+                for (int old_lightness = 1; old_lightness < 256; old_lightness++)
+                {
+                    int new_color_intensity = old_color_intensity * LUT[old_lightness] / old_lightness;
+                    int arg = (old_lightness << 8) | old_color_intensity;
+                    bigLUT[arg] = new_color_intensity;
                 }
             }
-            //progressBar1.Visible = false;
         } //************************** end makeBigLUT *******************************
 
 
