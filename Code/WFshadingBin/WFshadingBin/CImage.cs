@@ -42,17 +42,25 @@ namespace WFshadingBin
         }
 
 
-        public void Copy(CImage inp)
+        public void Copy(CImage input)
         {
-            width = inp.width;
-            height = inp.height;
-            N_Bits = inp.N_Bits;
+            width = input.width;
+            height = input.height;
+            N_Bits = input.N_Bits;
+
             for (int i = 0; i < width * height * N_Bits / 8; i++)
             {
-                this.Grid[i] = inp.Grid[i];
+                this.Grid[i] = input.Grid[i];
             }
         }
 
+        /// <summary>
+        /// returns the lightness of a color pixel
+        /// </summary>
+        /// <param name="R"></param>
+        /// <param name="G"></param>
+        /// <param name="B"></param>
+        /// <returns></returns>
         public byte MaxC(byte R, byte G, byte B)
         {
             int max;
@@ -129,16 +137,27 @@ namespace WFshadingBin
             this.Grid = new byte[width * height * 8];
 
             int y1 = 1 + height / 100;
+
             for (y = 0; y < height; y++) //=========================
             {
-                if (y % y1 == 1) fm1.progressBar1.PerformStep();
+                if (y % y1 == 1)
+                {
+                    fm1.progressBar1.PerformStep();
+                }
+
                 for (x = 0; x < width; x++) // =====================
                 {
                     sum = 0;
-                    for (c = 0; c < 3; c++) sum += inp.Grid[c + 3 * (x + width * y)];
+
+                    for (c = 0; c < 3; c++)
+                    {
+                        sum += inp.Grid[c + 3 * (x + width * y)];
+                    }
+
                     this.Grid[y * width + x] = (byte)(sum / 3);
                 } // ========== for (x.  ====================
             }
+
             fm1.progressBar1.Visible = false;
             return 1;
         } //********************** end ColorToGray **********************
@@ -239,6 +258,7 @@ namespace WFshadingBin
                     }
                 }
             }
+
             return 1;
         } //*************************** end FastAverageM ********************************
 

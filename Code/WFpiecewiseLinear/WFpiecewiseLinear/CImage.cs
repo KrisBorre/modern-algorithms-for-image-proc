@@ -47,7 +47,10 @@
                 for (x = 0; x < NX; x++) // =====================
                 {
                     sum = 0;
-                    for (c = 0; c < 3; c++) sum += inp.Grid[c + 3 * (x + NX * y)];
+                    for (c = 0; c < 3; c++)
+                    {
+                        sum += inp.Grid[c + 3 * (x + NX * y)];
+                    }
                     Grid[y * NX + x] = (byte)(sum / 3);
                 } // ========== for (x.  ====================
             }
@@ -76,7 +79,7 @@
         } //********************** end ColorToGray **********************
 
         /// <summary>
-        /// returns the lightness of a pixel with color
+        /// returns the lightness of a color pixel
         /// </summary>
         /// <param name="R"></param>
         /// <param name="G"></param>

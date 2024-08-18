@@ -12,14 +12,15 @@ namespace WFshadBinImpulse
         public Form1()
         {
             InitializeComponent();
+            Text = "shading corrected image processing";
         }
 
         private Bitmap origBmp;
         private Bitmap ShadingBmp; // result of shading correction
         private Bitmap ResultBmp; // result of processing histo
         CImage OrigIm;  // copy of original image
-        CImage SigmaIm;  // sigma filtered original image
-        CImage GrayIm;  // grayscale image for calculating MeanIm
+        private CImage sigmaFilteredOriginalCImage;  // sigma filtered original image
+        private CImage grayscaleCImage;  // grayscale image for calculating MeanIm
         CImage MeanIm;  // local mean
         CImage ShadIm;  // shading corrected image and the result
         CImage ImpulseIm;  // shading corrected image and the result
@@ -105,11 +106,11 @@ namespace WFshadBinImpulse
 
             int N_Bits = nbyteIm * 8;
 
-            SigmaIm = new CImage(width, height, N_Bits);
-            SigmaIm.SigmaSimpleUni(OrigIm, 2, 50);
-            GrayIm = new CImage(width, height, 8);
-            if (nbyteIm == 3) GrayIm.ColorToGray(SigmaIm);
-            else GrayIm.Copy(SigmaIm);
+            sigmaFilteredOriginalCImage = new CImage(width, height, N_Bits);
+            sigmaFilteredOriginalCImage.SigmaSimpleUni(OrigIm, 2, 50);
+            grayscaleCImage = new CImage(width, height, 8);
+            if (nbyteIm == 3) grayscaleCImage.ColorToGray(sigmaFilteredOriginalCImage);
+            else grayscaleCImage.Copy(sigmaFilteredOriginalCImage);
             MeanIm = new CImage(width, height, 8);
             ShadIm = new CImage(width, height, N_Bits);
             ImpulseIm = new CImage(width, height, N_Bits);
@@ -211,6 +212,7 @@ namespace WFshadBinImpulse
             return (int)(x + 0.5);
         }
 
+        // not called
         public int MaxC(int R, int G, int B)
         {
             int max;
@@ -241,37 +243,53 @@ namespace WFshadBinImpulse
             int[] color = { 0, 0, 0 };
             int Lightness = (int)numericUpDown2.Value;
             int hWind = (int)(numericUpDown1.Value * width / 1000);
-            MeanIm.FastAverageM(GrayIm, hWind, this);
-            progressBar1.Visible = true;
-            pictureBox2.Visible = true;
-            pictureBox3.Visible = true;
-            progressBar1.Value = 0;
+
+            this.MeanIm.FastAverageM(grayscaleCImage, hWind, this);
+            //progressBar1.Visible = true;
+            this.pictureBox2.Visible = true;
+            this.pictureBox3.Visible = true;
+            this.progressBar1.Value = 0;
 
             int[] histo = new int[256];
             for (i = 0; i < 256; i++) histo[i] = 0;
             byte lum = 0;
-            int nbyteIm = SigmaIm.N_Bits / 8;
+            int nbyteIm = sigmaFilteredOriginalCImage.N_Bits / 8;
             int jump = height / 50; // width and height are properties of Form1
+
             for (y = 0; y < height; y++) //==================================================
             {
-                if (y % jump == jump - 1) progressBar1.PerformStep();
+                if (y % jump == jump - 1)
+                {
+                    this.progressBar1.PerformStep();
+                }
+
                 for (x = 0; x < width; x++)
                 {                               // nbyteIm is member of 'Form1'
                     for (c = 0; c < nbyteIm; c++) //==============================================
                     {
                         if (DIV)
-                            color[c] = Round(SigmaIm.Grid[c + nbyteIm * (x + width * y)] * Lightness /
-                                                    (double)MeanIm.Grid[x + width * y]); // Division
+                        {
+                            color[c] = Round(sigmaFilteredOriginalCImage.Grid[c + nbyteIm * (x + width * y)] * Lightness / (double)MeanIm.Grid[x + width * y]); // Division
+                        }
                         else
-                            color[c] = Round(SigmaIm.Grid[c + nbyteIm * (x + width * y)] + Lightness -
-                                                  (double)MeanIm.Grid[x + width * y]); // Subtraction
+                        {
+                            color[c] = Round(sigmaFilteredOriginalCImage.Grid[c + nbyteIm * (x + width * y)] + Lightness - (double)MeanIm.Grid[x + width * y]); // Subtraction
+                        }
+
                         if (color[c] < 0) color[c] = 0;
                         if (color[c] > 255) color[c] = 255;
-                        ShadIm.Grid[c + nbyteIm * (x + width * y)] = (byte)color[c];
+                        this.ShadIm.Grid[c + nbyteIm * (x + width * y)] = (byte)color[c];
                     } //======================= end for (c... ==================================
 
-                    if (nbyteIm == 1) lum = (byte)color[0];
-                    else lum = (byte)MaxC((byte)color[2], (byte)color[1], (byte)color[0]);
+                    if (nbyteIm == 1)
+                    {
+                        lum = (byte)color[0];
+                    }
+                    else
+                    {
+                        lum = (byte)this.MaxC((byte)color[2], (byte)color[1], (byte)color[0]);
+                    }
+
                     histo[lum]++;
                 }
             } //============================ end for (y... ===================================
@@ -293,54 +311,73 @@ namespace WFshadBinImpulse
             // Calculating LUT:
             byte[] LUT = new byte[256];
             for (i = 0; i < 256; i++)
-                if (i <= MinLight) LUT[i] = 0;
-                else
-                  if (i > MinLight && i <= MaxLight)
+            {
+                if (i <= MinLight)
+                {
+                    LUT[i] = 0;
+                }
+                else if (i > MinLight && i <= MaxLight)
+                {
                     LUT[i] = (byte)(255 * (i - MinLight) / (MaxLight - MinLight));
-                else LUT[i] = 255;
+                }
+                else
+                {
+                    LUT[i] = 255;
+                }
+            }
 
             // Calculating contrasted "ShadIm":
             for (i = 0; i < 256; i++) histo[i] = 0;
             jump = width * height / 50;
             for (i = 0; i < width * height; i++) //====================================
             {
-                if (i % jump == jump - 1) progressBar1.PerformStep();
+                if (i % jump == jump - 1) this.progressBar1.PerformStep();
 
                 for (c = 0; c < nbyteIm; c++)
-                    ShadIm.Grid[c + nbyteIm * i] = LUT[ShadIm.Grid[c + nbyteIm * i]];
+                {
+                    this.ShadIm.Grid[c + nbyteIm * i] = LUT[this.ShadIm.Grid[c + nbyteIm * i]];
+                }
 
-                if (nbyteIm == 1) lum = ShadIm.Grid[0 + nbyteIm * i];
-                else lum = (byte)MaxC(ShadIm.Grid[2 + nbyteIm * i],
-                            ShadIm.Grid[1 + nbyteIm * i], ShadIm.Grid[0 + nbyteIm * i]);
+                if (nbyteIm == 1)
+                {
+                    lum = this.ShadIm.Grid[0 + nbyteIm * i];
+                }
+                else
+                {
+                    lum = (byte)this.MaxC(this.ShadIm.Grid[2 + nbyteIm * i], this.ShadIm.Grid[1 + nbyteIm * i], this.ShadIm.Grid[0 + nbyteIm * i]);
+                }
+
                 histo[lum]++;
             } //========================== end for (i = 0; ... ==============================
 
-            // Displaying the histograms and the row sections:
-            //pictureBox3.Enabled = true;
-            Graphics g3; // = pictureBox3.CreateGraphics();
-            Bitmap BmpPictBox3 = new Bitmap(pictureBox3.Width, pictureBox3.Height);
-            g3 = Graphics.FromImage(BmpPictBox3);
-            pictureBox3.Image = BmpPictBox3;
+            // Displaying the histograms and the row sections:                        
+            Bitmap BmpPictBox3 = new Bitmap(this.pictureBox3.Width, this.pictureBox3.Height);
+            Graphics g3 = Graphics.FromImage(BmpPictBox3);
+            this.pictureBox3.Image = BmpPictBox3;
 
             int MaxHisto = 0, SecondMax = 0;
             for (i = 0; i < 256; i++) if (histo[i] > MaxHisto) MaxHisto = histo[i];
             for (i = 0; i < 256; i++) if (histo[i] != MaxHisto && histo[i] > SecondMax) SecondMax = histo[i];
             MaxHisto = SecondMax * 4 / 3;
-            Pen redPen = new Pen(Color.Red), yellowPen = new Pen(Color.Yellow),
-                            bluePen = new Pen(Color.Blue), greenPen = new Pen(Color.LightGreen);
+            Pen redPen = new Pen(Color.Red), bluePen = new Pen(Color.Blue), greenPen = new Pen(Color.LightGreen);
             SolidBrush whiteBrush = new SolidBrush(Color.White);
-            Rectangle Rect = new Rectangle(0, 0, pictureBox3.Width, pictureBox3.Height);
-            pictureBox3.Visible = true;
+            Rectangle Rect = new Rectangle(0, 0, this.pictureBox3.Width, this.pictureBox3.Height);
+            this.pictureBox3.Visible = true;
 
             g3.FillRectangle(whiteBrush, Rect);
 
             for (i = 0; i < 256; i++)
+            {
                 g3.DrawLine(redPen, i, pictureBox3.Height - 1 - histo[i] * pictureBox3.Height / MaxHisto, i, pictureBox3.Height - 1);
+            }
+
             for (i = 0; i < 256; i += 50)
+            {
                 g3.DrawLine(greenPen, i, pictureBox3.Height - 200, i, pictureBox3.Height);
+            }
 
             if (Threshold >= 0) g3.DrawLine(bluePen, Threshold, pictureBox3.Height - 200, Threshold, pictureBox3.Height);
-            pictureBox3.Visible = true;
+            this.pictureBox3.Visible = true;
             SHAD = true;
         } //***************************** end CorrectShading **********************************************
 
@@ -352,7 +389,12 @@ namespace WFshadBinImpulse
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
             if (bmp.PixelFormat != PixelFormat.Format24bppRgb)
-                if (MessReturn("ImageToBitmapNew: we don't use this pixel format=" + bmp.PixelFormat) < 0) return -1;
+            {
+                if (MessReturn("ImageToBitmapNew: we don't use this pixel format=" + bmp.PixelFormat) < 0)
+                {
+                    return -1;
+                }
+            }
             IntPtr ptr = bmpData.Scan0;
             int size = bmp.Width * bmp.Height;
             int length = Math.Abs(bmpData.Stride) * bmp.Height;
@@ -413,8 +455,7 @@ namespace WFshadBinImpulse
                 KIND = 1;
                 CHOICE = true;
             }
-            else
-              if (radioButton2.Checked)
+            else if (radioButton2.Checked)
             {
                 button2.Visible = true;
                 label1.Visible = true;
@@ -431,8 +472,7 @@ namespace WFshadBinImpulse
                 KIND = 2;
                 CHOICE = true;
             }
-            else
-                if (radioButton3.Checked)
+            else if (radioButton3.Checked)
             {
                 button2.Visible = true;
                 label1.Visible = true;
@@ -446,7 +486,7 @@ namespace WFshadBinImpulse
                 KIND = 3;
                 CHOICE = true;
             }
-            if (radioButton4.Checked)
+            else if (radioButton4.Checked)
             {
                 button2.Visible = true;
                 label1.Visible = true;
@@ -478,7 +518,7 @@ namespace WFshadBinImpulse
                 numericUpDown2.Visible = true;
             }
 
-            Shading_Cor(KIND, this);
+            Shading_Correcting(KIND, this);
             label8.Visible = true;
             label6.Visible = false;
             label7.Visible = false;
@@ -492,21 +532,21 @@ namespace WFshadBinImpulse
         } //******************** end button 2 Shading *******************************************
 
 
-        private void Shading_Cor(int KIND, Form1 fm1)
+        private void Shading_Correcting(int KIND, Form1 fm1)
         {
             int width = OrigIm.width;
             int hWind = (int)numericUpDown1.Value * width / 200;
-            GrayIm.ColorToGrayMC(SigmaIm, fm1);
+            grayscaleCImage.ColorToGrayMC(sigmaFilteredOriginalCImage, fm1);
             progressBar1.Value = 0;
             progressBar1.Step = 1;
             progressBar1.Visible = true;
             progressBar1.Maximum = 100;
 
-            hWind = (int)numericUpDown1.Value * OrigIm.width / 200;
-            MeanIm.FastAverageM(GrayIm, hWind, fm1);
-            int[] histo = new int[256];
+            //hWind = (int)numericUpDown1.Value * OrigIm.width / 200;
+            //MeanIm.FastAverageM(grayscaleCImage, hWind, fm1);
+            //int[] histo = new int[256];
 
-            CorrectShading(DIV);
+            this.CorrectShading(DIV);
             ImageToBitmapNew(ShadIm, ShadingBmp);
 
             pictureBox2.Visible = true;
@@ -523,7 +563,7 @@ namespace WFshadBinImpulse
             }
             if (!SHAD)
             {
-                MessageBox.Show("Please ckick the button 'Shading'");
+                MessageBox.Show("Please click the button 'Shading'");
                 return;
             }
             if (!BIN)
@@ -570,14 +610,19 @@ namespace WFshadBinImpulse
             PN.LightNoise(ref ImpulseIm, minLi, maxLi, maxLight, this);
 
             for (int i = 0; i < nbyte * origBmp.Width * origBmp.Height; i++)
-                if (ImpulseIm.Grid[i] == 252 || ImpulseIm.Grid[i] == 254) ImpulseIm.Grid[i] = 255;
+            {
+                if (ImpulseIm.Grid[i] == 252 || ImpulseIm.Grid[i] == 254)
+                {
+                    ImpulseIm.Grid[i] = 255;
+                }
+            }
 
             ImageToBitmapNew(ImpulseIm, ResultBmp);
 
             pictureBox2.Image = ResultBmp;
 
             Graphics g = pictureBox1.CreateGraphics();
-            Pen myPen = new System.Drawing.Pen(System.Drawing.Color.LightGray);
+            Pen myPen = new Pen(Color.LightGray);
             for (int n = 0; n < Number; n += 2)
             {
                 g.DrawLine(myPen, v[n + 1].X, v[n + 0].Y, v[n + 1].X, v[n + 1].Y);
@@ -623,7 +668,7 @@ namespace WFshadBinImpulse
             else
                 MessageBox.Show("Number=" + Number + " is too large");
 
-            myPen = new System.Drawing.Pen(System.Drawing.Color.Blue);
+            myPen = new Pen(Color.Blue);
             if ((Number & 1) == 0)
                 for (int n = 0; n < Number; n += 2)
                 {
@@ -648,8 +693,7 @@ namespace WFshadBinImpulse
                 {
                     tmpFileName = OpenImageFile.Insert(OpenImageFile.IndexOf("."), "$$$");
                     if (dialog.FileName.Contains(".jpg")) ResultBmp.Save(tmpFileName, ImageFormat.Jpeg); // saving tmpFile
-                    else
-                      if (dialog.FileName.Contains(".bmp")) ResultBmp.Save(tmpFileName, ImageFormat.Bmp);
+                    else if (dialog.FileName.Contains(".bmp")) ResultBmp.Save(tmpFileName, ImageFormat.Bmp);
                     else
                     {
                         MessageBox.Show("The file " + dialog.FileName + " has an inappropriate extension. Returning.");

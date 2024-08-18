@@ -33,7 +33,7 @@ namespace WFpiecewiseLinear
         private string OpenImageFile;
 
         private Graphics histogramGraphics;
-        private int cntClick, X1, Y1, X2, Y2;
+        private int clickCount, X1, Y1, X2, Y2; // (X1, Y1) and (X2, Y2) are the knick points of the piecewise linear curve.
 
         private bool BMP_Graph;
 
@@ -72,6 +72,7 @@ namespace WFpiecewiseLinear
             progressBar1.Visible = true;
             progressBar1.Value = 0;
             progressBar1.Step = 1;
+
             if (OriginalBitmap.PixelFormat == PixelFormat.Format8bppIndexed)
             {
                 BMP_Graph = false;
@@ -222,7 +223,7 @@ namespace WFpiecewiseLinear
 
             progressBar1.Visible = true;
             GridToBitmap(ContrastEnhancedBitmap, contrastEnhancedCImage.Grid);
-            cntClick = 0;
+            clickCount = 0;
 
             if (BMP_Graph)
             {
@@ -241,13 +242,13 @@ namespace WFpiecewiseLinear
             SolidBrush myBrush = new SolidBrush(Color.LightGray);
             Rectangle rect = new Rectangle(0, 0, 256, 256);
 
-            cntClick++;
-            if (cntClick == 3) cntClick = 1;
+            clickCount++;
+            if (clickCount == 3) clickCount = 1;
             int oldX = -1, oldY = -1, yy;
             Pen redPen = new Pen(Color.Red);
             Pen bluePen = new Pen(Color.Blue);
 
-            if (cntClick == 1)
+            if (clickCount == 1)
             {
                 X1 = e.X;
                 if (X1 < MinimumGrayValue) X1 = MinimumGrayValue;
@@ -291,7 +292,7 @@ namespace WFpiecewiseLinear
                 oldY = Y1;
             } //------------------------ end if (cntClick == 1) --------------------------------------
 
-            if (cntClick == 2)
+            if (clickCount == 2)
             {
                 X2 = e.X;
                 if (X2 < MinimumGrayValue)
@@ -356,7 +357,7 @@ namespace WFpiecewiseLinear
                 pictureBoxHistogram.Refresh();
             }
 
-            if (cntClick == 2)
+            if (clickCount == 2)
             {
                 makeBigLUT(LUT);
             }
@@ -369,7 +370,7 @@ namespace WFpiecewiseLinear
                 contrastEnhancedCImage.Grid[i] = 0;
             }
 
-            if (cntClick == 2)
+            if (clickCount == 2)
             {
                 for (int y = 0, yn = 0; y < width * height; y += width, yn += nbyte * width) //=============
                 {
@@ -391,7 +392,7 @@ namespace WFpiecewiseLinear
             }
             progressBar1.Visible = false;
             pictureBoxContrastEnhancedImage.Image = ContrastEnhancedBitmap;
-            if (cntClick == 2) label2.Visible = true;
+            if (clickCount == 2) label2.Visible = true;
         } //******************************** end pictureBox3_MouseDown **************************
 
 
@@ -547,7 +548,7 @@ namespace WFpiecewiseLinear
         } //********************************* end Save result ******************************
 
 
-        private int[] bigLUT = new int[66000];
+        private int[] bigLUT = new int[66000]; // 65536 + 256 = 65792
 
         private void makeBigLUT(int[] LUT) // Making bigLUT
         {
@@ -563,6 +564,7 @@ namespace WFpiecewiseLinear
                 for (int old_lightness = 1; old_lightness < 256; old_lightness++)
                 {
                     int new_color_intensity = old_color_intensity * LUT[old_lightness] / old_lightness;
+                    // bytes 3 and 4 are not used.
                     int arg = (old_lightness << 8) | old_color_intensity;
                     bigLUT[arg] = new_color_intensity;
                 }

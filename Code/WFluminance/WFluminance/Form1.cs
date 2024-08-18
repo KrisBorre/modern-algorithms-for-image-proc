@@ -12,7 +12,9 @@ namespace WFluminance
         public Form1()
         {
             InitializeComponent();
+            Text = "Rectangles with constant visual lightness";
         }
+
         // Corrected version, all elements locked
         //                  0    1    2    3    4    5    6    7 : rows in pictureBox1; "7" relates to gray rectangle
         static int[] V = { 242, 160, 174, 122, 124, 122, 242, 121 };
@@ -229,7 +231,6 @@ namespace WFluminance
             panel1.Controls[40].Text = MaxMin[ind1].ToString();
             panel1.Controls[49].Text = Mean[ind1].ToString();
             panel1.Controls[58].Text = MaxC[ind1].ToString();
-
             Color color = Color.FromArgb(R[ind1], G[ind1], B[ind1]);
             SolidBrush myBrush1 = new SolidBrush(color);
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
@@ -286,6 +287,7 @@ namespace WFluminance
             Rectangle rect = new Rectangle(widthGray, heightColor * (ind1), widthColor, heightColor);
             g1.FillRectangle(myBrush1, rect);
         }
+
 
         private void numericUpDown8_ValueChanged_1(object sender, EventArgs e)
         {

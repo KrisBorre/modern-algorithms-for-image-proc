@@ -13,13 +13,14 @@ namespace WFshadingBin
         public Form1()
         {
             InitializeComponent();
+            this.Text = "Shading correction";
         }
 
         private Bitmap original_Bitmap;
-        private Bitmap Sub_Bitmap;
-        private Bitmap Div_Bitmap;
+        private Bitmap Subtraction_Bitmap;
+        private Bitmap Division_Bitmap;
         private CImage origImage;
-        private CImage sigmaImage;
+        private CImage sigmaFilteredCImage;
         private CImage subImage;
         private CImage divImage;
         private CImage grayImage;
@@ -74,33 +75,41 @@ namespace WFshadingBin
             progressBar1.Visible = true;
             progressBar1.Value = 0;
 
-            if (original_Bitmap.PixelFormat == PixelFormat.Format8bppIndexed) nbyteBmp = 1;
-            else
-              if (original_Bitmap.PixelFormat == PixelFormat.Format24bppRgb) nbyteBmp = 3;
+            if (original_Bitmap.PixelFormat == PixelFormat.Format8bppIndexed)
+            {
+                nbyteBmp = 1;
+            }
             else
             {
-                MessageBox.Show("Pixel format=" + original_Bitmap.PixelFormat + " not used in this project");
-                return;
+                if (original_Bitmap.PixelFormat == PixelFormat.Format24bppRgb)
+                {
+                    nbyteBmp = 3;
+                }
+                else
+                {
+                    MessageBox.Show("Pixel format=" + original_Bitmap.PixelFormat + " not used in this project");
+                    return;
+                }
             }
 
             nbyteIm = BitmapToImage(original_Bitmap, ref origImage);
             int N_Bits = nbyteIm * 8;
-            sigmaImage = new CImage(width, height, N_Bits);
+            sigmaFilteredCImage = new CImage(width, height, N_Bits);
             subImage = new CImage(width, height, N_Bits);
             divImage = new CImage(width, height, N_Bits);
             grayImage = new CImage(width, height, 8);
             meanImage = new CImage(width, height, 8);
             binImage = new CImage(width, height, 8);
 
-            sigmaImage.SigmaSimpleUni(origImage, 1, 30);
+            sigmaFilteredCImage.SigmaSimpleUni(input: origImage, hWind: 1, Toleranz: 30);
 
             if (origImage.N_Bits == 24)
             {
-                grayImage.ColorToGray(sigmaImage, this);
+                grayImage.ColorToGray(sigmaFilteredCImage, this);
             }
             else
             {
-                grayImage.Copy(sigmaImage);
+                grayImage.Copy(sigmaFilteredCImage);
             }
 
             Threshold1 = -1;
@@ -132,6 +141,7 @@ namespace WFshadingBin
 
                 progressBar1.Visible = true;
                 progressBar1.Value = 0;
+
                 for (y = 0; y < bmp.Height; y++) //========================================================
                 {
                     int jump = bmp.Height / 100;
@@ -147,9 +157,12 @@ namespace WFshadingBin
                             Image.Grid[3 * (x + bmp.Width * y) + 2] = color.R;
                         }
                         else // nbyteIm == 1:
+                        {
                             Image.Grid[x + bmp.Width * y] = color.R;
+                        }
                     } //================================== end for (x ... ===================================
                 } //==================================== end for (y ... =====================================
+
                 rv = nbyteIm;
             }
             else // nbyteBmp == 3 and nbyteIm == 3:
@@ -164,15 +177,21 @@ namespace WFshadingBin
 
                 nbyteIm = 3;
                 Image = new CImage(bmp.Width, bmp.Height, nbyteIm * 8);
+
                 for (y = 0; y < bmp.Height; y++) //=============================================
                 {
                     int jump = bmp.Height / 100;
                     if (y % jump == jump - 1) progressBar1.PerformStep();
+
                     for (x = 0; x < bmp.Width; x++)
+                    {
                         for (int c = 0; c < nbyteIm; c++)
-                            Image.Grid[c + nbyteIm * (x + bmp.Width * y)] =
-                              rgbValues[c + nbyteBmp * x + Math.Abs(bmpData.Stride) * y];
+                        {
+                            Image.Grid[c + nbyteIm * (x + bmp.Width * y)] = rgbValues[c + nbyteBmp * x + Math.Abs(bmpData.Stride) * y];
+                        }
+                    }
                 } //========================= end for (y = 0; ... ============================== 
+
                 rv = nbyteIm;
                 bmp.UnlockBits(bmpData);
             }
@@ -193,8 +212,12 @@ namespace WFshadingBin
         {
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
+
             if (bmp.PixelFormat != PixelFormat.Format24bppRgb)
+            {
                 if (Image.MessReturn("ImageToBitmapNew: we don't use this pixel format") < 0) return -1;
+            }
+
             IntPtr ptr = bmpData.Scan0;
             int size = bmp.Width * bmp.Height;
             int length = Math.Abs(bmpData.Stride) * bmp.Height;
@@ -202,6 +225,7 @@ namespace WFshadingBin
 
             progressBar1.Visible = true;
             int nbyteIm = Image.N_Bits / 8;
+
             for (int y = 0; y < bmp.Height; y++) //=================================================================
             {
                 int jump = bmp.Height / progPart;
@@ -209,22 +233,23 @@ namespace WFshadingBin
 
                 for (int x = 0; x < bmp.Width; x++)
                 {
-                    Color color = Color.FromArgb(0, 0, 0); ;
+                    Color color = Color.FromArgb(0, 0, 0);
+
                     if (nbyteIm == 3)
                     {
-                        color = Color.FromArgb(Image.Grid[2 + 3 * (x + Image.width * y)],
-                          Image.Grid[1 + 3 * (x + Image.width * y)], Image.Grid[0 + 3 * (x + Image.width * y)]);
+                        color = Color.FromArgb(Image.Grid[2 + 3 * (x + Image.width * y)], Image.Grid[1 + 3 * (x + Image.width * y)], Image.Grid[0 + 3 * (x + Image.width * y)]);
                     }
                     else
                     {
-                        color = Color.FromArgb(Image.Grid[x + Image.width * y],
-                          Image.Grid[x + Image.width * y], Image.Grid[x + Image.width * y]);
+                        color = Color.FromArgb(Image.Grid[x + Image.width * y], Image.Grid[x + Image.width * y], Image.Grid[x + Image.width * y]);
                     }
+
                     rgbValues[3 * x + Math.Abs(bmpData.Stride) * y + 0] = color.B;
                     rgbValues[3 * x + Math.Abs(bmpData.Stride) * y + 1] = color.G;
                     rgbValues[3 * x + Math.Abs(bmpData.Stride) * y + 2] = color.R;
                 } //==================================== end for (int x ... =============================
             }  //===================================== end for (int y ... ===============================
+
             System.Runtime.InteropServices.Marshal.Copy(rgbValues, 0, ptr, length);
             bmp.UnlockBits(bmpData);
             return 1;
@@ -262,18 +287,19 @@ namespace WFshadingBin
                 {                               // nbyteIm is member of 'Form1'
                     for (c = 0; c < nbyteIm; c++) //==============================================
                     {
-                        color[c] = Round(sigmaImage.Grid[c + nbyteIm * (x + width * y)] * Lightness /
-                                                (double)meanImage.Grid[x + width * y]); // Division
+                        color[c] = Round(sigmaFilteredCImage.Grid[c + nbyteIm * (x + width * y)] * Lightness / (double)meanImage.Grid[x + width * y]); // Division
+
                         if (color[c] < 0) color[c] = 0;
                         if (color[c] > 255) color[c] = 255;
                         divImage.Grid[c + nbyteIm * (x + width * y)] = (byte)color[c];
 
-                        color1[c] = sigmaImage.Grid[c + nbyteIm * (x + width * y)] + Lightness -
-                                                      meanImage.Grid[x + width * y]; // Subtraction
+                        color1[c] = sigmaFilteredCImage.Grid[c + nbyteIm * (x + width * y)] + Lightness - meanImage.Grid[x + width * y]; // Subtraction
+
                         if (color1[c] < 0) color1[c] = 0;
                         if (color1[c] > 255) color1[c] = 255;
                         subImage.Grid[c + nbyteIm * (x + width * y)] = (byte)color1[c];
                     } //======================= end for (c... ==================================
+
                     if (nbyteIm == 1)
                     {
                         lum = (byte)color[0];
@@ -281,9 +307,10 @@ namespace WFshadingBin
                     }
                     else
                     {
-                        lum = sigmaImage.MaxC((byte)color[2], (byte)color[1], (byte)color[0]);
-                        lum1 = sigmaImage.MaxC((byte)color1[2], (byte)color1[1], (byte)color1[0]);
+                        lum = sigmaFilteredCImage.MaxC((byte)color[2], (byte)color[1], (byte)color[0]);
+                        lum1 = sigmaFilteredCImage.MaxC((byte)color1[2], (byte)color1[1], (byte)color1[0]);
                     }
+
                     histoDiv[lum]++;
                     histoSub[lum1]++;
                 }
@@ -320,24 +347,31 @@ namespace WFshadingBin
             // Calculating LUT for 'Div':
             byte[] LUT = new byte[256];
             for (i = 0; i < 256; i++)
+            {
                 if (i <= MinLightDiv) LUT[i] = 0;
-                else
-                  if (i > MinLightDiv && i <= MaxLightDiv)
+                else if (i > MinLightDiv && i <= MaxLightDiv)
+                {
                     LUT[i] = (byte)(255 * (i - MinLightDiv) / (MaxLightDiv - MinLightDiv));
+                }
                 else LUT[i] = 255;
+            }
 
             // Calculating LUTsub for 'Sub':
             byte[] LUTsub = new byte[256];
             for (i = 0; i < 256; i++)
+            {
                 if (i <= MinLightSub) LUTsub[i] = 0;
-                else
-                  if (i > MinLightSub && i <= MaxLightSub)
+                else if (i > MinLightSub && i <= MaxLightSub)
+                {
                     LUTsub[i] = (byte)(255 * (i - MinLightSub) / (MaxLightSub - MinLightSub));
+                }
                 else LUTsub[i] = 255;
+            }
 
             // Calculating contrasted "Div" and "Sub":
             for (i = 0; i < 256; i++) histoDiv[i] = histoSub[i] = 0;
             jump = width * height / 17;
+
             for (i = 0; i < width * height; i++) //====================================
             {
                 if (i % jump == jump - 1) progressBar1.PerformStep();
@@ -355,11 +389,11 @@ namespace WFshadingBin
                 }
                 else
                 {
-                    lum = sigmaImage.MaxC(divImage.Grid[2 + nbyteIm * i], divImage.Grid[1 + nbyteIm * i],
-                      divImage.Grid[0 + nbyteIm * i]);
-                    lum1 = sigmaImage.MaxC(subImage.Grid[2 + nbyteIm * i], subImage.Grid[1 + nbyteIm * i],
-                      subImage.Grid[0 + nbyteIm * i]);
+                    lum = sigmaFilteredCImage.MaxC(divImage.Grid[2 + nbyteIm * i], divImage.Grid[1 + nbyteIm * i], divImage.Grid[0 + nbyteIm * i]);
+
+                    lum1 = sigmaFilteredCImage.MaxC(subImage.Grid[2 + nbyteIm * i], subImage.Grid[1 + nbyteIm * i], subImage.Grid[0 + nbyteIm * i]);
                 }
+
                 histoDiv[lum]++;
                 histoSub[lum1]++;
             } //========================== end for (i = 0; ... ==============================
@@ -375,18 +409,41 @@ namespace WFshadingBin
             pictureBox5.Image = BmpPictBox5;
             int MaxHisto1 = 0, SecondMax1 = 0;
             int MaxHisto = 0, SecondMax = 0;
+
             for (i = 0; i < 256; i++)
             {
-                if (histoSub[i] > MaxHisto1) MaxHisto1 = histoSub[i];
-                if (histoDiv[i] > MaxHisto) MaxHisto = histoDiv[i];
+                if (histoSub[i] > MaxHisto1)
+                {
+                    MaxHisto1 = histoSub[i];
+                }
+
+                if (histoDiv[i] > MaxHisto)
+                {
+                    MaxHisto = histoDiv[i];
+                }
             }
-            for (i = 0; i < 256; i++) if (histoSub[i] != MaxHisto1 && histoSub[i] > SecondMax1) SecondMax1 = histoSub[i];
+
+            for (i = 0; i < 256; i++)
+            {
+                if (histoSub[i] != MaxHisto1 && histoSub[i] > SecondMax1)
+                {
+                    SecondMax1 = histoSub[i];
+                }
+            }
+
             MaxHisto1 = SecondMax1 * 4 / 3;
-            for (i = 0; i < 256; i++) if (histoDiv[i] != MaxHisto && histoDiv[i] > SecondMax) SecondMax = histoDiv[i];
+
+            for (i = 0; i < 256; i++)
+            {
+                if (histoDiv[i] != MaxHisto && histoDiv[i] > SecondMax)
+                {
+                    SecondMax = histoDiv[i];
+                }
+            }
+
             MaxHisto = SecondMax * 4 / 3;
 
             Pen redPen = new Pen(Color.Red);
-            //Pen yellowPen = new Pen(Color.Yellow), bluePen = new Pen(Color.Blue);
             Pen greenPen = new Pen(Color.Green);
             SolidBrush whiteBrush = new SolidBrush(Color.White);
             Rectangle Rect1 = new Rectangle(0, 0, pictureBox4.Width, pictureBox4.Height);
@@ -416,22 +473,22 @@ namespace WFshadingBin
         {
             progressBar1.Value = 0;
             CorrectShading();
-            //MessageBox.Show("pictB5.Visible=" + pictureBox5.Visible);
-            Sub_Bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
-            Div_Bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
-            ImageToBitmapNew(subImage, Sub_Bitmap, 33);
-            ImageToBitmapNew(divImage, Div_Bitmap, 33);
+
+            Subtraction_Bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+            Division_Bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+            ImageToBitmapNew(subImage, Subtraction_Bitmap, 33);
+            ImageToBitmapNew(divImage, Division_Bitmap, 33);
 
             progressBar1.Visible = false;
-            pictureBox2.Image = Sub_Bitmap;
-            pictureBox3.Image = Div_Bitmap;
+            pictureBox2.Image = Subtraction_Bitmap;
+            pictureBox3.Image = Division_Bitmap;
             label3.Text = "If shading OK click threshold for 'SubIm'";
             label3.Visible = true;
             label4.Text = "If shading OK click threshold for 'DivIm'";
             label4.Visible = true;
             pictureBox4.Visible = true;
             pictureBox5.Visible = true;
-            //MessageBox.Show("After = true; pictB5.Visible=" + pictureBox5.Visible);
+
             SHADING = true;
         } //*********************************** end Shading correction ****************************
 
@@ -439,35 +496,51 @@ namespace WFshadingBin
         private void Save(SaveFileDialog dialog, string OpenImageFile, Bitmap Bmp)
         {
             string tmpFileName;
+
             if (dialog.FileName == OpenImageFile)
             {
                 tmpFileName = OpenImageFile.Insert(OpenImageFile.IndexOf("."), "$$$");
+
                 if (dialog.FileName.Contains(".jpg"))
+                {
                     Bmp.Save(tmpFileName, ImageFormat.Jpeg); // saving tmpFile
-                else
-                  if (dialog.FileName.Contains(".bmp")) Bmp.Save(tmpFileName, ImageFormat.Bmp);
+                }
                 else
                 {
-                    MessageBox.Show("The file " + dialog.FileName + " has an inappropriate extension. Returning.");
-                    return;
+                    if (dialog.FileName.Contains(".bmp"))
+                    {
+                        Bmp.Save(tmpFileName, ImageFormat.Bmp);
+                    }
+                    else
+                    {
+                        MessageBox.Show("The file " + dialog.FileName + " has an inappropriate extension. Returning.");
+                        return;
+                    }
                 }
 
                 original_Bitmap.Dispose();
-                File.Replace(tmpFileName, OpenImageFile,
-                              OpenImageFile.Insert(OpenImageFile.IndexOf("."), "BackUp"));
+                File.Replace(tmpFileName, OpenImageFile, OpenImageFile.Insert(OpenImageFile.IndexOf("."), "BackUp"));
+
                 original_Bitmap = new Bitmap(OpenImageFile);
                 pictureBox1.Image = original_Bitmap;
             }
             else
             {
                 if (dialog.FileName.Contains(".jpg"))
+                {
                     Bmp.Save(dialog.FileName, ImageFormat.Jpeg);
-                else
-                  if (dialog.FileName.Contains(".bmp")) Bmp.Save(dialog.FileName, ImageFormat.Bmp);
+                }
                 else
                 {
-                    MessageBox.Show("The file " + dialog.FileName + " has an inappropriate extension. Returning.");
-                    return;
+                    if (dialog.FileName.Contains(".bmp"))
+                    {
+                        Bmp.Save(dialog.FileName, ImageFormat.Bmp);
+                    }
+                    else
+                    {
+                        MessageBox.Show("The file " + dialog.FileName + " has an inappropriate extension. Returning.");
+                        return;
+                    }
                 }
             }
             MessageBox.Show("The result image saved under " + dialog.FileName);
@@ -484,10 +557,10 @@ namespace WFshadingBin
             SaveFileDialog dialog = new SaveFileDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                //Save(dialog, OpenImageFile, Div_Bitmap);
+                Save(dialog, OpenImageFile + "Div", Division_Bitmap);
             }
-            //button4.Visible = false;
-            //label4.Visible = false;
+            button4.Visible = false;
+            label4.Visible = false;
         }
 
 
@@ -514,18 +587,24 @@ namespace WFshadingBin
                     int i = x + width * y;
                     if (nbyte == 1)
                     {
-                        if (subImage.Grid[i] > Threshold1) binImage.Grid[i] = 255;
+                        if (subImage.Grid[i] > Threshold1)
+                        {
+                            binImage.Grid[i] = 255;
+                        }
                         else binImage.Grid[i] = 0;
                     }
                     else
                     {
-                        if (subImage.MaxC(subImage.Grid[2 + 3 * i], subImage.Grid[1 + 3 * i], subImage.Grid[0 + 3 * i]) > Threshold1) binImage.Grid[i] = 255;
+                        if (subImage.MaxC(subImage.Grid[2 + 3 * i], subImage.Grid[1 + 3 * i], subImage.Grid[0 + 3 * i]) > Threshold1)
+                        {
+                            binImage.Grid[i] = 255;
+                        }
                         else binImage.Grid[i] = 0;
                     }
-                    Sub_Bitmap.SetPixel(x, y, Color.FromArgb(binImage.Grid[i], binImage.Grid[i], binImage.Grid[i]));
+                    Subtraction_Bitmap.SetPixel(x, y, Color.FromArgb(binImage.Grid[i], binImage.Grid[i], binImage.Grid[i]));
                 }
             }
-            pictureBox2.Image = Sub_Bitmap;
+            pictureBox2.Image = Subtraction_Bitmap;
             button3.Visible = true;
             label3.Text = "If threshold OK click 'Save subtraction'";
             label3.Visible = true;
@@ -559,18 +638,24 @@ namespace WFshadingBin
                     int i = x + width * y;
                     if (nbyte == 1)
                     {
-                        if (divImage.Grid[i] > Threshold) binImage.Grid[i] = 255;
+                        if (divImage.Grid[i] > Threshold)
+                        {
+                            binImage.Grid[i] = 255;
+                        }
                         else binImage.Grid[i] = 0;
                     }
                     else
                     {
-                        if (divImage.MaxC(divImage.Grid[2 + 3 * i], divImage.Grid[1 + 3 * i], divImage.Grid[0 + 3 * i]) > Threshold) binImage.Grid[i] = 255;
+                        if (divImage.MaxC(divImage.Grid[2 + 3 * i], divImage.Grid[1 + 3 * i], divImage.Grid[0 + 3 * i]) > Threshold)
+                        {
+                            binImage.Grid[i] = 255;
+                        }
                         else binImage.Grid[i] = 0;
                     }
-                    Div_Bitmap.SetPixel(x, y, Color.FromArgb(binImage.Grid[i], binImage.Grid[i], binImage.Grid[i]));
+                    Division_Bitmap.SetPixel(x, y, Color.FromArgb(binImage.Grid[i], binImage.Grid[i], binImage.Grid[i]));
                 }
             }
-            pictureBox3.Image = Div_Bitmap;
+            pictureBox3.Image = Division_Bitmap;
             button4.Visible = true;
             label4.Text = "If threshold OK click 'Save division'";
             label4.Visible = true;
@@ -583,10 +668,15 @@ namespace WFshadingBin
 
         private void button3_Click(object sender, EventArgs e) // Save sub
         {
+            if (!SHADING)
+            {
+                MessageBox.Show("Please press the button 'Shading'");
+            }
+
             SaveFileDialog dialog = new SaveFileDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                Save(dialog, OpenImageFile, Sub_Bitmap);
+                Save(dialog, OpenImageFile + "Sub", Subtraction_Bitmap);
             }
             button3.Visible = false;
             label3.Visible = false;
