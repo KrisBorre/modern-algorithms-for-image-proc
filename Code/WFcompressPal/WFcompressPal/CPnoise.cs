@@ -168,7 +168,7 @@ namespace WFcompressPal
             return xn + Image.width * yn;
         }
 
-
+        // not called
         unsafe public int PositionInIndex(int lightNeb, int Neib)
         {
             for (int i = 0; i < nPixel[lightNeb]; i++)
@@ -181,6 +181,7 @@ namespace WFcompressPal
             return (int)((R + G + B) / 3);
         }
 
+        // not called
         public int MessReturn(string s)
         {
             if (MessageBox.Show(s, "Return", MessageBoxButtons.OKCancel) == DialogResult.Cancel)

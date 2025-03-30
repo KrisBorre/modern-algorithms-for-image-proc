@@ -118,7 +118,7 @@ namespace WFcompressPal
             OPEN = true;
         } //***************************** end Open image ****************************************
 
-
+        // not called
         private void ImageToBitmap(CImage Image, int[] Palet, int nbyteIm, Bitmap bmp)
         {
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
@@ -252,7 +252,7 @@ namespace WFcompressPal
             return rv;
         } //****************************** end BitmapToImage ****************************************
 
-
+        // not called
         public int Round(double x)
         {
             if (x < 0.0) return (int)(x - 0.5);
@@ -296,11 +296,11 @@ namespace WFcompressPal
             SigmaIm = new CImage(OrigIm.width, OrigIm.height, nbyteIm * 8);
 
             progressBar1.Value = 0;
-            SigmaIm.SigmaSimpleUni(ImpulseIm, 1, 30, this);
+            SigmaIm.SigmaFilterSimpleUni(ImpulseIm, 1, 30, this);
 
             ExtremIm = new CImage(OrigIm.width, OrigIm.height, nbyteIm * 8);
-            if (nbyteBmp == 3) ExtremIm.ExtremVarColor(SigmaIm, 2, this);
-            else ExtremIm.ExtremLightUni(SigmaIm, 2, this);
+            if (nbyteBmp == 3) ExtremIm.ExtremeFilterVarColor(SigmaIm, 2, this);
+            else ExtremIm.ExtremeFilterLightUni(SigmaIm, 2, this);
 
             int rv, x, y;
             Palet = new int[256]; // This is a palette containing an RGB int color for each of 256 indices
@@ -481,7 +481,7 @@ namespace WFcompressPal
             return (Sign * Dif) / 3;
         }
 
-
+        // not called
         public int MakeColorDifAr(int[] Palet, short[,] Array)
         // Makes the array with "ColorDifSign" of all pairs of 256 colors.
         {
@@ -701,6 +701,7 @@ namespace WFcompressPal
             }
             MessageBox.Show("Do not open an image in the next window but rather find the directory 'DAT'" +
             " and click a file there. If there is no file with a suitable name, then write a name with" + " the extension '.dat' in the bottom line.");
+
             SaveFileDialog dialog = new SaveFileDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {

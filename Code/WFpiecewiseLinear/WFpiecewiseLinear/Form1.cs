@@ -16,21 +16,23 @@ namespace WFpiecewiseLinear
             this.Text = "Piecewise Linear Contrast Enhancement";
         }
 
-        private int MinimumGrayValue;
-        private int MaximumGrayValue;
+        private int minimumGrayValue;
+        private int maximumGrayValue;
 
-        private Bitmap OriginalBitmap;
-        private Bitmap ContrastEnhancedBitmap;
-        private Bitmap HistogramBitmap;
+        private Bitmap originalBitmap;
+        private Bitmap contrastEnhancedBitmap;
+        private Bitmap histogramBitmap;
+
         private CImage originalCImage;
         private CImage origGrayLevelCImage; // gray level copy for histogram
         private CImage contrastEnhancedCImage;
-        private int MaximumHistogramFrequecy, nbyte, width, height;
+
+        private int maximumHistogramFrequecy, nbyte, width, height;
 
         private int[] LUT = new int[256];
         private int[] histogram_frequency = new int[256];
 
-        private string OpenImageFile;
+        private string openImageFile;
 
         private Graphics histogramGraphics;
         private int clickCount, X1, Y1, X2, Y2; // (X1, Y1) and (X2, Y2) are the knick points of the piecewise linear curve.
@@ -47,9 +49,9 @@ namespace WFpiecewiseLinear
             {
                 try
                 {
-                    OpenImageFile = openFileDialog1.FileName;
-                    OriginalBitmap = new Bitmap(OpenImageFile);
-                    pictureBoxOriginalImage.Image = OriginalBitmap;
+                    openImageFile = openFileDialog1.FileName;
+                    originalBitmap = new Bitmap(openImageFile);
+                    pictureBoxOriginalImage.Image = originalBitmap;
                 }
                 catch (Exception ex)
                 {
@@ -59,8 +61,8 @@ namespace WFpiecewiseLinear
             }
             else return;
 
-            width = OriginalBitmap.Width;
-            height = OriginalBitmap.Height;
+            width = originalBitmap.Width;
+            height = originalBitmap.Height;
 
             originalCImage = new CImage(width, height, 24);
             origGrayLevelCImage = new CImage(width, height, 8);  // grayscale version of origIm
@@ -73,7 +75,7 @@ namespace WFpiecewiseLinear
             progressBar1.Value = 0;
             progressBar1.Step = 1;
 
-            if (OriginalBitmap.PixelFormat == PixelFormat.Format8bppIndexed)
+            if (originalBitmap.PixelFormat == PixelFormat.Format8bppIndexed)
             {
                 BMP_Graph = false;
                 progressBar1.Visible = true;
@@ -93,7 +95,7 @@ namespace WFpiecewiseLinear
                     for (int x = 0; x < width; x++)
                     {
                         int i = x + width * y;
-                        color = OriginalBitmap.GetPixel(i % width, i / width);
+                        color = originalBitmap.GetPixel(i % width, i / width);
                         for (int c = 0; c < nbyte; c++)
                         {
                             if (c == 0) originalCImage.Grid[nbyte * i] = color.B;
@@ -103,10 +105,10 @@ namespace WFpiecewiseLinear
                     }
                 } //=============================== end for ( int y... =========================
             }
-            else if (OriginalBitmap.PixelFormat == PixelFormat.Format24bppRgb)
+            else if (originalBitmap.PixelFormat == PixelFormat.Format24bppRgb)
             {
                 BMP_Graph = true;
-                BitmapToGrid(OriginalBitmap, originalCImage.Grid);
+                BitmapToGrid(originalBitmap, originalCImage.Grid);
             }
             else
             {
@@ -114,13 +116,13 @@ namespace WFpiecewiseLinear
                 return;
             }
 
-            ContrastEnhancedBitmap = new Bitmap(OriginalBitmap.Width, OriginalBitmap.Height, PixelFormat.Format24bppRgb);
-            pictureBoxContrastEnhancedImage.Image = ContrastEnhancedBitmap;
-            HistogramBitmap = new Bitmap(256, 256);
+            contrastEnhancedBitmap = new Bitmap(originalBitmap.Width, originalBitmap.Height, PixelFormat.Format24bppRgb);
+            pictureBoxContrastEnhancedImage.Image = contrastEnhancedBitmap;
+            histogramBitmap = new Bitmap(256, 256);
 
             if (BMP_Graph)
             {
-                histogramGraphics = Graphics.FromImage(HistogramBitmap);
+                histogramGraphics = Graphics.FromImage(histogramBitmap);
             }
             else
             {
@@ -140,26 +142,26 @@ namespace WFpiecewiseLinear
             }
 
             // Here we determine the Maximum Histogram Frequency.
-            MaximumHistogramFrequecy = 0;
+            maximumHistogramFrequecy = 0;
             for (int gray_value = 0; gray_value < 256; gray_value++)
             {
-                if (histogram_frequency[gray_value] > MaximumHistogramFrequecy)
+                if (histogram_frequency[gray_value] > maximumHistogramFrequecy)
                 {
-                    MaximumHistogramFrequecy = histogram_frequency[gray_value];
+                    maximumHistogramFrequecy = histogram_frequency[gray_value];
                 }
             }
 
-            MinimumGrayValue = 255;
-            MaximumGrayValue = 0;
+            minimumGrayValue = 255;
+            maximumGrayValue = 0;
 
             // Here we determine the actual minimum gray value and the actual maximum gray value.
-            for (MinimumGrayValue = 0; MinimumGrayValue < 256; MinimumGrayValue++)
+            for (minimumGrayValue = 0; minimumGrayValue < 256; minimumGrayValue++)
             {
-                if (histogram_frequency[MinimumGrayValue] > 0) break;
+                if (histogram_frequency[minimumGrayValue] > 0) break;
             }
-            for (MaximumGrayValue = 255; MaximumGrayValue >= 0; MaximumGrayValue--)
+            for (maximumGrayValue = 255; maximumGrayValue >= 0; maximumGrayValue--)
             {
-                if (histogram_frequency[MaximumGrayValue] > 0) break;
+                if (histogram_frequency[maximumGrayValue] > 0) break;
             }
 
             // Drawing the histogram:
@@ -170,11 +172,11 @@ namespace WFpiecewiseLinear
             Pen greenPen = new Pen(Color.Green);
             for (int gray_value = 0; gray_value < 256; gray_value++)
             {
-                int hh = histogram_frequency[gray_value] * 255 / MaximumHistogramFrequecy;
+                int hh = histogram_frequency[gray_value] * 255 / maximumHistogramFrequecy;
                 if (histogram_frequency[gray_value] > 0 && hh < 1) hh = 1;
                 histogramGraphics.DrawLine(redPen, gray_value, 255, gray_value, 255 - hh);
 
-                if (gray_value == MinimumGrayValue || gray_value == MaximumGrayValue)
+                if (gray_value == minimumGrayValue || gray_value == maximumGrayValue)
                 {
                     histogramGraphics.DrawLine(greenPen, gray_value, 255, gray_value, 255 - hh);
                 }
@@ -182,27 +184,27 @@ namespace WFpiecewiseLinear
 
             // Calculating the standard LUT:
             int[] LUT = new int[256];
-            int X = (MinimumGrayValue + MaximumGrayValue) / 2;
+            int X = (minimumGrayValue + maximumGrayValue) / 2;
             int Y = 128;
 
             for (int gray_value = 0; gray_value < 256; gray_value++)
             {
-                if (gray_value <= MinimumGrayValue)
+                if (gray_value <= minimumGrayValue)
                 {
                     LUT[gray_value] = 0;
                 }
 
-                if (gray_value > MinimumGrayValue && gray_value <= X)
+                if (gray_value > minimumGrayValue && gray_value <= X)
                 {
-                    LUT[gray_value] = (gray_value - MinimumGrayValue) * Y / (X - MinimumGrayValue);
+                    LUT[gray_value] = (gray_value - minimumGrayValue) * Y / (X - minimumGrayValue);
                 }
 
-                if (gray_value > X && gray_value <= MaximumGrayValue)
+                if (gray_value > X && gray_value <= maximumGrayValue)
                 {
-                    LUT[gray_value] = Y + (gray_value - X) * (255 - Y) / (MaximumGrayValue - X);
+                    LUT[gray_value] = Y + (gray_value - X) * (255 - Y) / (maximumGrayValue - X);
                 }
 
-                if (gray_value >= MaximumGrayValue)
+                if (gray_value >= maximumGrayValue)
                 {
                     LUT[gray_value] = 255;
                 }
@@ -210,10 +212,10 @@ namespace WFpiecewiseLinear
 
             int yy = 255;
             Pen bluePen = new Pen(Color.Blue);
-            histogramGraphics.DrawLine(pen: bluePen, x1: 0, y1: yy, x2: MinimumGrayValue, y2: yy);
-            histogramGraphics.DrawLine(bluePen, MinimumGrayValue, yy, X, yy - Y);
-            histogramGraphics.DrawLine(bluePen, X, yy - Y, MaximumGrayValue, 0);
-            histogramGraphics.DrawLine(bluePen, MaximumGrayValue, 0, yy, 0);
+            histogramGraphics.DrawLine(pen: bluePen, x1: 0, y1: yy, x2: minimumGrayValue, y2: yy);
+            histogramGraphics.DrawLine(bluePen, minimumGrayValue, yy, X, yy - Y);
+            histogramGraphics.DrawLine(bluePen, X, yy - Y, maximumGrayValue, 0);
+            histogramGraphics.DrawLine(bluePen, maximumGrayValue, 0, yy, 0);
 
             // nbyte = 3;  origIm and contrastIm are both 24-bit images
             for (int i = 0; i < nbyte * width * height; i++)
@@ -222,15 +224,15 @@ namespace WFpiecewiseLinear
             }
 
             progressBar1.Visible = true;
-            GridToBitmap(ContrastEnhancedBitmap, contrastEnhancedCImage.Grid);
+            GridToBitmap(contrastEnhancedBitmap, contrastEnhancedCImage.Grid);
             clickCount = 0;
 
             if (BMP_Graph)
             {
-                pictureBoxHistogram.Image = HistogramBitmap;
+                pictureBoxHistogram.Image = histogramBitmap;
             }
 
-            pictureBoxContrastEnhancedImage.Image = ContrastEnhancedBitmap;
+            pictureBoxContrastEnhancedImage.Image = contrastEnhancedBitmap;
             label1.Visible = true;
             progressBar1.Visible = false;
         } //******************************* end Open image ******************************************
@@ -251,22 +253,22 @@ namespace WFpiecewiseLinear
             if (clickCount == 1)
             {
                 X1 = e.X;
-                if (X1 < MinimumGrayValue) X1 = MinimumGrayValue;
-                if (X1 > MaximumGrayValue) X1 = MaximumGrayValue;
+                if (X1 < minimumGrayValue) X1 = minimumGrayValue;
+                if (X1 > maximumGrayValue) X1 = maximumGrayValue;
                 Y1 = 255 - e.Y; // (X, Y) is the clicked point in the graph of the LUT
                 if (X1 != oldX || Y1 != oldY) //-------------------------------------------------------
                 {
                     // Calculating the LUT for X1 and Y1:
                     for (int gray_value = 0; gray_value <= X1; gray_value++)
                     {
-                        if (gray_value <= MinimumGrayValue)
+                        if (gray_value <= minimumGrayValue)
                         {
                             LUT[gray_value] = 0;
                         }
 
-                        if (gray_value > MinimumGrayValue && gray_value <= X1)
+                        if (gray_value > minimumGrayValue && gray_value <= X1)
                         {
-                            LUT[gray_value] = (gray_value - MinimumGrayValue) * Y1 / (X1 - MinimumGrayValue);
+                            LUT[gray_value] = (gray_value - minimumGrayValue) * Y1 / (X1 - minimumGrayValue);
                         }
 
                         if (LUT[gray_value] > 255)
@@ -280,14 +282,14 @@ namespace WFpiecewiseLinear
 
                 for (int gray_value = 0; gray_value < 256; gray_value++)
                 {
-                    int hh = histogram_frequency[gray_value] * 255 / MaximumHistogramFrequecy;
+                    int hh = histogram_frequency[gray_value] * 255 / maximumHistogramFrequecy;
                     if (histogram_frequency[gray_value] > 0 && hh < 1) hh = 1;
                     histogramGraphics.DrawLine(pen: redPen, x1: gray_value, y1: 255, x2: gray_value, y2: 255 - hh);
                 }
 
                 yy = 255;
-                histogramGraphics.DrawLine(pen: bluePen, x1: 0, y1: yy - LUT[0], x2: MinimumGrayValue, y2: yy - LUT[0]);
-                histogramGraphics.DrawLine(pen: bluePen, x1: MinimumGrayValue, y1: yy - LUT[0], x2: X1, y2: yy - LUT[X1]);
+                histogramGraphics.DrawLine(pen: bluePen, x1: 0, y1: yy - LUT[0], x2: minimumGrayValue, y2: yy - LUT[0]);
+                histogramGraphics.DrawLine(pen: bluePen, x1: minimumGrayValue, y1: yy - LUT[0], x2: X1, y2: yy - LUT[X1]);
                 oldX = X1;
                 oldY = Y1;
             } //------------------------ end if (cntClick == 1) --------------------------------------
@@ -295,13 +297,13 @@ namespace WFpiecewiseLinear
             if (clickCount == 2)
             {
                 X2 = e.X;
-                if (X2 < MinimumGrayValue)
+                if (X2 < minimumGrayValue)
                 {
-                    X2 = MinimumGrayValue;
+                    X2 = minimumGrayValue;
                 }
-                if (X2 > MaximumGrayValue)
+                if (X2 > maximumGrayValue)
                 {
-                    X2 = MaximumGrayValue;
+                    X2 = maximumGrayValue;
                 }
 
                 if (X2 < X1)
@@ -326,9 +328,9 @@ namespace WFpiecewiseLinear
                             LUT[gray_value] = Y1 + (gray_value - X1) * (Y2 - Y1) / (X2 - X1);
                         }
 
-                        if (gray_value > X2 && gray_value <= MaximumGrayValue)
+                        if (gray_value > X2 && gray_value <= maximumGrayValue)
                         {
-                            LUT[gray_value] = Y2 + (gray_value - X2) * (255 - Y2) / (MaximumGrayValue - X2);
+                            LUT[gray_value] = Y2 + (gray_value - X2) * (255 - Y2) / (maximumGrayValue - X2);
                         }
 
                         if (LUT[gray_value] > 255)
@@ -336,7 +338,7 @@ namespace WFpiecewiseLinear
                             LUT[gray_value] = 255;
                         }
 
-                        if (gray_value >= MaximumGrayValue)
+                        if (gray_value >= maximumGrayValue)
                         {
                             LUT[gray_value] = 255;
                         }
@@ -345,8 +347,8 @@ namespace WFpiecewiseLinear
 
                 yy = 255;
                 histogramGraphics.DrawLine(pen: bluePen, x1: X1, y1: yy - LUT[X1], x2: X2, y2: yy - LUT[X2]);
-                histogramGraphics.DrawLine(bluePen, X2, yy - LUT[X2], MaximumGrayValue, 0);
-                histogramGraphics.DrawLine(bluePen, MaximumGrayValue, 0, 255, 0);
+                histogramGraphics.DrawLine(bluePen, X2, yy - LUT[X2], maximumGrayValue, 0);
+                histogramGraphics.DrawLine(bluePen, maximumGrayValue, 0, 255, 0);
 
                 oldX = X2;
                 oldY = Y2;
@@ -388,10 +390,10 @@ namespace WFpiecewiseLinear
                     }
                 } //=============================== end for (int y = 0 ... ======================
                   // Calculating "ContrastBmp":
-                GridToBitmap(ContrastEnhancedBitmap, contrastEnhancedCImage.Grid);
+                GridToBitmap(contrastEnhancedBitmap, contrastEnhancedCImage.Grid);
             }
             progressBar1.Visible = false;
-            pictureBoxContrastEnhancedImage.Image = ContrastEnhancedBitmap;
+            pictureBoxContrastEnhancedImage.Image = contrastEnhancedBitmap;
             if (clickCount == 2) label2.Visible = true;
         } //******************************** end pictureBox3_MouseDown **************************
 
@@ -506,18 +508,18 @@ namespace WFpiecewiseLinear
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 string tmpFileName;
-                if (dialog.FileName == OpenImageFile)
+                if (dialog.FileName == openImageFile)
                 {
-                    tmpFileName = OpenImageFile.Insert(OpenImageFile.IndexOf("."), "$$$");
+                    tmpFileName = openImageFile.Insert(openImageFile.IndexOf("."), "$$$");
                     if (dialog.FileName.Contains(".jpg"))
                     {
-                        ContrastEnhancedBitmap.Save(tmpFileName, ImageFormat.Jpeg); // saving tmpFile
+                        contrastEnhancedBitmap.Save(tmpFileName, ImageFormat.Jpeg); // saving tmpFile
                     }
                     else
                     {
                         if (dialog.FileName.Contains(".bmp"))
                         {
-                            ContrastEnhancedBitmap.Save(tmpFileName, ImageFormat.Bmp);
+                            contrastEnhancedBitmap.Save(tmpFileName, ImageFormat.Bmp);
                         }
                         else
                         {
@@ -525,18 +527,18 @@ namespace WFpiecewiseLinear
                             return;
                         }
                     }
-                    OriginalBitmap.Dispose();
-                    File.Replace(tmpFileName, OpenImageFile, OpenImageFile.Insert(OpenImageFile.IndexOf("."), "BackUp"));
+                    originalBitmap.Dispose();
+                    File.Replace(tmpFileName, openImageFile, openImageFile.Insert(openImageFile.IndexOf("."), "BackUp"));
                     // Replaces the contents of 'OpenImageFile' with the contents of the file 'tmpFileName', 
                     // deleting 'tmpFileName', and creating a backup of the 'OpenImageFile'.
-                    OriginalBitmap = new Bitmap(OpenImageFile);
-                    pictureBoxOriginalImage.Image = OriginalBitmap;
+                    originalBitmap = new Bitmap(openImageFile);
+                    pictureBoxOriginalImage.Image = originalBitmap;
                 }
                 else
                 {
-                    if (dialog.FileName.Contains(".jpg")) ContrastEnhancedBitmap.Save(dialog.FileName, ImageFormat.Jpeg);
+                    if (dialog.FileName.Contains(".jpg")) contrastEnhancedBitmap.Save(dialog.FileName, ImageFormat.Jpeg);
                     else
-                      if (dialog.FileName.Contains(".bmp")) ContrastEnhancedBitmap.Save(dialog.FileName, ImageFormat.Bmp);
+                      if (dialog.FileName.Contains(".bmp")) contrastEnhancedBitmap.Save(dialog.FileName, ImageFormat.Bmp);
                     else
                     {
                         MessageBox.Show("The file " + dialog.FileName + " has an inappropriate extension. Returning.");

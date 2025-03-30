@@ -13,19 +13,20 @@ namespace WFrestoreLin
         public Form1()
         {
             InitializeComponent();
+            this.Text = "Image Compression";
         }
-        string OpenFileName;
+
+        private string OpenFileName;
 
         public struct iVect2
         {
-            public
-            int X, Y;
+            public int X, Y;
+
             public iVect2(int x, int y) // constructor
             {
                 this.X = x;
                 this.Y = y;
             }
-
 
             public static iVect2 operator +(iVect2 a, iVect2 b)
             {
@@ -115,11 +116,16 @@ namespace WFrestoreLin
 
                 this.Corner = new byte[4];
                 for (int i1 = 0; i1 < 4; i1++)
+                {
                     this.Corner[i1] = ByteNew[j + i1];
+                }
                 j += 4;
 
                 this.Line1 = new CCrack[nLine1];
-                for (int i1 = 0; i1 < nLine1; i1++) this.Line1[i1] = new CCrack();
+                for (int i1 = 0; i1 < nLine1; i1++)
+                {
+                    this.Line1[i1] = new CCrack();
+                }
 
                 fm1.progressBar1.Visible = true;
                 int denomProg = fm1.progressBar1.Maximum / fm1.progressBar1.Step;
@@ -137,7 +143,10 @@ namespace WFrestoreLin
                 }
 
                 this.Line2 = new CLine[nLine2];
-                for (int i2 = 0; i2 < nLine2; i2++) this.Line2[i2] = new CLine();
+                for (int i2 = 0; i2 < nLine2; i2++)
+                {
+                    this.Line2[i2] = new CLine();
+                }
 
                 for (int i2 = 0; i2 < nLine2; i2++)
                 {
@@ -160,16 +169,23 @@ namespace WFrestoreLin
 
                 int p = j;
                 this.Byte = new byte[nByte];
+
                 for (int i3 = 0; i3 < nByte; i3++)
                 {
                     if ((i3 % k) == 0) fm1.progressBar1.PerformStep();
                     this.Byte[i3] = ByteNew[j + i3];
                 }
+
                 fm1.progressBar1.Visible = false;
                 j += nByte;
 
                 this.Step = new iVect2[4];
-                for (int i = 0; i < 4; i++) Step[i] = new iVect2();
+
+                for (int i = 0; i < 4; i++)
+                {
+                    Step[i] = new iVect2();
+                }
+
                 this.Step[0].X = 1; this.Step[0].Y = 0;
                 this.Step[1].X = 0; this.Step[1].Y = 1;
                 this.Step[2].X = -1; this.Step[2].Y = 0;
@@ -186,9 +202,16 @@ namespace WFrestoreLin
 
                 fm1.progressBar1.Value = 0;
                 fm1.progressBar1.Visible = true;
-                for (int i = 0; i < width * height * (nBits / 8); i++) Image.Grid[i] = 0;
 
-                for (int i = 0; i < width * height; i++) Mask.Grid[i] = 0;
+                for (int i = 0; i < width * height * (nBits / 8); i++)
+                {
+                    Image.Grid[i] = 0;
+                }
+
+                for (int i = 0; i < width * height; i++)
+                {
+                    Mask.Grid[i] = 0;
+                }
 
                 if (nBits == 24)
                 {
@@ -207,6 +230,7 @@ namespace WFrestoreLin
                     Image.Grid[width * height - 1] = Corner[2];
                     Image.Grid[0 + width * (height - 1)] = Corner[3];
                 }
+
                 Mask.Grid[0] = Mask.Grid[width - 1] = Mask.Grid[width * height - 1] = Mask.Grid[width * (height - 1)] = LabMask;
 
                 // Short lines:
@@ -216,11 +240,13 @@ namespace WFrestoreLin
                 int jump, Len = nLine1, nStep = 20;
                 if (Len > 2 * nStep) jump = Len / nStep;
                 else jump = 2;
+
                 for (int il = 0; il < nLine1; il++) //=====================================================
                 {
                     if ((il % jump) == jump - 1) fm1.progressBar1.PerformStep();
                     dir = ((Line1[il].x >> 14) & 2) | (Line1[il].y >> 15);
                     x = Line1[il].x & 0X7FFF; y = Line1[il].y & 0X7FFF;
+
                     if (nBits == 24)
                     {
                         switch (dir)
@@ -298,6 +324,7 @@ namespace WFrestoreLin
                 nStep = 20;
                 if (Len > 2 * nStep) jump = Len / nStep;
                 else jump = 2;
+
                 for (int il = 0; il < nLine2; il++) //====================================================================================================
                 {
                     if ((il % jump) == jump - 1) fm1.progressBar1.PerformStep();
@@ -311,10 +338,12 @@ namespace WFrestoreLin
                     iVect2 P = new iVect2(), PixelP = new iVect2(), PixelN = new iVect2(); // comb. coordinates
 
                     byte[] ColN = new byte[3], ColP = new byte[3];
-                    byte[] ColStartN = new byte[3], ColStartP = new byte[3],
-                              ColLastN = new byte[3], ColLastP = new byte[3]; // Colors
+                    byte[] ColStartN = new byte[3], ColStartP = new byte[3], ColLastN = new byte[3], ColLastP = new byte[3]; // Colors
+
                     for (int c = 0; c < 3; c++)
+                    {
                         ColN[c] = ColP[c] = ColStartN[c] = ColStartP[c] = ColLastN[c] = ColLastP[c] = 0;
+                    }
 
                     if (nBits == 24)
                     {
@@ -333,6 +362,7 @@ namespace WFrestoreLin
                         ColLastN[0] = Line2[il].Ind2;
                         ColLastP[0] = Line2[il].Ind3;
                     }
+
                     P.X = Line2[il].x; P.Y = Line2[il].y;
 
                     int nCrack = Line2[il].nCrack;
@@ -350,10 +380,8 @@ namespace WFrestoreLin
                         }
                         if (PixelP.Y < 0 || PixelN.Y < 0 || PixelP.Y > height - 1 || PixelN.Y > height - 1)
                         {
-                            MessageBox.Show("Restore: Bad 'PixelP' or 'PixelN'. This means 'Byte' is bad. iByte=" +
-                    iByte + "; dir=" + dir + "; Byte=" + Byte[iByte]);
-                            MessageBox.Show("Restore: PixelP=(" + PixelP.X + "," + PixelP.Y + "); PixelN=(" + PixelN.X + ","
-                            + PixelN.Y + "); P=(" + P.X + "," + P.Y + ")");
+                            MessageBox.Show("Restore: Bad 'PixelP' or 'PixelN'. This means 'Byte' is bad. iByte=" + iByte + "; dir=" + dir + "; Byte=" + Byte[iByte]);
+                            MessageBox.Show("Restore: PixelP=(" + PixelP.X + "," + PixelP.Y + "); PixelN=(" + PixelN.X + "," + PixelN.Y + "); P=(" + P.X + "," + P.Y + ")");
                         }
                         for (int c = 0; c < nbyte; c++) //===================================================
                         {
@@ -363,6 +391,7 @@ namespace WFrestoreLin
 
                         // Assigning colors to intermediate pixels of a line:
                         xx = PixelP.X; yy = PixelP.Y;
+
                         if (xx + width * yy > width * height - 1 || xx + width * yy < 0)
                         {
                             MessageBox.Show("Restore: Bad 'xx,yy'=" + (xx + width * yy) + "; This means 'Byte' is bad.");
@@ -370,17 +399,25 @@ namespace WFrestoreLin
 
                         if (xx + width * yy < width * height && xx + width * yy >= 0)
                         {
-                            for (int c = 0; c < nbyte; c++) Image.Grid[c + nbyte * xx + nbyte * width * yy] = ColP[c]; // Assertion
+                            for (int c = 0; c < nbyte; c++)
+                            {
+                                Image.Grid[c + nbyte * xx + nbyte * width * yy] = ColP[c]; // Assertion
+                            }
                             Mask.Grid[xx + width * yy] = LabMask;
                         }
+
                         xx = PixelN.X; yy = PixelN.Y;
                         if (xx + width * yy > width * height - 1 || xx + width * yy < 0) return -1;
 
                         if (xx + width * yy < width * height && xx + width * yy >= 0)
                         {
-                            for (int c = 0; c < nbyte; c++) Image.Grid[c + nbyte * xx + nbyte * width * yy] = ColN[c];
+                            for (int c = 0; c < nbyte; c++)
+                            {
+                                Image.Grid[c + nbyte * xx + nbyte * width * yy] = ColN[c];
+                            }
                             Mask.Grid[xx + width * yy] = LabMask;
                         }
+
                         P = P + Step[dir];
 
                         iShift++;
@@ -413,6 +450,7 @@ namespace WFrestoreLin
                 {
                     if (OpenFileName[i] == '.') indDot = i;  // Position of the last '.'
                 }
+
                 if (OpenFileName[indDot + 1] != 'd' && OpenFileName[indDot + 1] != 'D' ||
                     OpenFileName[indDot + 2] != 'a' && OpenFileName[indDot + 2] != 'A' ||
                     OpenFileName[indDot + 3] != 't' && OpenFileName[indDot + 3] != 'T')
@@ -464,12 +502,13 @@ namespace WFrestoreLin
                 for (int x = 0; x < bmp.Width; x++)
                 {
                     if (nbyteI == 3)
-                        bmp.SetPixel(x, y, Color.FromArgb(Image.Grid[nbyteI * (x + bmp.Width * y) + 2],
-                           Image.Grid[nbyteI * (x + bmp.Width * y) + 1], Image.Grid[nbyteI * (x + bmp.Width * y) + 0]));
+                    {
+                        bmp.SetPixel(x, y, Color.FromArgb(Image.Grid[nbyteI * (x + bmp.Width * y) + 2], Image.Grid[nbyteI * (x + bmp.Width * y) + 1], Image.Grid[nbyteI * (x + bmp.Width * y) + 0]));
+                    }
                     else
-                        bmp.SetPixel(x, y, Color.FromArgb(Image.Grid[x + bmp.Width * y],
-                           Image.Grid[x + bmp.Width * y], Image.Grid[x + bmp.Width * y]));
-
+                    {
+                        bmp.SetPixel(x, y, Color.FromArgb(Image.Grid[x + bmp.Width * y], Image.Grid[x + bmp.Width * y], Image.Grid[x + bmp.Width * y]));
+                    }
                 }
             }
             progressBar1.Visible = false;
@@ -510,8 +549,7 @@ namespace WFrestoreLin
                     else
                         for (int c = 0; c < nbyte; c++)
                         {
-                            rgbValues[c + nbyte * x + Math.Abs(bmpData.Stride) * y] =
-                                                    Grid[c + nbyte * (x + bmp.Width * y)];
+                            rgbValues[c + nbyte * x + Math.Abs(bmpData.Stride) * y] = Grid[c + nbyte * (x + bmp.Width * y)];
                         }
                 }
             }
@@ -548,9 +586,13 @@ namespace WFrestoreLin
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 if (dialog.FileName.Contains(".jpg"))
+                {
                     RestoreBMP.Save(dialog.FileName, ImageFormat.Jpeg);
-                else
-                  if (dialog.FileName.Contains(".bmp")) RestoreBMP.Save(dialog.FileName, ImageFormat.Bmp);
+                }
+                else if (dialog.FileName.Contains(".bmp"))
+                {
+                    RestoreBMP.Save(dialog.FileName, ImageFormat.Bmp);
+                }
                 else
                 {
                     MessageBox.Show("The file " + dialog.FileName + " has an inappropriate extension. Returning.");

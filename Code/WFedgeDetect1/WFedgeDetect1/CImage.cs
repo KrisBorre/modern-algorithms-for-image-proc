@@ -75,13 +75,14 @@ namespace WFedgeDetect
             for (int i = 0; i < width * height * (N_Bits / 8); i++) this.Grid[i] = img[i];
         }
 
+        // not called
         public int RGB(byte rot, byte gruen, byte blau)
         {
             int color = rot | (gruen << 8) | (blau << 16);
             return color;
         }
 
-
+        // not called
         public void Copy(CImage inp)
         {
             width = inp.width;
@@ -100,6 +101,7 @@ namespace WFedgeDetect
             return max;
         }
 
+        // not called
         public int ColorToGrayMC(CImage inp, Form1 fm1)
         /* Transforms the colors of the color image "inp" to MaxC(r,g,b) 
         and puts these values to this.Grid. --------- */
@@ -129,6 +131,7 @@ namespace WFedgeDetect
         } //************************** end ColorToGrayMC ***************************
 
 
+        // not called
         public int DeleteBit0(int nbyte)
         // If "this" is a 8 bit image, then sets the bits 0 and 1 of each pixel to 0.
         // If it is a 24 bit one, then sets the bit 0 of green and red chanels to 0.
@@ -145,7 +148,7 @@ namespace WFedgeDetect
         } //********************* end DeleteBit0 ************************   
 
 
-
+        // not called
         public int SigmaNewM(CImage Inp, int hWind, int Toleranz, Form1 fm1)
         // Sigma filter with doubled calculation of the output values for gray value images.
         {
@@ -203,7 +206,7 @@ namespace WFedgeDetect
             return 1;
         } //********************** end SigmaNewM **********************************
 
-
+        // not called
         public int SigmaColor(CImage Inp, int hWind, int Toleranz, Form1 fm1)
         {   // The sigma filter for color images with 3 bytes per pixel.
             int gv, y1, yEnd, yStart;
@@ -258,7 +261,7 @@ namespace WFedgeDetect
         } //********************** end SigmaColor **********************************
 
 
-        public int SigmaSimpleUni(CImage Inp, int hWind, int Toleranz, Form1 fm1)
+        public int SigmaFilterSimpleUni(CImage Inp, int hWind, int Toleranz, Form1 fm1)
         // Simple sigma filter for both gray value and color images. 
         {
             int[] gvMin = new int[3], gvMax = new int[3], nPixel = new int[3], Sum = new int[3];
@@ -307,7 +310,7 @@ namespace WFedgeDetect
         } //********************** end SigmaSimpleUni **********************************
 
 
-        public int ExtremVar(CImage Inp, int hWind, Form1 fm1)
+        public int ExtremeFilterVar(CImage Inp, int hWind, Form1 fm1)
         // Extrem filter for gray value images with variable window size of 2*hWind+1.
         {
             N_Bits = 8; width = Inp.width; height = Inp.height;
@@ -357,7 +360,7 @@ namespace WFedgeDetect
             return 1;
         } //********************** end ExtrmVar *********************************************
 
-
+        // not called
         public int ExtremVarColor(CImage Inp, int hWind, Form1 fm1)
         {   /* The extreme filter for 3 byte color images with variable hWind.
 	    The filter finds in the (2*hWind+1)-neighbourhood of the actual pixel (x,y) the color "Color1" which has 
@@ -434,7 +437,7 @@ namespace WFedgeDetect
             return 1;
         } //********************** end ExtremVarColor **************************************
 
-
+        // not called
         public int ExtremDifColor(CImage Inp, int hWind, Form1 fm1)
         {   /* The extreme filter for 3 byte color images with variable hWind.
 	    The filter finds in the (2*hWind+1)-neighbourhood of the actual pixel (x,y) the color "Color1" which 
@@ -569,7 +572,7 @@ namespace WFedgeDetect
             return 1;
         } //********************** end ExtremLightColor **************************************
 
-
+        // not called
         public int ExtremVarColorExp(CImage Inp, int hWind1)
         {   /* The extreme filter for 3 byte color images with variable hWind.
 	    The filter finds in the (2*hWind+1)-neighbourhood of the actual pixel (x,y) the color "Color1" which has 
@@ -648,7 +651,7 @@ namespace WFedgeDetect
             return 1;
         } //********************** end ExtremVarColorExp *************************************
 
-
+        // not called
         int ColorDifAbs(byte[] Colp, byte[] Colh)
         // Returns the sum of the absolut differences of the color components divided through 3.
         {
@@ -665,6 +668,7 @@ namespace WFedgeDetect
             return Dif / 3;
         }
 
+        // not called
         public int LabelCells(int th, CImage Image3)
         /* Looks in "Image3" (standard coord.) for all pairs of adjacent pixels with color differences greater
              than "th" and finds the maximum color differencew among adjacent pairs in the same line or in the same column.
@@ -968,11 +972,13 @@ namespace WFedgeDetect
             int jump, Len = height / 2, nStep = 10;
             if (Len > 2 * nStep) jump = Len / nStep;
             else jump = 2;
+
             for (y = 3; y < height; y += 2) //================ vertical cracks =====================
             {
                 if (y % jump == jump - 1) fm1.progressBar1.PerformStep();
                 State = 0;
                 xopt = -1; xStartP = xStartM = -1;
+
                 for (x = 3; x < width; x += 2)  //====================================================
                 {
                     for (c = 0; c < nByte; c++)
@@ -1052,6 +1058,7 @@ namespace WFedgeDetect
                         Colorh[c] = Image3.Grid[c + nByte * (x / 2) + nByte * NXB * ((y - 2) / 2)];
                         Colorp[c] = Image3.Grid[c + nByte * (x / 2) + nByte * NXB * (y / 2)];
                     }
+
                     if (nByte == 3) difH = ColorDifSign(Colorp, Colorh);
                     else difH = Colorp[0] - Colorh[0];
                     if (difH > th)
@@ -1122,8 +1129,7 @@ namespace WFedgeDetect
         }
 
 
-        public int Trace(byte[] GridCopy, int P, int[] Index, ref int SumCells, ref int Pterm, ref int dir,
-          int Size, bool SPEC, int maxDist, Point EP)
+        public int Trace(byte[] GridCopy, int P, int[] Index, ref int SumCells, ref int Pterm, ref int dir, int Size, bool SPEC, int maxDist, Point EP)
         /* Traces a branch of a component, saves all cells in "Index"; "SumCells" is the number of saved cells.
          * If "SumCells" becomes greater than "Size", the tracing is interrupted, and the method returns -1.
          * Otherwise it returns a positive number. --*/
@@ -1145,8 +1151,15 @@ namespace WFedgeDetect
                 if (SumCells < Size) Index[SumCells] = Crack;
                 SumCells++;
 
-                if (Crack >= 0 && Crack < width * height) LabCrack = GridCopy[Crack];
-                else LabCrack = 0;
+                if (Crack >= 0 && Crack < width * height)
+                {
+                    LabCrack = GridCopy[Crack];
+                }
+                else
+                {
+                    LabCrack = 0;
+                }
+
                 if (LabCrack == 0)
                 {
                     int cellY = Crack / width;
@@ -1155,9 +1168,11 @@ namespace WFedgeDetect
                     int cellX1 = StartLine - cellY1 * width;
                     int cellY2 = P / width;
                     int cellX2 = P - cellY1 * width;
+
                     MessageBox.Show("Trace, error: dir=" + dir + " the Crack=(" + cellX + "; " + cellY +
                     ") has label 0;  P=(" + cellX2 + "; " + cellY2 + "; Lab=" + (GridCopy[P] & Mask) + " iCrack=" +
                     iCrack + " Start=(" + cellX1 + "; " + cellY1 + ")");
+
                     Pterm = P;
                     if ((GridCopy[P] & Mask) == 0) return -1;
                 }
@@ -1316,6 +1331,7 @@ namespace WFedgeDetect
                 for (x = 2; x < width - 2; x += 2) //===================== over points ==============================
                 {
                     Lab = Grid[x + width * y];
+
                     if (Grid[x + width * y] >= 3 && Grid[x - 2 + width * (y + 2)] >= 3 &&
                          Grid[x - 1 + width * y] == 1 && Grid[x - 2 + width * (y + 1)] == 1 &&
                          Grid[x + width * (y + 1)] == 1 && Grid[x - 1 + width * (y + 2)] == 1)
@@ -1595,7 +1611,7 @@ namespace WFedgeDetect
             return 1;
         } //******************************** end FastAverageUni ***************************************
 
-
+        // not called
         public int CheckComb(int Mask)
         {
             bool found = false;
@@ -1642,8 +1658,7 @@ namespace WFedgeDetect
             Pen thickBluePen = new Pen(Color.LightGreen, 4);
             SolidBrush blackBrush = new SolidBrush(Color.Black);
             Rectangle rect = new Rectangle(0, 0, fm1.pictureBox3.Width, 300);
-            int divider, xEnd, Step = 4, length = fm1.pictureBox3.Width / Step, light1 = 0, light2 = 0, x1,
-              y01 = 120, y02 = 240, y1, y;
+            int divider, xEnd, Step = 4, length = fm1.pictureBox3.Width / Step, light1 = 0, light2 = 0, x1, y01 = 120, y02 = 240, y1, y;
 
             int nByte = N_Bits / 8;
             if (nByte == 3) divider = 8;
@@ -1654,11 +1669,16 @@ namespace WFedgeDetect
             else xEnd = width;
             int Step2 = Step / 2;
 
-            for (int c = 0; c < 3; c++) light1 += Grid[c + nByte * (xStart + width * Y)];
+            for (int c = 0; c < 3; c++)
+            {
+                light1 += Grid[c + nByte * (xStart + width * Y)];
+            }
+
             x1 = 0;
             y1 = y01 - light1 / divider;
             g3.DrawLine(whitePen, 20, y01, 20, y01 - th / divider);
             g3.DrawLine(whitePen, 0, y01, xEnd * Step, y01);
+
             for (int x = xStart + 1; x < xEnd; x++) //===============================================
             {
                 x1 = (x - xStart);
@@ -1693,10 +1713,16 @@ namespace WFedgeDetect
 
             // Drawing the curve of "SigmaIm":
             int nByteSigma = Sigma.N_Bits / 8;
-            for (int c = 0; c < nByteSigma; c++) light1 += Sigma.Grid[c + nByteSigma * (xStart + width * Y)];
+
+            for (int c = 0; c < nByteSigma; c++)
+            {
+                light1 += Sigma.Grid[c + nByteSigma * (xStart + width * Y)];
+            }
+
             x1 = 0;
             y1 = y02; // -light1 / divider;
             g3.DrawLine(whitePen, 0, y02, xEnd * Step, y02);
+
             for (int x = xStart + 1; x < xEnd; x++) //=============================
             {
                 //x1 = (int)((x - xStart) * fm1.Scale1 * 0.8);
@@ -1709,6 +1735,7 @@ namespace WFedgeDetect
                 x1 = x;
                 y1 = y;
             }  //============================= end for (int x ... =================
+
             int xx = (int)(xStart * fm1.Scale1) + fm1.marginX;
             int yy = (int)(Y * fm1.Scale1) + fm1.marginY;
             int ex = (int)(xEnd * fm1.Scale1) + fm1.marginX;
@@ -1719,7 +1746,7 @@ namespace WFedgeDetect
         } //******************************** end DrawImageLine ***********************
 
 
-
+        // not called
         public void DrawImageLineED(int Y, int xStart, int th, CImage Sigma, byte[] Grid2, Form1 fm1)
         // This is a method of "ExtremIm".
         {

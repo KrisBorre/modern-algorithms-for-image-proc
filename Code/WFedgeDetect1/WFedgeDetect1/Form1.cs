@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
+// Chapter 6: Edge Detection
 // page 87
 namespace WFedgeDetect
 {
@@ -11,6 +12,7 @@ namespace WFedgeDetect
         public Form1()
         {
             InitializeComponent();
+            Text = "Edge Detection";
         }
 
         private Bitmap origBmp;
@@ -24,6 +26,7 @@ namespace WFedgeDetect
         private CImage ExtremIm;  // shading corrected image and the result
         private CImage CombIm;  // shading corrected image and the result
         private CImage EdgeIm;  // shading corrected image and the result
+
         private int nBit;
         private bool OPEN = false;
         private int nLoop, denomProg;
@@ -74,8 +77,7 @@ namespace WFedgeDetect
                 OPEN = true;
                 BmpGraph = true;
             }
-            else
-              if (origBmp.PixelFormat == PixelFormat.Format8bppIndexed)
+            else if (origBmp.PixelFormat == PixelFormat.Format8bppIndexed)
             {
                 Grid = new byte[origBmp.Width * origBmp.Height]; // indexed image
                 nBit = 8;
@@ -87,6 +89,7 @@ namespace WFedgeDetect
                 MessageBox.Show("Form1: Inappropriate pixel format. Returning.");
                 return;
             }
+
             label4.Text = "Original image";
             label4.Visible = true;
             BmpGraph = false;
@@ -97,6 +100,7 @@ namespace WFedgeDetect
             pictureBox1.Image = origBmp;
             pictureBox2.Image = BmpPictBox2;
             pictureBox3.Image = BmpPictBox3;
+
             if (BmpGraph)
             {
                 g1 = Graphics.FromImage(BmpPictBox1);
@@ -115,10 +119,19 @@ namespace WFedgeDetect
             ExtremIm = new CImage(origBmp.Width, origBmp.Height, nBit, Grid);
             CombIm = new CImage(1 + 2 * origBmp.Width, 1 + 2 * origBmp.Height, 8);
             EdgeIm = new CImage(origBmp.Width, origBmp.Height, 8, Grid);
+
             double ScaleX = (double)pictureBox1.Width / (double)OrigIm.width;
             double ScaleY = (double)pictureBox1.Height / (double)OrigIm.height;
-            if (ScaleX < ScaleY) Scale1 = ScaleX;
-            else Scale1 = ScaleY;
+
+            if (ScaleX < ScaleY)
+            {
+                Scale1 = ScaleX;
+            }
+            else
+            {
+                Scale1 = ScaleY;
+            }
+
             marginX = (pictureBox1.Width - (int)(Scale1 * OrigIm.width)) / 2;
             marginY = (pictureBox1.Height - (int)(Scale1 * OrigIm.height)) / 2;
             OPEN = true;
@@ -141,6 +154,7 @@ namespace WFedgeDetect
                 {
                     int i = x + bmp.Width * y;
                     color = origBmp.GetPixel(x, y);
+
                     for (int c = 0; c < nByte; c++)
                     {
                         if (c == 0) Grid[nByte * i] = color.B;
@@ -159,18 +173,21 @@ namespace WFedgeDetect
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
             int nbyte;
+
             switch (bmp.PixelFormat)
             {
                 case PixelFormat.Format24bppRgb: nbyte = 3; break;
                 case PixelFormat.Format8bppIndexed: nbyte = 1; break;
                 default: MessageBox.Show("BitmapToGrid: Inappropriate pixel format=" + bmp.PixelFormat); return;
             }
+
             IntPtr ptr = bmpData.Scan0;
             int length = Math.Abs(bmpData.Stride) * bmp.Height;
             byte[] rgbValues = new byte[length];
             System.Runtime.InteropServices.Marshal.Copy(ptr, rgbValues, 0, length);
 
             progressBar1.Visible = true;
+
             for (int y = 0; y < bmp.Height; y++)
             {
                 int y1 = 1 + bmp.Height / 100;
@@ -181,17 +198,21 @@ namespace WFedgeDetect
                     if (nbyte == 1)  // nbyte is global according to the PixelFormat of "bmp"
                     {
                         Color color = bmp.Palette.Entries[rgbValues[x + Math.Abs(bmpData.Stride) * y]]; // es war ohne 3*
+
                         Grid[3 * (x + bmp.Width * y) + 0] = color.B;
                         Grid[3 * (x + bmp.Width * y) + 1] = color.G;
                         Grid[3 * (x + bmp.Width * y) + 2] = color.R;
                     }
                     else
+                    {
                         for (int c = 0; c < nbyte; c++)
                         {
                             Grid[c + nbyte * (x + bmp.Width * y)] = rgbValues[c + nbyte * x + Math.Abs(bmpData.Stride) * y];
                         }
+                    }
                 }
             }
+
             bmp.UnlockBits(bmpData);
             progressBar1.Visible = false;
         } //****************************** end BitmapToGrid ****************************************
@@ -203,12 +224,14 @@ namespace WFedgeDetect
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
             int nbyte;
+
             switch (bmp.PixelFormat)
             {
                 case PixelFormat.Format24bppRgb: nbyte = 3; break;
                 case PixelFormat.Format8bppIndexed: nbyte = 1; break;
                 default: MessageBox.Show("GridToBitmap: Inappropriate pixel format=" + bmp.PixelFormat); return;
             }
+
             IntPtr ptr = bmpData.Scan0;
             int size = bmp.Width * bmp.Height;
             int length = Math.Abs(bmpData.Stride) * bmp.Height;
@@ -216,6 +239,7 @@ namespace WFedgeDetect
 
             progressBar1.Visible = true;
             int y1 = 1 + nLoop * bmp.Height / 63;
+
             for (int y = 0; y < bmp.Height; y++)
             {
                 if (((y + 1) % y1) == 0) progressBar1.PerformStep();
@@ -225,18 +249,21 @@ namespace WFedgeDetect
                     if (nbyte == 1)  // nbyte is global according to the PixelFormat of "bmp"
                     {
                         Color color = bmp.Palette.Entries[Grid[3 * (x + bmp.Width * y)]];
+
                         rgbValues[3 * (x + Math.Abs(bmpData.Stride) * y) + 0] = color.B;
                         rgbValues[3 * (x + Math.Abs(bmpData.Stride) * y) + 1] = color.G;
                         rgbValues[3 * (x + Math.Abs(bmpData.Stride) * y) + 2] = color.R;
                     }
                     else
+                    {
                         for (int c = 0; c < nbyte; c++)
                         {
-                            rgbValues[c + nbyte * x + Math.Abs(bmpData.Stride) * y] =
-                                                    Grid[c + nbyte * (x + bmp.Width * y)];
+                            rgbValues[c + nbyte * x + Math.Abs(bmpData.Stride) * y] = Grid[c + nbyte * (x + bmp.Width * y)];
                         }
+                    }
                 }
             }
+
             System.Runtime.InteropServices.Marshal.Copy(rgbValues, 0, ptr, length);
             bmp.UnlockBits(bmpData);
         } //****************************** end GridToBitmap ****************************************
@@ -301,6 +328,7 @@ namespace WFedgeDetect
         } //****************************** end GridToBitmap ****************************************
 
 
+        // not called
         public void GridToBitmapSet(Bitmap bmp, byte[] Grid, int nbyte)
         // The argument "nByte" specifies the type of "Grid"
         {
@@ -361,17 +389,18 @@ namespace WFedgeDetect
                 MessageBox.Show("Please open an image");
                 return;
             }
+
             progressBar1.Visible = true;
             progressBar1.Value = 0;
 
-            SigmaIm.SigmaSimpleUni(OrigIm, 1, 30, this);
+            SigmaIm.SigmaFilterSimpleUni(OrigIm, 1, 30, this);
             if (OrigIm.N_Bits == 24)
             {
                 ExtremIm.ExtremLightColor(SigmaIm, 2, 1, this);
             }
             else
             {
-                ExtremIm.ExtremVar(SigmaIm, 2, this);
+                ExtremIm.ExtremeFilterVar(SigmaIm, 2, this);
             }
 
             Threshold = (int)numericUpDown1.Value;
@@ -384,10 +413,10 @@ namespace WFedgeDetect
 
             GridToBitmapOld(BmpPictBox2, EdgeIm.Grid);
 
-            radioButton1.Visible = true;
-            radioButton2.Visible = true;
-            radioButton1.Checked = false;
-            radioButton2.Checked = false;
+            radioButton1Comb.Visible = true;
+            radioButton2Image.Visible = true;
+            radioButton1Comb.Checked = false;
+            radioButton2Image.Checked = false;
             label5.Visible = true;
 
             pictureBox2.Refresh();
@@ -397,14 +426,15 @@ namespace WFedgeDetect
         private void pictureBox2_MouseClick(object sender, MouseEventArgs e) // DrawComb
         {
             int StandX, StandY;
-            if (!radioButton1.Checked && !radioButton2.Checked)
+            if (!radioButton1Comb.Checked && !radioButton2Image.Checked)
             {
                 MessageBox.Show("Please click one of the right radio buttons");
             }
-            if (radioButton2.Checked)
+
+            if (radioButton2Image.Checked)
             {
                 pictureBox1.Image = origBmp;
-                radioButton1.Checked = false;
+                radioButton1Comb.Checked = false;
                 StandX = (int)((e.X - marginX) / Scale1);
                 StandY = (int)((e.Y - marginY) / Scale1);
                 label2.Visible = true;
@@ -413,7 +443,7 @@ namespace WFedgeDetect
                 ExtremIm.DrawImageLine(StandY, StandX, Threshold, SigmaIm, CombIm.Grid, this);
             }
 
-            if (radioButton1.Checked)
+            if (radioButton1Comb.Checked)
             {
                 StandX = (int)((e.X - marginX) / Scale1);
                 StandY = (int)((e.Y - marginY) / Scale1);
@@ -422,6 +452,7 @@ namespace WFedgeDetect
                 pictureBox3.Visible = false;
                 CombIm.DrawComb(StandX, StandY, this);
             }
+
             if (BmpGraph)
             {
                 pictureBox1.Refresh();

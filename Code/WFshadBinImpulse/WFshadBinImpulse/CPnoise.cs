@@ -16,9 +16,18 @@
             this.Q1 = new Queue(Qlength); // necessary to find connected components
             this.Comp = new int[MaxSize];
             this.nPixel = new int[256]; // 256 is the number of lightness values
-            for (int light = 0; light < 256; light++) nPixel[light] = 0;
+
+            for (int light = 0; light < 256; light++)
+            {
+                nPixel[light] = 0;
+            }
+
             Index = new int[256][];
-            for (int light = 0; light < 256; light++) Index[light] = new int[Histo[light] + 2];
+
+            for (int light = 0; light < 256; light++)
+            {
+                Index[light] = new int[Histo[light] + 2];
+            }
         }
 
 
@@ -57,41 +66,92 @@
             double ScaleX = (double)picBox1Width / (double)Image.width;
             double ScaleY = (double)picBox1Height / (double)Image.height;
             double Scale; // Scale of the presentation of the image in "pictureBox1"
-            if (ScaleX < ScaleY) Scale = ScaleX;
-            else Scale = ScaleY;
+
+            if (ScaleX < ScaleY)
+            {
+                Scale = ScaleX;
+            }
+            else
+            {
+                Scale = ScaleY;
+            }
+
             bool COLOR;
-            if (Image.N_Bits == 24) COLOR = true;
-            else COLOR = false;
+
+            if (Image.N_Bits == 24)
+            {
+                COLOR = true;
+            }
+            else
+            {
+                COLOR = false;
+            }
+
             double marginX = (double)(picBox1Width - Scale * Image.width) * 0.5; // space left of the image
             double marginY = (double)(picBox1Height - Scale * Image.height) * 0.5; // space above the image
-            bool Condition = false; // Condition for skipping pixel (x, y) if it lies in one of the global rectangles "fm1.v"
-            for (light = 0; light < 256; light++) nPixel[light] = 0;
-            for (light = 0; light < 256; light++)
-                for (int light1 = 0; light1 < histo[light]; light1++)
-                    Index[light][light1] = 0;
 
-            int y1 = 1 + Image.height / 100;
+            bool Condition = false; // Condition for skipping pixel (x, y) if it lies in one of the global rectangles "fm1.v"
+            for (light = 0; light < 256; light++)
+            {
+                nPixel[light] = 0;
+            }
+
+            for (light = 0; light < 256; light++)
+            {
+                for (int light1 = 0; light1 < histo[light]; light1++)
+                {
+                    Index[light][light1] = 0;
+                }
+            }
+
             for (int y = 0; y < Image.height; y++) //===============================================================
             {
                 for (int x = 0; x < Image.width; x++) //============================================================
                 {
                     Condition = false;
+
                     for (int k = 0; k < Number; k += 2)
+                    {
                         Condition = Condition || getCond(k, x, y, marginX, marginY, Scale, fm1);
+                    }
+
                     if (Condition)
+                    {
                         continue;
+                    }
+
                     i = x + y * Image.width; // Index of the pixel (x, y)
+
                     if (COLOR)
+                    {
                         light = MaxC(Image.Grid[3 * i + 2] & 254, Image.Grid[3 * i + 1] & 254, Image.Grid[3 * i + 0] & 254);
-                    else light = Image.Grid[i] & 252;
-                    if (light < 0) light = 0;
-                    if (light > 255) light = 255;
+                    }
+                    else
+                    {
+                        light = Image.Grid[i] & 252;
+                    }
+
+                    if (light < 0)
+                    {
+                        light = 0;
+                    }
+
+                    if (light > 255)
+                    {
+                        light = 255;
+                    }
+
                     Index[light][nPixel[light]] = i; // record of the index "i" of a pixel with lightness "light"
-                    if (nPixel[light] < histo[light]) nPixel[light]++;
+
+                    if (nPixel[light] < histo[light])
+                    {
+                        nPixel[light]++;
+                    }
                 } //============================ end for (int x=1; .. ========================================
             } //============================== end for (int y=1; .. ========================================
             return 1;
         } //******************************** end Sort *********************************************************
+
 
         public int Neighb(CImage Image, int W, int n)
         // Returns the index of the nth neighboor of the pixel W. If the neighboor
@@ -106,7 +166,7 @@
             return xn + Image.width * yn;
         }
 
-
+        // not called
         unsafe public int PositionInIndex(int lightNeb, int Neib)
         {
             for (int i = 0; i < nPixel[lightNeb]; i++)
@@ -114,7 +174,7 @@
             return -1;
         }
 
-
+        // not called
         private bool TestComp(int[] Comp, int numbPix, int width)
         {
             int ind, minX = 10000, maxX = 0, minY = 10000, maxY = 0, x, y, xs, ys;

@@ -101,7 +101,7 @@ namespace WFshadingBin
             meanImage = new CImage(width, height, 8);
             binImage = new CImage(width, height, 8);
 
-            sigmaFilteredCImage.SigmaSimpleUni(input: origImage, hWind: 1, Toleranz: 30);
+            sigmaFilteredCImage.SigmaFilterSimpleUni(input: origImage, hWind: 1, Toleranz: 30);
 
             if (origImage.N_Bits == 24)
             {
@@ -262,6 +262,9 @@ namespace WFshadingBin
             return (int)(x + 0.5);
         }
 
+        /// <summary>
+        /// calculates the image with corrected shading in two ways.
+        /// </summary>
         public void CorrectShading()
         {
             int c, i, x, y;

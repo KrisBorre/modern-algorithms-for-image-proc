@@ -97,7 +97,7 @@ namespace WFcompressPal
                 Grid[i] = inp.Grid[i];
         }
 
-        public int SigmaSimpleUni(CImage Inp, int hWind, int Toleranz, Form1 fm1)
+        public int SigmaFilterSimpleUni(CImage Inp, int hWind, int Toleranz, Form1 fm1)
         // Simple sigma filter for both gray value and color images. 
         {
             int[] gvMin = new int[3], gvMax = new int[3], nPix0 = new int[3], Sum = new int[3];
@@ -148,7 +148,7 @@ namespace WFcompressPal
             return 1;
         } //********************** end SigmaSimpleUni **********************************
 
-
+        // not called
         public int ExtremVar(CImage Inp, int hWind, Form1 fm1)
         // Extrem filter for grayscale images with variable window size of 2*hWind + 1.
         {
@@ -202,12 +202,13 @@ namespace WFcompressPal
         } //********************** end ExtrmVar **********************************
 
 
-        public int ExtremVarColor(CImage Inp, int hWind, Form1 fm1)
+        public int ExtremeFilterVarColor(CImage Inp, int hWind, Form1 fm1)
         {   /* The extreme filter for 3 byte color images with variable hWind.
-	    The filter finds in the (2*hWind+1)-neighbourhood of the actual pixel (x,y) the color "Color1" which has the greatest 
-	    difference form the central color of (x, y). Then it finds a Color2 which has the greatest differnce from
-	    Color1. Color1 is assigned to the output pixel if its difference to the cental color is greater than that
-	    of Color2. Otherwise Color 2 is assigned. --*/
+	        The filter finds in the (2*hWind+1)-neighbourhood of the actual pixel (x,y) the color "Color1" which has the greatest difference form the central color of (x, y). 
+            Then it finds a Color2 which has the greatest differnce from Color1. 
+            Color1 is assigned to the output pixel if its difference to the cental color is greater than that of Color2. 
+            Otherwise Color 2 is assigned. --*/
+
             int[] CenterColor = new int[3], Color = new int[3], Color1 = new int[3], Color2 = new int[3];
             int c, k, x, y; //, xx=3, yy=1;
             fm1.progressBar1.Maximum = 100;
@@ -216,6 +217,7 @@ namespace WFcompressPal
             int jump;
             if (height > 300) jump = height / 20;
             else jump = 2;
+
             for (y = 0; y < height; y++) // =======================================
             {
                 if ((y % jump) == jump - 1) fm1.progressBar1.PerformStep();
@@ -492,7 +494,7 @@ namespace WFcompressPal
             return (Sign * Dif);
         }
 
-
+        // not called
         int ColorDifAbs(byte[] Colp, byte[] Colh)
         // Returns the sum of the absolut differences of the color components divided through 3
         // with the sign of MaxC(Colp) - MaxC(Colh).
@@ -502,7 +504,7 @@ namespace WFcompressPal
             return Dif;
         }
 
-
+        // not called
         int ColorDifSign(int iColp, int iColh)
         // Returns the sum of the absolut differences of the color components divided through 3
         // with the sign of MaxC(Colp) - MaxC(Colh).
@@ -683,7 +685,7 @@ namespace WFcompressPal
             return 1;
         } //******************************** end LabelCellsSign *****************************************
 
-
+        // not called
         public int LabelCellsSignAr(CImage Pal, short[,] Ar, int th)
         /* Looks in "Image3" (standard coord.) for all pairs of adjacent pixels with signed color  
           differences greater than "th" or less than "-th" and finds the maximum or minimum color  
@@ -2017,7 +2019,7 @@ namespace WFcompressPal
             return 1;
         } //********************************* end FastAverageM **********************************
 
-
+        // not called
         public int ConnectShort(CImage Img, int Threshold, Form1 fm1)
         // Filters 'Img" with the average filter, compares the difference of the filtered values
         // in two pixels with the distance of 'dist' pixels with the threshold and connects end points
@@ -2186,11 +2188,10 @@ namespace WFcompressPal
 
 
 
-        public int ExtremLightUni(CImage Inp, int hWind, Form1 fm1)
+        public int ExtremeFilterLightUni(CImage Inp, int hWind, Form1 fm1)
         {   /* The extreme filter for color or grayscale images with variable hWind.
-	    The filter finds in the (2*hWind+1)-neighbourhood of the actual pixel (x,y) the color "Color1" with 
-      minimum and the color "Color2" with thge maximum lightness. "Color1" is assigned to the output pixel
-      if its lightniss is closer to the lightness of the cetral pixel than the lightness of "Color2". --*/
+	      The filter finds in the (2*hWind+1)-neighbourhood of the actual pixel (x,y) the color "Color1" with minimum and the color "Color2" with thge maximum lightness. 
+            "Color1" is assigned to the output pixel if its lightniss is closer to the lightness of the cetral pixel than the lightness of "Color2". --*/
 
             byte[] CenterColor = new byte[3], Color = new byte[3], Color1 = new byte[3], Color2 = new byte[3];
             int c, k, nbyte = 3, x; //, xx=3, yy=1;

@@ -78,7 +78,7 @@ namespace WFshadingBin
         }
 
 
-        public int SigmaSimpleUni(CImage input, int hWind, int Toleranz)
+        public int SigmaFilterSimpleUni(CImage input, int hWind, int Toleranz)
         // Simple sigma filter for both gray value and color images. 
         {
             int[] gvMin = new int[3], gvMax = new int[3], nPixel = new int[3], Sum = new int[3];
