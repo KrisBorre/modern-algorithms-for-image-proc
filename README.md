@@ -21,3 +21,5 @@ See the file Contributing.md for more information on how you can contribute to t
 ![PiecewiseLinearContrastEnhancementMonaLisa](https://github.com/user-attachments/assets/e65e3aea-ef3a-4916-8d8d-1960f791be54)
 
 ![female_warrior](https://github.com/user-attachments/assets/d5693f97-9c8a-457e-adf6-358c518ce02b)
+
+![shading_correction_31mar2025](https://github.com/user-attachments/assets/50289923-46d7-45aa-8b77-e32e79ce3ba8)
