@@ -17,8 +17,9 @@ namespace WFshadingBin
         }
 
         private Bitmap original_Bitmap;
-        private Bitmap Subtraction_Bitmap;
-        private Bitmap Division_Bitmap;
+        private Bitmap subtraction_Bitmap;
+        private Bitmap division_Bitmap;
+
         private CImage origImage;
         private CImage sigmaFilteredCImage;
         private CImage subImage;
@@ -26,11 +27,13 @@ namespace WFshadingBin
         private CImage grayImage;
         private CImage meanImage;
         private CImage binImage;
+
         int width, height, nbyteBmp, nbyteIm, Threshold, Threshold1;
         bool SHADING = false;
-        double ScaleX, ScaleY, Scale1;
-        int marginX, marginY;
-        string OpenImageFile;
+        //double ScaleX, ScaleY;
+        //double Scale1;
+        //int marginX, marginY;
+        string openImageFile;
 
         private void button1_Click(object sender, EventArgs e) // Open image
         {
@@ -49,7 +52,7 @@ namespace WFshadingBin
                 try
                 {
                     original_Bitmap = new Bitmap(openFileDialog1.FileName);
-                    OpenImageFile = openFileDialog1.FileName;
+                    openImageFile = openFileDialog1.FileName;
                     pictureBox1.Image = original_Bitmap;
                 }
                 catch (Exception ex)
@@ -63,7 +66,7 @@ namespace WFshadingBin
             label1.Visible = true;
             label2.Visible = true;
             label5.Visible = true;
-            label5.Text = "Opened image:" + OpenImageFile;
+            label5.Text = "Opened image:" + openImageFile;
             label6.Visible = true;
             button2.Visible = true;
             numericUpDown1.Visible = true;
@@ -114,11 +117,11 @@ namespace WFshadingBin
 
             Threshold1 = -1;
             Threshold = -1;
-            ScaleX = (double)pictureBox1.Width / (double)width;
-            ScaleY = (double)pictureBox1.Height / (double)height;
-            Scale1 = Math.Min(ScaleX, ScaleY);
-            marginX = (pictureBox1.Width - (int)(Scale1 * width)) / 2;
-            marginY = (pictureBox1.Height - (int)(Scale1 * height)) / 2;
+            //ScaleX = (double)pictureBox1.Width / (double)width;
+            //ScaleY = (double)pictureBox1.Height / (double)height;
+            //Scale1 = Math.Min(ScaleX, ScaleY);
+            //marginX = (pictureBox1.Width - (int)(Scale1 * width)) / 2;
+            //marginY = (pictureBox1.Height - (int)(Scale1 * height)) / 2;
             progressBar1.Visible = false;
 
             SHADING = false;
@@ -256,7 +259,7 @@ namespace WFshadingBin
         } //****************************** end ImageToBitmapNew ****************************************
 
 
-        public int Round(double x)
+        private int Round(double x)
         {
             if (x < 0.0) return (int)(x - 0.5);
             return (int)(x + 0.5);
@@ -477,14 +480,14 @@ namespace WFshadingBin
             progressBar1.Value = 0;
             CorrectShading();
 
-            Subtraction_Bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
-            Division_Bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
-            ImageToBitmapNew(subImage, Subtraction_Bitmap, 33);
-            ImageToBitmapNew(divImage, Division_Bitmap, 33);
+            subtraction_Bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+            division_Bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+            ImageToBitmapNew(subImage, subtraction_Bitmap, 33);
+            ImageToBitmapNew(divImage, division_Bitmap, 33);
 
             progressBar1.Visible = false;
-            pictureBox2.Image = Subtraction_Bitmap;
-            pictureBox3.Image = Division_Bitmap;
+            pictureBox2.Image = subtraction_Bitmap;
+            pictureBox3.Image = division_Bitmap;
             label3.Text = "If shading OK click threshold for 'SubIm'";
             label3.Visible = true;
             label4.Text = "If shading OK click threshold for 'DivIm'";
@@ -560,7 +563,7 @@ namespace WFshadingBin
             SaveFileDialog dialog = new SaveFileDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                Save(dialog, OpenImageFile + "Div", Division_Bitmap);
+                Save(dialog, openImageFile + "Div", division_Bitmap);
             }
             button4.Visible = false;
             label4.Visible = false;
@@ -604,10 +607,10 @@ namespace WFshadingBin
                         }
                         else binImage.Grid[i] = 0;
                     }
-                    Subtraction_Bitmap.SetPixel(x, y, Color.FromArgb(binImage.Grid[i], binImage.Grid[i], binImage.Grid[i]));
+                    subtraction_Bitmap.SetPixel(x, y, Color.FromArgb(binImage.Grid[i], binImage.Grid[i], binImage.Grid[i]));
                 }
             }
-            pictureBox2.Image = Subtraction_Bitmap;
+            pictureBox2.Image = subtraction_Bitmap;
             button3.Visible = true;
             label3.Text = "If threshold OK click 'Save subtraction'";
             label3.Visible = true;
@@ -655,10 +658,10 @@ namespace WFshadingBin
                         }
                         else binImage.Grid[i] = 0;
                     }
-                    Division_Bitmap.SetPixel(x, y, Color.FromArgb(binImage.Grid[i], binImage.Grid[i], binImage.Grid[i]));
+                    division_Bitmap.SetPixel(x, y, Color.FromArgb(binImage.Grid[i], binImage.Grid[i], binImage.Grid[i]));
                 }
             }
-            pictureBox3.Image = Division_Bitmap;
+            pictureBox3.Image = division_Bitmap;
             button4.Visible = true;
             label4.Text = "If threshold OK click 'Save division'";
             label4.Visible = true;
@@ -679,7 +682,7 @@ namespace WFshadingBin
             SaveFileDialog dialog = new SaveFileDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                Save(dialog, OpenImageFile + "Sub", Subtraction_Bitmap);
+                Save(dialog, openImageFile + "Sub", subtraction_Bitmap);
             }
             button3.Visible = false;
             label3.Visible = false;
