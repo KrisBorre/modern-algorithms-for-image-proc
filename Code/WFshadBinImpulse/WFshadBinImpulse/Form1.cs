@@ -33,16 +33,16 @@ namespace WFshadBinImpulse
         private bool DIV, Drawn = false, OPEN = false, SHAD = false, BIN = false, CHOICE = false;
         private int KIND = 1;
         //private int marginX, marginY;
-        private int nbyteIm, nbyteBmp, width, height, Threshold;
+        private int nbyteIm, nbyteBmp, width, height, threshold;
         //private double ScaleX, ScaleY;
         //private double Scale1;
         private string openImageFile;
 
-        private void button1_Click_1(object sender, EventArgs e)  // Open image
+        private void buttonOpenImage_Click(object sender, EventArgs e)  // Open image
         {
-            pictureBox1.Visible = false;
-            pictureBox2.Visible = false;
-            pictureBox3.Visible = true;
+            pictureBoxOriginalImage.Visible = false;
+            pictureBoxProcessesImage.Visible = false;
+            pictureBoxThresholding.Visible = true;
             groupBox1.Visible = false;
 
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -57,8 +57,7 @@ namespace WFshadBinImpulse
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: Could not read file from disk. Original error: " +
-                     ex.Message);
+                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
                 }
             }
             else return;
@@ -68,13 +67,13 @@ namespace WFshadBinImpulse
             label11.Visible = true;
             label6.Visible = true;
 
-            button2.Visible = false;
-            button3.Visible = false;
-            button4.Visible = false;
-            numericUpDown1.Visible = false;
-            numericUpDown2.Visible = false;
-            numericUpDown4.Visible = false;
-            numericUpDown5.Visible = false;
+            buttonShading.Visible = false;
+            buttonImpulseNoise.Visible = false;
+            buttonSave.Visible = false;
+            numericUpDownWindow.Visible = false;
+            numericUpDownLightness.Visible = false;
+            numericUpDownDeleteDark.Visible = false;
+            numericUpDownDeleteLight.Visible = false;
             label1.Visible = false;
             label2.Visible = false;
             label4.Visible = false;
@@ -83,8 +82,8 @@ namespace WFshadBinImpulse
             label8.Visible = false;
             label9.Visible = false;
             label10.Visible = false;
-            pictureBox2.Visible = false;
-            pictureBox3.Visible = false;
+            pictureBoxProcessesImage.Visible = false;
+            pictureBoxThresholding.Visible = false;
 
             groupBox1.Visible = true;
 
@@ -104,8 +103,8 @@ namespace WFshadBinImpulse
 
             nbyteIm = BitmapToImage(origBmp, ref originalCImage);
 
-            pictureBox1.Visible = true;
-            pictureBox1.Image = origBmp;
+            pictureBoxOriginalImage.Visible = true;
+            pictureBoxOriginalImage.Image = origBmp;
 
             width = origBmp.Width;
             height = origBmp.Height;
@@ -129,8 +128,8 @@ namespace WFshadBinImpulse
             //marginY = (pictureBox1.Height - (int)(Scale1 * height)) / 2;
             shadingCorrectedBmp = new Bitmap(origBmp.Width, origBmp.Height, PixelFormat.Format24bppRgb);
 
-            pictureBox2.Visible = false;
-            pictureBox3.Visible = false;
+            pictureBoxProcessesImage.Visible = false;
+            pictureBoxThresholding.Visible = false;
             radioButton1.Checked = false;
             radioButton2.Checked = false;
             radioButton3.Checked = false;
@@ -142,7 +141,7 @@ namespace WFshadBinImpulse
         } //********************************** end Open image *************************************
 
 
-        public int BitmapToImage(Bitmap bmp, ref CImage Image)
+        public int BitmapToImage(Bitmap bmp, ref CImage image)
         // Converts any bitmap to a color or to a grayscale image.
         {
             int nbyteIm = 1, rv = 0, x, y;
@@ -154,7 +153,7 @@ namespace WFshadBinImpulse
                 y = 2;
                 color = bmp.GetPixel(x, y);
                 if (color.R != color.G) nbyteIm = 3;
-                Image = new CImage(bmp.Width, bmp.Height, nbyteIm * 8);
+                image = new CImage(bmp.Width, bmp.Height, nbyteIm * 8);
 
                 progressBar1.Visible = true;
                 for (y = 0; y < bmp.Height; y++) //========================================================
@@ -167,12 +166,12 @@ namespace WFshadBinImpulse
                         color = bmp.GetPixel(x, y);
                         if (nbyteIm == 3)
                         {
-                            Image.Grid[3 * (x + bmp.Width * y) + 0] = color.B;
-                            Image.Grid[3 * (x + bmp.Width * y) + 1] = color.G;
-                            Image.Grid[3 * (x + bmp.Width * y) + 2] = color.R;
+                            image.Grid[3 * (x + bmp.Width * y) + 0] = color.B;
+                            image.Grid[3 * (x + bmp.Width * y) + 1] = color.G;
+                            image.Grid[3 * (x + bmp.Width * y) + 2] = color.R;
                         }
                         else // nbyteIm == 1:
-                            Image.Grid[x + bmp.Width * y] = color.R;
+                            image.Grid[x + bmp.Width * y] = color.R;
                     } //================================== end for (x ... ===================================
                 } //==================================== end for (y ... =====================================
                 rv = nbyteIm;
@@ -188,14 +187,14 @@ namespace WFshadBinImpulse
                 System.Runtime.InteropServices.Marshal.Copy(ptr, rgbValues, 0, bytes);
 
                 nbyteIm = 3;
-                Image = new CImage(bmp.Width, bmp.Height, nbyteIm * 8);
+                image = new CImage(bmp.Width, bmp.Height, nbyteIm * 8);
                 for (y = 0; y < bmp.Height; y++) //=============================================
                 {
                     int jump = bmp.Height / 100;
                     if (y % jump == jump - 1) progressBar1.PerformStep();
                     for (x = 0; x < bmp.Width; x++)
                         for (int c = 0; c < nbyteIm; c++)
-                            Image.Grid[c + nbyteIm * (x + bmp.Width * y)] =
+                            image.Grid[c + nbyteIm * (x + bmp.Width * y)] =
                               rgbValues[c + nbyteBmp * x + Math.Abs(bmpData.Stride) * y];
                 } //========================= end for (y = 0; ... ============================== 
                 rv = nbyteIm;
@@ -205,14 +204,14 @@ namespace WFshadBinImpulse
         } //****************************** end BitmapToImage ****************************************
 
 
-        public int MessReturn(string s)
+        private int MessReturn(string s)
         {
             if (MessageBox.Show(s, "Return", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
                 return -1;
             return 1;
         }
 
-        public int Round(double x)
+        private int Round(double x)
         {
             if (x < 0.0) return (int)(x - 0.5);
             return (int)(x + 0.5);
@@ -228,7 +227,7 @@ namespace WFshadBinImpulse
             return max;
         }
 
-        public byte MaxC(byte R, byte G, byte B)
+        private byte MaxC(byte R, byte G, byte B)
         {
             byte max;
             if (R * 0.713 > G) max = (byte)(R * 0.713);
@@ -238,7 +237,7 @@ namespace WFshadBinImpulse
         }
 
 
-        public void CorrectShading(bool DIV)
+        private void CorrectShading(bool DIV)
         {
             if (!OPEN)
             {
@@ -247,13 +246,13 @@ namespace WFshadBinImpulse
             }
             int c, i, x, y;
             int[] color = { 0, 0, 0 };
-            int Lightness = (int)numericUpDown2.Value;
-            int hWind = (int)(numericUpDown1.Value * width / 1000);
+            int Lightness = (int)numericUpDownLightness.Value;
+            int hWind = (int)(numericUpDownWindow.Value * width / 1000);
 
             this.localMeanCImage.FastAverageM(grayscaleCImage, hWind, this);
             //progressBar1.Visible = true;
-            this.pictureBox2.Visible = true;
-            this.pictureBox3.Visible = true;
+            this.pictureBoxProcessesImage.Visible = true;
+            this.pictureBoxThresholding.Visible = true;
             this.progressBar1.Value = 0;
 
             int[] histo = new int[256];
@@ -357,9 +356,9 @@ namespace WFshadBinImpulse
             } //========================== end for (i = 0; ... ==============================
 
             // Displaying the histograms and the row sections:                        
-            Bitmap BmpPictBox3 = new Bitmap(this.pictureBox3.Width, this.pictureBox3.Height);
+            Bitmap BmpPictBox3 = new Bitmap(this.pictureBoxThresholding.Width, this.pictureBoxThresholding.Height);
             Graphics g3 = Graphics.FromImage(BmpPictBox3);
-            this.pictureBox3.Image = BmpPictBox3;
+            this.pictureBoxThresholding.Image = BmpPictBox3;
 
             int MaxHisto = 0, SecondMax = 0;
             for (i = 0; i < 256; i++) if (histo[i] > MaxHisto) MaxHisto = histo[i];
@@ -367,29 +366,29 @@ namespace WFshadBinImpulse
             MaxHisto = SecondMax * 4 / 3;
             Pen redPen = new Pen(Color.Red), bluePen = new Pen(Color.Blue), greenPen = new Pen(Color.LightGreen);
             SolidBrush whiteBrush = new SolidBrush(Color.White);
-            Rectangle Rect = new Rectangle(0, 0, this.pictureBox3.Width, this.pictureBox3.Height);
-            this.pictureBox3.Visible = true;
+            Rectangle Rect = new Rectangle(0, 0, this.pictureBoxThresholding.Width, this.pictureBoxThresholding.Height);
+            this.pictureBoxThresholding.Visible = true;
 
             g3.FillRectangle(whiteBrush, Rect);
 
             for (i = 0; i < 256; i++)
             {
-                g3.DrawLine(redPen, i, pictureBox3.Height - 1 - histo[i] * pictureBox3.Height / MaxHisto, i, pictureBox3.Height - 1);
+                g3.DrawLine(redPen, i, pictureBoxThresholding.Height - 1 - histo[i] * pictureBoxThresholding.Height / MaxHisto, i, pictureBoxThresholding.Height - 1);
             }
 
             for (i = 0; i < 256; i += 50)
             {
-                g3.DrawLine(greenPen, i, pictureBox3.Height - 200, i, pictureBox3.Height);
+                g3.DrawLine(greenPen, i, pictureBoxThresholding.Height - 200, i, pictureBoxThresholding.Height);
             }
 
-            if (Threshold >= 0) g3.DrawLine(bluePen, Threshold, pictureBox3.Height - 200, Threshold, pictureBox3.Height);
-            this.pictureBox3.Visible = true;
+            if (threshold >= 0) g3.DrawLine(bluePen, threshold, pictureBoxThresholding.Height - 200, threshold, pictureBoxThresholding.Height);
+            this.pictureBoxThresholding.Visible = true;
             SHAD = true;
         } //***************************** end CorrectShading **********************************************
 
 
 
-        private int ImageToBitmapNew(CImage Image, Bitmap bmp)
+        private int ImageToBitmapNew(CImage image, Bitmap bmp)
         // Any image and color bitmap.
         {
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
@@ -406,7 +405,7 @@ namespace WFshadBinImpulse
             int length = Math.Abs(bmpData.Stride) * bmp.Height;
             byte[] rgbValues = new byte[length];
 
-            int nbyteIm = Image.N_Bits / 8;
+            int nbyteIm = image.N_Bits / 8;
             for (int y = 0; y < bmp.Height; y++) //=================================================================
             {
                 int jump = bmp.Height / 100;
@@ -418,11 +417,11 @@ namespace WFshadBinImpulse
 
                     if (nbyteIm == 3)
                     {
-                        color = Color.FromArgb(Image.Grid[2 + 3 * (x + Image.width * y)], Image.Grid[1 + 3 * (x + Image.width * y)], Image.Grid[0 + 3 * (x + Image.width * y)]);
+                        color = Color.FromArgb(image.Grid[2 + 3 * (x + image.width * y)], image.Grid[1 + 3 * (x + image.width * y)], image.Grid[0 + 3 * (x + image.width * y)]);
                     }
                     else
                     {
-                        color = Color.FromArgb(Image.Grid[x + Image.width * y], Image.Grid[x + Image.width * y], Image.Grid[x + Image.width * y]);
+                        color = Color.FromArgb(image.Grid[x + image.width * y], image.Grid[x + image.width * y], image.Grid[x + image.width * y]);
                     }
 
                     rgbValues[3 * x + Math.Abs(bmpData.Stride) * y + 0] = color.B;
@@ -436,7 +435,7 @@ namespace WFshadBinImpulse
         } //****************************** end ImageToBitmapNew ****************************************
 
 
-        private void button2_Click(object sender, EventArgs e) // Shading
+        private void buttonShading_Click(object sender, EventArgs e) // Shading
         {
             if (!OPEN)
             {
@@ -446,16 +445,16 @@ namespace WFshadBinImpulse
 
             if (radioButton1.Checked)
             {
-                button2.Visible = true;
+                buttonShading.Visible = true;
                 label1.Visible = true;
                 label2.Visible = true;
                 label9.Visible = true;
-                numericUpDown1.Visible = true;
-                numericUpDown2.Visible = true;
-                numericUpDown1.Value = 11;  // Window in per mille
-                numericUpDown2.Value = 255; // Light
-                numericUpDown4.Value = 50;  // Delete dark
-                numericUpDown5.Value = 0;   // Delete light
+                numericUpDownWindow.Visible = true;
+                numericUpDownLightness.Visible = true;
+                numericUpDownWindow.Value = 11;  // Window in per mille
+                numericUpDownLightness.Value = 255; // Light
+                numericUpDownDeleteDark.Value = 50;  // Delete dark
+                numericUpDownDeleteLight.Value = 0;   // Delete light
 
                 DIV = true;
                 KIND = 1;
@@ -463,16 +462,16 @@ namespace WFshadBinImpulse
             }
             else if (radioButton2.Checked)
             {
-                button2.Visible = true;
+                buttonShading.Visible = true;
                 label1.Visible = true;
                 label2.Visible = true;
                 label9.Visible = true;
-                numericUpDown1.Visible = true;
-                numericUpDown2.Visible = true;
-                numericUpDown1.Value = 11;  // Window in per mille
-                numericUpDown2.Value = 140; // Light
-                numericUpDown4.Value = 0;  // Delete dark
-                numericUpDown5.Value = 70;   // Delete light
+                numericUpDownWindow.Visible = true;
+                numericUpDownLightness.Visible = true;
+                numericUpDownWindow.Value = 11;  // Window in per mille
+                numericUpDownLightness.Value = 140; // Light
+                numericUpDownDeleteDark.Value = 0;  // Delete dark
+                numericUpDownDeleteLight.Value = 70;   // Delete light
 
                 DIV = false;
                 KIND = 2;
@@ -480,28 +479,28 @@ namespace WFshadBinImpulse
             }
             else if (radioButton3.Checked)
             {
-                button2.Visible = true;
+                buttonShading.Visible = true;
                 label1.Visible = true;
                 label2.Visible = true;
                 label9.Visible = true;
-                numericUpDown1.Visible = true;
-                numericUpDown2.Visible = true;
-                numericUpDown1.Value = 500;  // Window in per mille
-                numericUpDown2.Value = 128; // Light
+                numericUpDownWindow.Visible = true;
+                numericUpDownLightness.Visible = true;
+                numericUpDownWindow.Value = 500;  // Window in per mille
+                numericUpDownLightness.Value = 128; // Light
                 DIV = true;
                 KIND = 3;
                 CHOICE = true;
             }
             else if (radioButton4.Checked)
             {
-                button2.Visible = true;
+                buttonShading.Visible = true;
                 label1.Visible = true;
                 label2.Visible = true;
                 label9.Visible = true;
-                numericUpDown1.Visible = true;
-                numericUpDown2.Visible = true;
-                numericUpDown1.Value = 11;  // Window in per mille
-                numericUpDown2.Value = 255; // Light
+                numericUpDownWindow.Visible = true;
+                numericUpDownLightness.Visible = true;
+                numericUpDownWindow.Value = 11;  // Window in per mille
+                numericUpDownLightness.Value = 255; // Light
                 DIV = false;
                 KIND = 4;
                 CHOICE = true;
@@ -519,9 +518,9 @@ namespace WFshadBinImpulse
                 label1.Visible = true;
                 label2.Visible = true;
                 label9.Visible = true;
-                button2.Visible = true;
-                numericUpDown1.Visible = true;
-                numericUpDown2.Visible = true;
+                buttonShading.Visible = true;
+                numericUpDownWindow.Visible = true;
+                numericUpDownLightness.Visible = true;
             }
 
             Shading_Correcting(KIND, this);
@@ -541,7 +540,7 @@ namespace WFshadBinImpulse
         private void Shading_Correcting(int KIND, Form1 fm1)
         {
             int width = originalCImage.width;
-            int hWind = (int)numericUpDown1.Value * width / 200;
+            int hWind = (int)numericUpDownWindow.Value * width / 200;
             grayscaleCImage.ColorToGrayMC(sigmaFilteredCImage, fm1);
             progressBar1.Value = 0;
             progressBar1.Step = 1;
@@ -555,12 +554,12 @@ namespace WFshadBinImpulse
             this.CorrectShading(DIV);
             ImageToBitmapNew(shadingCorrectedCImage, shadingCorrectedBmp);
 
-            pictureBox2.Visible = true;
-            pictureBox2.Image = shadingCorrectedBmp;
+            pictureBoxProcessesImage.Visible = true;
+            pictureBoxProcessesImage.Image = shadingCorrectedBmp;
         } //****************************** end Shading_Cor ***********************
 
 
-        private void button3_Click(object sender, EventArgs e) // Impulse Noise
+        private void buttonImpulseNoise_Click(object sender, EventArgs e) // Impulse Noise
         {
             if (!OPEN)
             {
@@ -613,10 +612,10 @@ namespace WFshadBinImpulse
 
             CPnoise PN = new CPnoise(Histo: histo, Qlength: 1000, Size: 4000);
 
-            PN.Sort(Image: impulseCImage, histo: histo, Number: number, picBox1Width: pictureBox1.Width, picBox1Height: pictureBox1.Height, fm1: this);
+            PN.Sort(image: impulseCImage, histo: histo, number: number, picBox1Width: pictureBoxOriginalImage.Width, picBox1Height: pictureBoxOriginalImage.Height, fm1: this);
 
-            int maxDark = (int)numericUpDown4.Value;
-            int maxLight = (int)numericUpDown5.Value;
+            int maxDark = (int)numericUpDownDeleteDark.Value;
+            int maxLight = (int)numericUpDownDeleteLight.Value;
 
             PN.DarkNoise(ref impulseCImage, minLi, maxLi, maxDark, this);
             impulseCImage.DeleteBit0(nbyte, this);
@@ -633,9 +632,9 @@ namespace WFshadBinImpulse
 
             ImageToBitmapNew(impulseCImage, resultBmp);
 
-            pictureBox2.Image = resultBmp;
+            pictureBoxProcessesImage.Image = resultBmp;
 
-            Graphics g = pictureBox1.CreateGraphics();
+            Graphics g = pictureBoxOriginalImage.CreateGraphics();
             Pen myPen = new Pen(Color.LightGray);
 
             for (int n = 0; n < number; n += 2)
@@ -656,21 +655,21 @@ namespace WFshadBinImpulse
             label9.Visible = true;
             label10.Text = "Impulse noise removed";
             label10.Visible = true;
-            button4.Visible = true;
+            buttonSave.Visible = true;
 
             CHOICE = false;
-            pictureBox3.Visible = true;
+            pictureBoxThresholding.Visible = true;
         } //********************************** end Impulse noise *******************************
 
 
-        private void pictureBox1_MouseClick(object sender, MouseEventArgs e) // small rectangles in OrigIm
+        private void pictureBoxOriginalImage_MouseClick(object sender, MouseEventArgs e) // small rectangles in OrigIm
         {
-            Graphics g = pictureBox1.CreateGraphics();
+            Graphics g = pictureBoxOriginalImage.CreateGraphics();
             Pen myPen;
 
             if (Drawn)
             {
-                pictureBox1.Image = origBmp;
+                pictureBoxOriginalImage.Image = origBmp;
                 number = 0;
                 Drawn = false;
             }
@@ -702,7 +701,7 @@ namespace WFshadBinImpulse
         } //***************************** end pictureBox1_MouseClick ***********************
 
 
-        private void button4_Click(object sender, EventArgs e) // Save result
+        private void buttonSave_Click(object sender, EventArgs e) // Save result
         {
             SaveFileDialog dialog = new SaveFileDialog(); //Prompts the user to select a location for saving a file. 
                                                           // This class can either open and overwrite an existing file or create a new file.
@@ -731,7 +730,7 @@ namespace WFshadBinImpulse
                     origBmp.Dispose();
                     File.Replace(tmpFileName, openImageFile, openImageFile.Insert(openImageFile.IndexOf("."), "BackUp"));
                     origBmp = new Bitmap(openImageFile);
-                    pictureBox1.Image = origBmp;
+                    pictureBoxOriginalImage.Image = origBmp;
                 }
                 else
                 {
@@ -754,7 +753,7 @@ namespace WFshadBinImpulse
         } //**************************** end Save result ***********************
 
 
-        private void pictureBox3_MouseClick(object sender, MouseEventArgs e) // Thresholding
+        private void pictureBoxThresholding_MouseClick(object sender, MouseEventArgs e) // Thresholding
         {
             if (!OPEN)
             {
@@ -767,10 +766,10 @@ namespace WFshadBinImpulse
                 return;
             }
 
-            Threshold = e.X;
-            Graphics g3 = pictureBox3.CreateGraphics();
+            threshold = e.X;
+            Graphics g3 = pictureBoxThresholding.CreateGraphics();
             Pen bluePen = new Pen(Color.Blue);
-            g3.DrawLine(bluePen, Threshold, pictureBox3.Height, Threshold, pictureBox3.Height - 200);
+            g3.DrawLine(bluePen, threshold, pictureBoxThresholding.Height, threshold, pictureBoxThresholding.Height - 200);
             progressBar1.Visible = true;
             progressBar1.Value = 0;
             int nbyte = shadingCorrectedCImage.N_Bits / 8;
@@ -787,7 +786,7 @@ namespace WFshadBinImpulse
 
                     if (nbyte == 1)
                     {
-                        if (shadingCorrectedCImage.Grid[i] > Threshold)
+                        if (shadingCorrectedCImage.Grid[i] > threshold)
                         {
                             binCImage.Grid[i] = 255;
                         }
@@ -798,7 +797,7 @@ namespace WFshadBinImpulse
                     }
                     else
                     {
-                        if (MaxC(shadingCorrectedCImage.Grid[2 + 3 * i], shadingCorrectedCImage.Grid[1 + 3 * i], shadingCorrectedCImage.Grid[0 + 3 * i]) > Threshold)
+                        if (MaxC(shadingCorrectedCImage.Grid[2 + 3 * i], shadingCorrectedCImage.Grid[1 + 3 * i], shadingCorrectedCImage.Grid[0 + 3 * i]) > threshold)
                         {
                             binCImage.Grid[i] = 255;
                         }
@@ -817,70 +816,70 @@ namespace WFshadBinImpulse
             groupBox1.Visible = false;
             label8.Visible = false;
             CHOICE = false;
-            pictureBox2.Image = resultBmp;
-            Threshold = -1;
+            pictureBoxProcessesImage.Image = resultBmp;
+            threshold = -1;
             progressBar1.Visible = false;
             label10.Text = "Thresholded image";
             label10.Visible = true;
             label4.Visible = true;
             label5.Visible = true;
-            button3.Visible = true;
-            numericUpDown4.Visible = true;
-            numericUpDown5.Visible = true;
+            buttonImpulseNoise.Visible = true;
+            numericUpDownDeleteDark.Visible = true;
+            numericUpDownDeleteLight.Visible = true;
 
             BIN = true;
         } //**************************** end pict3_MouseClick Thresholding ********************
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
-            button2.Visible = true;
+            buttonShading.Visible = true;
             label1.Visible = true;
             label2.Visible = true;
             label9.Visible = true;
-            numericUpDown1.Visible = true;
-            numericUpDown2.Visible = true;
-            numericUpDown1.Value = 11;  // Window in per mille
-            numericUpDown2.Value = 255; // Light
-            numericUpDown4.Value = 50;  // Delete dark
-            numericUpDown5.Value = 0;   // Delete light
+            numericUpDownWindow.Visible = true;
+            numericUpDownLightness.Visible = true;
+            numericUpDownWindow.Value = 11;  // Window in per mille
+            numericUpDownLightness.Value = 255; // Light
+            numericUpDownDeleteDark.Value = 50;  // Delete dark
+            numericUpDownDeleteLight.Value = 0;   // Delete light
         }
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
-            button2.Visible = true;
+            buttonShading.Visible = true;
             label1.Visible = true;
             label2.Visible = true;
             label9.Visible = true;
-            numericUpDown1.Visible = true;
-            numericUpDown2.Visible = true;
-            numericUpDown1.Value = 11;  // Window in per mille
-            numericUpDown2.Value = 140; // Light
-            numericUpDown4.Value = 0;  // Delete dark
-            numericUpDown5.Value = 70;   // Delete light
+            numericUpDownWindow.Visible = true;
+            numericUpDownLightness.Visible = true;
+            numericUpDownWindow.Value = 11;  // Window in per mille
+            numericUpDownLightness.Value = 140; // Light
+            numericUpDownDeleteDark.Value = 0;  // Delete dark
+            numericUpDownDeleteLight.Value = 70;   // Delete light
         }
 
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
         {
-            button2.Visible = true;
+            buttonShading.Visible = true;
             label1.Visible = true;
             label2.Visible = true;
             label9.Visible = true;
-            numericUpDown1.Visible = true;
-            numericUpDown2.Visible = true;
-            numericUpDown1.Value = 500;  // Window in per mille
-            numericUpDown2.Value = 128; // Light
+            numericUpDownWindow.Visible = true;
+            numericUpDownLightness.Visible = true;
+            numericUpDownWindow.Value = 500;  // Window in per mille
+            numericUpDownLightness.Value = 128; // Light
         }
 
         private void radioButton4_CheckedChanged(object sender, EventArgs e)
         {
-            button2.Visible = true;
+            buttonShading.Visible = true;
             label1.Visible = true;
             label2.Visible = true;
             label9.Visible = true;
-            numericUpDown1.Visible = true;
-            numericUpDown2.Visible = true;
-            numericUpDown1.Value = 11;  // Window in per mille
-            numericUpDown2.Value = 255; // Light
+            numericUpDownWindow.Visible = true;
+            numericUpDownLightness.Visible = true;
+            numericUpDownWindow.Value = 11;  // Window in per mille
+            numericUpDownLightness.Value = 255; // Light
         }
 
     } //****************************** end class Form1 **************************

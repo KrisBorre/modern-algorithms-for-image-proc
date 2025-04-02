@@ -4,17 +4,18 @@
     {
         unsafe
         public int[][] Index; // saving all pixels of the image ordered by lightness
-        int[] Comp; // contains indices of pixels of a connected component
-        int[] nPixel; // number of pixels with certain lightness in the image
-        int MaxSize;  // admissible size of a component
-        Queue Q1;
+
+        private int[] component; // contains indices of pixels of a connected component
+        private int[] nPixel; // number of pixels with certain lightness in the image
+        private int maxSize;  // admissible size of a component
+        private Queue queue;
 
         unsafe
         public CPnoise(int[] Histo, int Qlength, int Size)  // Constructor
         {
-            this.MaxSize = Size;
-            this.Q1 = new Queue(Qlength); // necessary to find connected components
-            this.Comp = new int[MaxSize];
+            this.maxSize = Size;
+            this.queue = new Queue(Qlength); // necessary to find connected components
+            this.component = new int[maxSize];
             this.nPixel = new int[256]; // 256 is the number of lightness values
 
             for (int light = 0; light < 256; light++)
@@ -60,11 +61,11 @@
         }
 
 
-        public int Sort(CImage Image, int[] histo, int Number, int picBox1Width, int picBox1Height, Form1 fm1)
+        public int Sort(CImage image, int[] histo, int number, int picBox1Width, int picBox1Height, Form1 fm1)
         {
             int light, i;
-            double ScaleX = (double)picBox1Width / (double)Image.width;
-            double ScaleY = (double)picBox1Height / (double)Image.height;
+            double ScaleX = (double)picBox1Width / (double)image.width;
+            double ScaleY = (double)picBox1Height / (double)image.height;
             double Scale; // Scale of the presentation of the image in "pictureBox1"
 
             if (ScaleX < ScaleY)
@@ -78,7 +79,7 @@
 
             bool COLOR;
 
-            if (Image.N_Bits == 24)
+            if (image.N_Bits == 24)
             {
                 COLOR = true;
             }
@@ -87,8 +88,8 @@
                 COLOR = false;
             }
 
-            double marginX = (double)(picBox1Width - Scale * Image.width) * 0.5; // space left of the image
-            double marginY = (double)(picBox1Height - Scale * Image.height) * 0.5; // space above the image
+            double marginX = (double)(picBox1Width - Scale * image.width) * 0.5; // space left of the image
+            double marginY = (double)(picBox1Height - Scale * image.height) * 0.5; // space above the image
 
             bool Condition = false; // Condition for skipping pixel (x, y) if it lies in one of the global rectangles "fm1.v"
             for (light = 0; light < 256; light++)
@@ -104,13 +105,13 @@
                 }
             }
 
-            for (int y = 0; y < Image.height; y++) //===============================================================
+            for (int y = 0; y < image.height; y++) //===============================================================
             {
-                for (int x = 0; x < Image.width; x++) //============================================================
+                for (int x = 0; x < image.width; x++) //============================================================
                 {
                     Condition = false;
 
-                    for (int k = 0; k < Number; k += 2)
+                    for (int k = 0; k < number; k += 2)
                     {
                         Condition = Condition || getCond(k, x, y, marginX, marginY, Scale, fm1);
                     }
@@ -120,15 +121,15 @@
                         continue;
                     }
 
-                    i = x + y * Image.width; // Index of the pixel (x, y)
+                    i = x + y * image.width; // Index of the pixel (x, y)
 
                     if (COLOR)
                     {
-                        light = MaxC(Image.Grid[3 * i + 2] & 254, Image.Grid[3 * i + 1] & 254, Image.Grid[3 * i + 0] & 254);
+                        light = MaxC(image.Grid[3 * i + 2] & 254, image.Grid[3 * i + 1] & 254, image.Grid[3 * i + 0] & 254);
                     }
                     else
                     {
-                        light = Image.Grid[i] & 252;
+                        light = image.Grid[i] & 252;
                     }
 
                     if (light < 0)
@@ -153,17 +154,17 @@
         } //******************************** end Sort *********************************************************
 
 
-        public int Neighb(CImage Image, int W, int n)
+        public int Neighb(CImage image, int W, int n)
         // Returns the index of the nth neighboor of the pixel W. If the neighboor
         // is outside the grid, then it returns -1.
         {
             int dx, dy, x, y, xn, yn;
             if (n == 4) return -1; // "n==4" means Neigb==W
-            yn = y = W / Image.width; xn = x = W % Image.width;
+            yn = y = W / image.width; xn = x = W % image.width;
             dx = (n % 3) - 1; dy = n / 3 - 1;
             xn += dx; yn += dy;
-            if (xn < 0 || xn >= Image.width || yn < 0 || yn >= Image.height) return -2;
-            return xn + Image.width * yn;
+            if (xn < 0 || xn >= image.width || yn < 0 || yn >= image.height) return -2;
+            return xn + image.width * yn;
         }
 
         // not called
@@ -295,7 +296,7 @@
         } //**************************************** end TestComp *******************************
 
 
-        private int BreadthFirst_D(ref CImage Image, int i, int light, int maxSize)
+        private int BreadthFirst_D(ref CImage image, int i, int light, int maxSize)
         /* Looks for pixels with lightness <=light composing with the pixel "Index[light][i]"
            an 8-connected subset. The size of the subset must be less than "maxSize".
            Instead of labeling the pixels of the subset, indices of pixels of the subset are saved in Comp.
@@ -311,59 +312,58 @@
                 nextIndex, // index of the next pixel in the queue
                 numbPix; // number of pixel indices in "Comp"
             bool small;
-            bool COLOR = (Image.N_Bits == 24);
+            bool COLOR = (image.N_Bits == 24);
             index = Index[light][i];
             int[] MinBound = new int[3]; // color of a pixel with minimum lightness among pixels near the subset
             for (int c = 0; c < 3; c++) MinBound[c] = 300;
-            for (int p = 0; p < MaxSize; p++) Comp[p] = -1;
+            for (int p = 0; p < this.maxSize; p++) component[p] = -1;
             numbPix = 0;
             maxNeib = 8; // maximum number of neighbors
             small = true;
-            Comp[numbPix] = index;
+            component[numbPix] = index;
             numbPix++;
             if (COLOR)
-                Image.Grid[1 + 3 * index] |= 1; // Labeling as in Comp (Label1)
+                image.Grid[1 + 3 * index] |= 1; // Labeling as in Comp (Label1)
             else
-                Image.Grid[index] |= 1; // Labeling as in Comp
-            Q1.input = Q1.output = 0;
-            Q1.Put(index); // putting index into the queue
-            while (Q1.Empty() == 0) //=  loop running while queue not empty =======================
+                image.Grid[index] |= 1; // Labeling as in Comp
+            queue.input = queue.output = 0;
+            queue.Put(index); // putting index into the queue
+            while (queue.Empty() == 0) //=  loop running while queue not empty =======================
             {
-                nextIndex = Q1.Get();
+                nextIndex = queue.Get();
                 for (int n = 0; n <= maxNeib; n++) // == all neighbors of nextIndex =====================
                 {
-                    Neib = Neighb(Image, nextIndex, n); // the index of the nth neighbor of nextIndex 
+                    Neib = Neighb(image, nextIndex, n); // the index of the nth neighbor of nextIndex 
                     if (Neib < 0) continue; // Neib<0 means outside the image
                     if (COLOR)
                     {
-                        Label1 = Image.Grid[1 + 3 * Neib] & 1;
-                        Label2 = Image.Grid[2 + 3 * Neib] & 1;
-                        lightNeb = MaxC(Image.Grid[2 + 3 * Neib], Image.Grid[1 + 3 * Neib],
-                                                                        Image.Grid[0 + 3 * Neib]) & 254; // MaskColor;
+                        Label1 = image.Grid[1 + 3 * Neib] & 1;
+                        Label2 = image.Grid[2 + 3 * Neib] & 1;
+                        lightNeb = MaxC(image.Grid[2 + 3 * Neib], image.Grid[1 + 3 * Neib], image.Grid[0 + 3 * Neib]) & 254; // MaskColor;
                     }
                     else
                     {
-                        Label1 = Image.Grid[Neib] & 1;
-                        Label2 = Image.Grid[Neib] & 2;
-                        lightNeb = Image.Grid[Neib] & 252; // MaskGV;
+                        Label1 = image.Grid[Neib] & 1;
+                        Label2 = image.Grid[Neib] & 2;
+                        lightNeb = image.Grid[Neib] & 252; // MaskGV;
                     }
                     if (lightNeb == light && Label2 > 0) small = false;
 
                     if (lightNeb <= light) //------------------------------------------------------------
                     {
                         if (Label1 > 0) continue;
-                        Comp[numbPix] = Neib; // putting the element with index Neib into Comp
+                        component[numbPix] = Neib; // putting the element with index Neib into Comp
                         numbPix++;
                         if (COLOR)
-                            Image.Grid[1 + 3 * Neib] |= 1; // Labeling with "1" as in Comp 
+                            image.Grid[1 + 3 * Neib] |= 1; // Labeling with "1" as in Comp 
                         else
-                            Image.Grid[Neib] |= 1; // Labeling with "1" as in Comp 
+                            image.Grid[Neib] |= 1; // Labeling with "1" as in Comp 
                         if (numbPix > maxSize)
                         {
                             small = false;
                             break;
                         }
-                        Q1.Put(Neib);
+                        queue.Put(Neib);
                     }
                     else // lightNeb > light
                     {
@@ -372,7 +372,7 @@
                             if (COLOR)
                             {
                                 if (lightNeb < MaxC(MinBound[2], MinBound[1], MinBound[0]))
-                                    for (int c = 0; c < 3; c++) MinBound[c] = Image.Grid[c + 3 * Neib];
+                                    for (int c = 0; c < 3; c++) MinBound[c] = image.Grid[c + 3 * Neib];
                             }
                             else
                               if (lightNeb < MinBound[0]) MinBound[0] = lightNeb;
@@ -388,32 +388,34 @@
                 if (small && MinBound[0] < 300) //--"300" means MinBound was not calculated ---
                 {
                     if (COLOR)
-                        for (int c = 0; c < 3; c++) Image.Grid[c + 3 * Comp[m]] = (byte)MinBound[c];
+                        for (int c = 0; c < 3; c++)
+                        {
+                            image.Grid[c + 3 * component[m]] = (byte)MinBound[c];
+                        }
                     else
-                        Image.Grid[Comp[m]] = (byte)MinBound[0];
+                        image.Grid[component[m]] = (byte)MinBound[0];
                 }
                 else
                 {
                     if (COLOR)
-                        lightComp = MaxC(Image.Grid[2 + 3 * Comp[m]], Image.Grid[1 + 3 * Comp[m]],
-                                                                        Image.Grid[0 + 3 * Comp[m]]) & 254;
+                        lightComp = MaxC(image.Grid[2 + 3 * component[m]], image.Grid[1 + 3 * component[m]], image.Grid[0 + 3 * component[m]]) & 254;
                     else
-                        lightComp = Image.Grid[Comp[m]] & 252; // MaskGV;
+                        lightComp = image.Grid[component[m]] & 252; // MaskGV;
 
                     if (lightComp == light) //----------------------------------------------------------------
                     {
-                        if (COLOR) Image.Grid[2 + 3 * Comp[m]] |= 1;
-                        else Image.Grid[Comp[m]] |= 2;
+                        if (COLOR) image.Grid[2 + 3 * component[m]] |= 1;
+                        else image.Grid[component[m]] |= 2;
                     }
                     else // lightComp != light
                     {
                         if (COLOR)
                         {
-                            Image.Grid[1 + 3 * Comp[m]] &= (byte)254; // deleting label 1
-                            Image.Grid[2 + 3 * Comp[m]] &= (byte)254; // deleting label 2
+                            image.Grid[1 + 3 * component[m]] &= (byte)254; // deleting label 1
+                            image.Grid[2 + 3 * component[m]] &= (byte)254; // deleting label 2
                         }
                         else
-                            Image.Grid[Comp[m]] &= 252; // (byte)MaskGV; // deleting the labels
+                            image.Grid[component[m]] &= 252; // (byte)MaskGV; // deleting the labels
                     } //------------------------------ end if (bric == light) and else ------------------
                 } //-------------------------------- end if (small != false) and else -----------------
             } //================================== end for (int m=0 .. ================================
@@ -421,9 +423,9 @@
         } //************************************ end BreadthFirst_D ************************************
 
 
-        public int DarkNoise(ref CImage Image, int minLight, int maxLight, int maxSize, Form1 fm1)
+        public int DarkNoise(ref CImage image, int minLight, int maxLight, int maxSize, Form1 fm1)
         {
-            bool COLOR = (Image.N_Bits == 24);
+            bool COLOR = (image.N_Bits == 24);
             int Label2, Lum, rv = 0, ind3 = 0; // index multilied with 3
             fm1.progressBar1.Maximum = 100;
             fm1.progressBar1.Step = 1;
@@ -438,7 +440,7 @@
                 return 1;
             }
 
-            int jump = Image.width * Image.height / 50;
+            int jump = image.width * image.height / 50;
             for (int light = maxLight - 2; light >= minLight; light--) //=========================================
             {
                 for (int i = 0; i < nPixel[light]; i++) //========================================
@@ -447,17 +449,17 @@
                     if ((Index[light][i] % jump) == jump - 1) fm1.progressBar1.PerformStep();
                     if (COLOR)
                     {
-                        Label2 = Image.Grid[2 + ind3] & 1;
-                        Lum = MaxC(Image.Grid[2 + ind3] & 254, Image.Grid[1 + ind3] & 254, Image.Grid[0 + ind3] & 254);
+                        Label2 = image.Grid[2 + ind3] & 1;
+                        Lum = MaxC(image.Grid[2 + ind3] & 254, image.Grid[1 + ind3] & 254, image.Grid[0 + ind3] & 254);
                     }
                     else
                     {
-                        Label2 = Image.Grid[Index[light][i]] & 2;
-                        Lum = Image.Grid[Index[light][i]] & 252;
+                        Label2 = image.Grid[Index[light][i]] & 2;
+                        Lum = image.Grid[Index[light][i]] & 252;
                     }
                     if (Lum == light && Label2 == 0)
                     {
-                        rv = BreadthFirst_D(ref Image, i, light, maxSize);
+                        rv = BreadthFirst_D(ref image, i, light, maxSize);
                     }
 
                 } //============================= end for (int i.. =======================
@@ -466,9 +468,9 @@
         } //********************************* end DarkNoise *******************************
 
 
-        public int LightNoise(ref CImage Image, int minLight, int maxLight, int maxSize, Form1 fm1)
+        public int LightNoise(ref CImage image, int minLight, int maxLight, int maxSize, Form1 fm1)
         {
-            bool COLOR = (Image.N_Bits == 24);
+            bool COLOR = (image.N_Bits == 24);
             int Label2, Lum, rv = 0, ind3 = 0; // index multiplied with 3
             fm1.progressBar1.Minimum = 0;
             fm1.progressBar1.Maximum = 100;
@@ -481,7 +483,7 @@
                 return 1;
             }
 
-            int jump = Image.width * Image.height / 50;
+            int jump = image.width * image.height / 50;
             for (int light = minLight; light <= maxLight; light++) //=========================================
             {
                 int index;
@@ -493,23 +495,23 @@
 
                     if (COLOR)
                     {
-                        Label2 = Image.Grid[2 + 3 * Index[light][i]] & 1;
-                        Lum = MaxC(Image.Grid[2 + ind3] & 254, Image.Grid[1 + ind3] & 254, Image.Grid[0 + ind3]);
+                        Label2 = image.Grid[2 + 3 * Index[light][i]] & 1;
+                        Lum = MaxC(image.Grid[2 + ind3] & 254, image.Grid[1 + ind3] & 254, image.Grid[0 + ind3]);
                     }
                     else
                     {
-                        Label2 = Image.Grid[Index[light][i]] & 2;
-                        Lum = Image.Grid[Index[light][i]];
+                        Label2 = image.Grid[Index[light][i]] & 2;
+                        Lum = image.Grid[Index[light][i]];
                     }
                     if (Lum == light && Label2 == 0)
-                        rv = BreadthFirst_L(ref Image, i, light, maxSize);
+                        rv = BreadthFirst_L(ref image, i, light, maxSize);
                 } //============================= end for (int i.. =======================
             } //=============================== end for (int light.. ========================
             return rv;
         } //********************************* end LightNoise ******************************
 
 
-        private int BreadthFirst_L(ref CImage Image, int i, int light, int maxSize)
+        private int BreadthFirst_L(ref CImage image, int i, int light, int maxSize)
         // Looks for pixels with gray values >=light composing with the pixel "Index[light][i]"
         // an 8-connected subset. The size of the subset must be less than "maxSize".
         // Instead of labeling the pixels of the subset, indices of pixels of the subset are saved in Comp.
@@ -522,58 +524,57 @@
             int lightNeb, index, Label1, Label2, MaskBri = 252, MaskColor = 254, maxNeib = 8, Neib, nextIndex;
             bool small = true;
             int[] MaxBound = new int[3];
-            bool COLOR = (Image.N_Bits == 24);
+            bool COLOR = (image.N_Bits == 24);
             index = Index[light][i];
             for (int c = 0; c < 3; c++) MaxBound[c] = -255;
-            for (int p = 0; p < MaxSize; p++) Comp[p] = -1;
+            for (int p = 0; p < this.maxSize; p++) component[p] = -1;
             int numbPix = 0;
-            Comp[numbPix] = index;
+            component[numbPix] = index;
             numbPix++;
             if (COLOR == true)
-                Image.Grid[1 + 3 * index] |= 1; // Labeling as in Comp
+                image.Grid[1 + 3 * index] |= 1; // Labeling as in Comp
             else
-                Image.Grid[index] |= 1; // Labeling as in Comp
-            Q1.input = Q1.output = 0;
-            Q1.Put(index); // putting index into the queue
+                image.Grid[index] |= 1; // Labeling as in Comp
+            queue.input = queue.output = 0;
+            queue.Put(index); // putting index into the queue
 
-            while (Q1.Empty() == 0) //=== loop running while queue not empty ========================
+            while (queue.Empty() == 0) //=== loop running while queue not empty ========================
             {
-                nextIndex = Q1.Get();
+                nextIndex = queue.Get();
                 for (int n = 0; n <= maxNeib; n++) //======== all neighbors of nextIndex ================
                 {
-                    Neib = Neighb(Image, nextIndex, n); // the index of the nth neighbor of nextIndex 
+                    Neib = Neighb(image, nextIndex, n); // the index of the nth neighbor of nextIndex 
                     if (Neib < 0) continue; // Neib < 0 means outside the image
                     if (COLOR)
                     {
-                        Label1 = Image.Grid[1 + 3 * Neib] & 1;
-                        Label2 = Image.Grid[2 + 3 * Neib] & 1;
-                        lightNeb = MaxC(Image.Grid[2 + 3 * Neib], Image.Grid[1 + 3 * Neib],
-                                                                        Image.Grid[0 + 3 * Neib]) & 254; // MaskColor;
+                        Label1 = image.Grid[1 + 3 * Neib] & 1;
+                        Label2 = image.Grid[2 + 3 * Neib] & 1;
+                        lightNeb = MaxC(image.Grid[2 + 3 * Neib], image.Grid[1 + 3 * Neib], image.Grid[0 + 3 * Neib]) & 254; // MaskColor;
                     }
                     else
                     {
-                        Label1 = Image.Grid[Neib] & 1;
-                        Label2 = Image.Grid[Neib] & 2;
-                        lightNeb = Image.Grid[Neib] & MaskBri;
+                        Label1 = image.Grid[Neib] & 1;
+                        Label2 = image.Grid[Neib] & 2;
+                        lightNeb = image.Grid[Neib] & MaskBri;
                     }
                     if (lightNeb == light && Label2 > 0) small = false;
 
                     if (lightNeb >= light) //------------------------------------------------------------
                     {
                         if (Label1 > 0) continue;
-                        Comp[numbPix] = Neib; // putting the element with index Neib into Comp
+                        component[numbPix] = Neib; // putting the element with index Neib into Comp
                         numbPix++;
                         if (COLOR)
-                            Image.Grid[1 + 3 * Neib] |= 1; // Labeling with "1" as in Comp 
+                            image.Grid[1 + 3 * Neib] |= 1; // Labeling with "1" as in Comp 
                         else
-                            Image.Grid[Neib] |= 1; // Labeling with "1" as in Comp 
+                            image.Grid[Neib] |= 1; // Labeling with "1" as in Comp 
 
                         if (numbPix > maxSize)
                         {
                             small = false;
                             break;
                         }
-                        Q1.Put(Neib);
+                        queue.Put(Neib);
                     }
                     else // lightNeb < light
                     {
@@ -582,7 +583,12 @@
                             if (COLOR)
                             {
                                 if (lightNeb > MaxC(MaxBound[2], MaxBound[1], MaxBound[0]))
-                                    for (int c = 0; c < 3; c++) MaxBound[c] = (Image.Grid[c + 3 * Neib] & MaskColor);
+                                {
+                                    for (int c = 0; c < 3; c++)
+                                    {
+                                        MaxBound[c] = (image.Grid[c + 3 * Neib] & MaskColor);
+                                    }
+                                }
                             }
                             else
                               if (lightNeb > MaxBound[0]) MaxBound[0] = lightNeb;
@@ -598,35 +604,34 @@
                 if (small == true && MaxBound[0] >= 0) //it was >-255; ----"-1" means MaxBound was not calculated ---------
                 {
                     if (COLOR == true)
-                        for (int c = 0; c < 3; c++) Image.Grid[c + 3 * Comp[m]] = (byte)MaxBound[c];
+                        for (int c = 0; c < 3; c++) image.Grid[c + 3 * component[m]] = (byte)MaxBound[c];
                     else
                     {
-                        Image.Grid[Comp[m]] = (byte)MaxBound[0];
+                        image.Grid[component[m]] = (byte)MaxBound[0];
                         nChanged++;
                     }
                 }
                 else
                 {
                     if (COLOR == true)
-                        lightComp = MaxC(Image.Grid[2 + 3 * Comp[m]], Image.Grid[1 + 3 * Comp[m]],
-                                                                                    Image.Grid[0 + 3 * Comp[m]]) & MaskColor;
+                        lightComp = MaxC(image.Grid[2 + 3 * component[m]], image.Grid[1 + 3 * component[m]], image.Grid[0 + 3 * component[m]]) & MaskColor;
                     else
-                        lightComp = Image.Grid[Comp[m]] & MaskBri;
+                        lightComp = image.Grid[component[m]] & MaskBri;
 
                     if (lightComp == light) //------------------------------------------------------ 
                     {
-                        if (COLOR == true) Image.Grid[2 + 3 * Comp[m]] |= 1;
-                        else Image.Grid[Comp[m]] |= 2;
+                        if (COLOR == true) image.Grid[2 + 3 * component[m]] |= 1;
+                        else image.Grid[component[m]] |= 2;
                     }
                     else
                     {
                         if (COLOR == true)
                         {
-                            Image.Grid[1 + 3 * Comp[m]] &= (byte)MaskColor; // deleting label 1
-                            Image.Grid[2 + 3 * Comp[m]] &= (byte)MaskColor; // deleting label 2
+                            image.Grid[1 + 3 * component[m]] &= (byte)MaskColor; // deleting label 1
+                            image.Grid[2 + 3 * component[m]] &= (byte)MaskColor; // deleting label 2
                         }
                         else
-                            Image.Grid[Comp[m]] &= (byte)MaskBri; // deleting the labels
+                            image.Grid[component[m]] &= (byte)MaskBri; // deleting the labels
                     } //----------------------- end if (lightComp==light) and else ---------------
                 } //------------------------- end if (small && MaxBound[0]>0) and else ----------
             } //=========================== end for (int m=0 .. ================================
