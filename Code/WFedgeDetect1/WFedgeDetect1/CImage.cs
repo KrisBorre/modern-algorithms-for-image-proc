@@ -8,7 +8,7 @@ namespace WFedgeDetect
     {
         public int input, output, Len;
         bool full;
-        int[] Array;
+        private int[] array;
 
         public CQueInd(int len) // Constructor
         {
@@ -16,13 +16,13 @@ namespace WFedgeDetect
             input = 0;
             output = 0;
             full = false;
-            Array = new int[Len];
+            array = new int[Len];
         }
 
         public int Put(int V)
         {
             if (full) return -1;
-            Array[input] = V;
+            array[input] = V;
             if (input == Len - 1) input = 0;
             else input++;
             return 1;
@@ -36,7 +36,7 @@ namespace WFedgeDetect
                 return er;
             }
             int iV = new int();
-            iV = Array[output];
+            iV = array[output];
             if (output == Len - 1) output = 0;
             else output++;
             if (full) full = false;
@@ -49,6 +49,7 @@ namespace WFedgeDetect
             return false;
         }
     } //***************************** end public class CQueInd **************************
+
 
     public class CImage
     {
@@ -261,12 +262,12 @@ namespace WFedgeDetect
         } //********************** end SigmaColor **********************************
 
 
-        public int SigmaFilterSimpleUni(CImage Inp, int hWind, int Toleranz, Form1 fm1)
+        public int SigmaFilterSimpleUni(CImage input, int hWind, int toleranz, Form1 fm1)
         // Simple sigma filter for both gray value and color images. 
         {
             int[] gvMin = new int[3], gvMax = new int[3], nPixel = new int[3], Sum = new int[3];
             int c;
-            N_Bits = Inp.N_Bits;
+            N_Bits = input.N_Bits;
             int nbyte = N_Bits / 8;
             int jump, Len = height, nStep = 20;
             if (Len > 2 * nStep) jump = Len / nStep;
@@ -284,14 +285,14 @@ namespace WFedgeDetect
                     for (c = 0; c < nbyte; c++)
                     {
                         Sum[c] = 0; nPixel[c] = 0;
-                        gvMin[c] = Math.Max(0, Inp.Grid[c + nbyte * (x + width * y)] - Toleranz);
-                        gvMax[c] = Math.Min(255, Inp.Grid[c + nbyte * (x + width * y)] + Toleranz);
+                        gvMin[c] = Math.Max(0, input.Grid[c + nbyte * (x + width * y)] - toleranz);
+                        gvMax[c] = Math.Min(255, input.Grid[c + nbyte * (x + width * y)] + toleranz);
                     }
                     for (y1 = yStart; y1 <= yEnd; y1++)
                         for (x1 = xStart; x1 <= xEndB; x1++)
                             for (c = 0; c < nbyte; c++)
                             {
-                                gv = Inp.Grid[c + nbyte * (x1 + y1 * width)];
+                                gv = input.Grid[c + nbyte * (x1 + y1 * width)];
                                 if (gv >= gvMin[c] && gv <= gvMax[c])
                                 {
                                     Sum[c] += gv;
@@ -302,7 +303,7 @@ namespace WFedgeDetect
                     {
                         if (nPixel[c] > 0)
                             Grid[c + nbyte * (x + width * y)] = (byte)((Sum[c] + nPixel[c] / 2) / nPixel[c]);
-                        else Grid[c + nbyte * (x + width * y)] = Inp.Grid[c + nbyte * (x + width * y)];
+                        else Grid[c + nbyte * (x + width * y)] = input.Grid[c + nbyte * (x + width * y)];
                     }
                 } //================== end for (int x... =================================
             } //==================== end for (int y... ===================================
@@ -310,10 +311,10 @@ namespace WFedgeDetect
         } //********************** end SigmaSimpleUni **********************************
 
 
-        public int ExtremeFilterVar(CImage Inp, int hWind, Form1 fm1)
+        public int ExtremeFilterVar(CImage input, int hWind, Form1 fm1)
         // Extrem filter for gray value images with variable window size of 2*hWind+1.
         {
-            N_Bits = 8; width = Inp.width; height = Inp.height;
+            N_Bits = 8; width = input.width; height = input.height;
             int gv, y1, yEnd, yStart;
             Grid = new byte[width * height];
             int[] hist = new int[256];
@@ -332,18 +333,18 @@ namespace WFedgeDetect
                     {
                         for (gv = 0; gv < 256; gv++) hist[gv] = 0;
                         for (y1 = yStart; y1 <= yEnd; y1++)
-                            for (int xx = 0; xx <= hWind; xx++) hist[Inp.Grid[xx + y1 * width]]++;
+                            for (int xx = 0; xx <= hWind; xx++) hist[input.Grid[xx + y1 * width]]++;
                     }
                     else
                     {
                         int x1 = x + hWind, x2 = x - hWind - 1;
                         if (x1 < width)
-                            for (y1 = yStart; y1 <= yEnd; y1++) hist[Inp.Grid[x1 + y1 * width]]++;
+                            for (y1 = yStart; y1 <= yEnd; y1++) hist[input.Grid[x1 + y1 * width]]++;
                         if (x2 >= 0)
                             for (y1 = yStart; y1 <= yEnd; y1++)
                             {
-                                hist[Inp.Grid[x2 + y1 * width]]--;
-                                if (hist[Inp.Grid[x2 + y1 * width]] < 0) return -1;
+                                hist[input.Grid[x2 + y1 * width]]--;
+                                if (hist[input.Grid[x2 + y1 * width]] < 0) return -1;
                             }
 
                     } //---------------- end if (x==0) ---------------------------------------
@@ -352,7 +353,7 @@ namespace WFedgeDetect
                         if (hist[gv] > 0) { gvMin = gv; break; }
                     for (gv = gvMax; gv >= 0; gv--)
                         if (hist[gv] > 0) { gvMax = gv; break; }
-                    if (Inp.Grid[x + width * y] - gvMin < gvMax - Inp.Grid[x + width * y])
+                    if (input.Grid[x + width * y] - gvMin < gvMax - input.Grid[x + width * y])
                         Grid[x + width * y] = (byte)gvMin;
                     else Grid[x + width * y] = (byte)gvMax;
                 } //================== end for (int x... =====================================
@@ -508,7 +509,7 @@ namespace WFedgeDetect
         } //********************** end ExtremNewColor **************************************
 
 
-        public int ExtremLightColor(CImage Inp, int hWind, int th, Form1 fm1)
+        public int ExtremLightColor(CImage input, int hWind, int th, Form1 fm1)
         {   /* The extreme filter for 3 byte color images with variable hWind.
 	    The filter finds in the (2*hWind+1)-neighbourhood of the actual pixel (x,y) the color "Color1" with 
       minimum and the color "Color2" with thge maximum lightness. "Color1" is assigned to the output pixel
@@ -525,7 +526,7 @@ namespace WFedgeDetect
                 if ((y % jump) == jump - 1) fm1.progressBar1.PerformStep();
                 for (x = 0; x < width; x++) //==============================================
                 {
-                    for (c = 0; c < 3; c++) Color2[c] = Color1[c] = Color[c] = CenterColor[c] = Inp.Grid[c + 3 * x + y * width * 3];
+                    for (c = 0; c < 3; c++) Color2[c] = Color1[c] = Color[c] = CenterColor[c] = input.Grid[c + 3 * x + y * width * 3];
 
                     int MinLight = 1000, MaxLight = 0;
                     for (k = -hWind; k <= hWind; k++) //=========================================
@@ -535,7 +536,7 @@ namespace WFedgeDetect
                             {
                                 if (x + i >= 0 && x + i < width)
                                 {
-                                    for (c = 0; c < 3; c++) Color[c] = Inp.Grid[c + 3 * (x + i) + 3 * (y + k) * width];
+                                    for (c = 0; c < 3; c++) Color[c] = input.Grid[c + 3 * (x + i) + 3 * (y + k) * width];
                                     int light = MaxC(Color[2], Color[1], Color[0]);
 
                                     if (light < MinLight)
@@ -660,7 +661,7 @@ namespace WFedgeDetect
             return Dif / 3;
         }
 
-        int ColorDif(byte[] Colh, byte[] Colp)
+        private int ColorDif(byte[] Colh, byte[] Colp)
         // Returns the sum of the differences of the color components.
         {
             int Dif = 0;
@@ -815,14 +816,14 @@ namespace WFedgeDetect
         } //*************************** end CracksToPixel **************************************
 
 
-        public int MessReturn(string s)
+        private int MessReturn(string s)
         {
             if (MessageBox.Show(s, "Return", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
                 return -1;
             return 1;
         }
 
-        int ColorDifSign(byte[] Colp, byte[] Colh)
+        private int ColorDifSign(byte[] Colp, byte[] Colh)
         // Returns the sum of the absolut differences of the color components divided through 3
         // with the sign of MaxC(Colp) - MaxC(Colh).
         {
@@ -846,7 +847,7 @@ namespace WFedgeDetect
             {
                 SizeX = width / 2; SizeY = height / 2;
             }
-            Graphics g = fm1.pictureBox1.CreateGraphics();
+            Graphics g = fm1.pictureBoxOriginalImage.CreateGraphics();
             Pen whitePen; //, PenDelete;
             whitePen = new Pen(Color.White, 1);
             SolidBrush blackBrush, redBrush, greenBrush, yellowBrush, blueBrush;
@@ -856,11 +857,11 @@ namespace WFedgeDetect
             yellowBrush = new SolidBrush(Color.Yellow);
             blueBrush = new SolidBrush(Color.Blue);
             Rectangle rect, rect2, point, point2;
-            rect = new Rectangle(0, 0, fm1.pictureBox1.Width, fm1.pictureBox1.Height);
+            rect = new Rectangle(0, 0, fm1.pictureBoxOriginalImage.Width, fm1.pictureBoxOriginalImage.Height);
             g.FillRectangle(blackBrush, rect);
 
 
-            Graphics g2 = fm1.pictureBox2.CreateGraphics();
+            Graphics g2 = fm1.pictureBoxDetectedEdges.CreateGraphics();
             int X = (int)(fm1.Scale1 * (StandX)) + fm1.marginX;
             int Y = (int)(fm1.Scale1 * (StandY)) + fm1.marginY;
             rect2 = new Rectangle(X, Y, (int)(fm1.Scale1 * (SizeX / 2)), (int)(fm1.Scale1 * (SizeY / 2)));
@@ -1648,8 +1649,8 @@ namespace WFedgeDetect
         public void DrawImageLine(int Y, int xStart, int th, CImage Sigma, byte[] Grid2, Form1 fm1)
         // This is a method of "ExtremIm".
         {
-            Graphics g1 = fm1.pictureBox1.CreateGraphics();
-            Graphics g2 = fm1.pictureBox2.CreateGraphics();
+            Graphics g1 = fm1.pictureBoxOriginalImage.CreateGraphics();
+            Graphics g2 = fm1.pictureBoxDetectedEdges.CreateGraphics();
             Graphics g3 = fm1.pictureBox3.CreateGraphics();
             Pen whitePen = new Pen(Color.White);
             Pen redPen = new Pen(Color.Red);
@@ -1761,8 +1762,7 @@ namespace WFedgeDetect
             SolidBrush blackBrush = new SolidBrush(Color.Black);
             Rectangle rect = new Rectangle(0, 0, 1224, 279);
             g3.FillRectangle(blackBrush, rect);
-            int divider = 3, xEndB, length, light1 = 0, light2 = 0, Step = 2, x1,
-              y01 = 120, y02 = 240, y1, y;
+            int divider = 3, xEndB, length, light1 = 0, light2 = 0, Step = 2, x1, y01 = 120, y02 = 240, y1, y;
             length = fm1.pictureBox3.Width / Step;
             int nByte = N_Bits / 8;
             int c = 0, Step2 = Step / 2;
@@ -1771,7 +1771,7 @@ namespace WFedgeDetect
 
             if (fm1.OrigIm.N_Bits == 24) fm1.GridToBitmap(fm1.BmpPictBox1, fm1.OrigIm.Grid);
             else fm1.GridToBitmapOld(fm1.BmpPictBox1, fm1.OrigIm.Grid);
-            fm1.pictureBox1.Image = fm1.BmpPictBox1;
+            fm1.pictureBoxOriginalImage.Image = fm1.BmpPictBox1;
 
             int lengthB, xStartB, YB;
             if (fm1.BmpGraph)
@@ -1866,8 +1866,8 @@ namespace WFedgeDetect
             g2.DrawLine(greenPen, xx, yy, ex, yy);
             if (fm1.BmpGraph)
             {
-                fm1.pictureBox1.Image = fm1.BmpPictBox1;
-                fm1.pictureBox2.Image = fm1.BmpPictBox2;
+                fm1.pictureBoxOriginalImage.Image = fm1.BmpPictBox1;
+                fm1.pictureBoxDetectedEdges.Image = fm1.BmpPictBox2;
                 fm1.pictureBox3.Image = fm1.BmpPictBox3;
             }
         } //******************************** end DrawImageLine ***********************

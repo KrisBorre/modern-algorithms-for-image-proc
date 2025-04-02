@@ -28,12 +28,12 @@
     /// </summary>
     private void InitializeComponent()
     {
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.buttonOpen = new System.Windows.Forms.Button();
+            this.buttonDetectEdges = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxOriginalImage = new System.Windows.Forms.PictureBox();
+            this.pictureBoxDetectedEdges = new System.Windows.Forms.PictureBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.radioButton1Comb = new System.Windows.Forms.RadioButton();
             this.radioButton2Image = new System.Windows.Forms.RadioButton();
@@ -45,30 +45,30 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOriginalImage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDetectedEdges)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.SuspendLayout();
             // 
-            // button1
+            // buttonOpen
             // 
-            this.button1.Location = new System.Drawing.Point(176, 13);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(92, 42);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Open image";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonOpen.Location = new System.Drawing.Point(176, 13);
+            this.buttonOpen.Name = "buttonOpen";
+            this.buttonOpen.Size = new System.Drawing.Size(92, 42);
+            this.buttonOpen.TabIndex = 0;
+            this.buttonOpen.Text = "Open image";
+            this.buttonOpen.UseVisualStyleBackColor = true;
+            this.buttonOpen.Click += new System.EventHandler(this.buttonOpenImage_Click);
             // 
-            // button2
+            // buttonDetectEdges
             // 
-            this.button2.Location = new System.Drawing.Point(637, 13);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(92, 42);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Detect edges";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.buttonDetectEdges.Location = new System.Drawing.Point(637, 13);
+            this.buttonDetectEdges.Name = "buttonDetectEdges";
+            this.buttonDetectEdges.Size = new System.Drawing.Size(92, 42);
+            this.buttonDetectEdges.TabIndex = 1;
+            this.buttonDetectEdges.Text = "Detect edges";
+            this.buttonDetectEdges.UseVisualStyleBackColor = true;
+            this.buttonDetectEdges.Click += new System.EventHandler(this.buttonDetectEdges_Click);
             // 
             // label1
             // 
@@ -101,24 +101,24 @@
             0,
             0});
             // 
-            // pictureBox1
+            // pictureBoxOriginalImage
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(20, 150);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(600, 600);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 4;
-            this.pictureBox1.TabStop = false;
+            this.pictureBoxOriginalImage.Location = new System.Drawing.Point(20, 150);
+            this.pictureBoxOriginalImage.Name = "pictureBoxOriginalImage";
+            this.pictureBoxOriginalImage.Size = new System.Drawing.Size(600, 600);
+            this.pictureBoxOriginalImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxOriginalImage.TabIndex = 4;
+            this.pictureBoxOriginalImage.TabStop = false;
             // 
-            // pictureBox2
+            // pictureBoxDetectedEdges
             // 
-            this.pictureBox2.Location = new System.Drawing.Point(660, 150);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(600, 600);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox2.TabIndex = 5;
-            this.pictureBox2.TabStop = false;
-            this.pictureBox2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox2_MouseClick);
+            this.pictureBoxDetectedEdges.Location = new System.Drawing.Point(660, 150);
+            this.pictureBoxDetectedEdges.Name = "pictureBoxDetectedEdges";
+            this.pictureBoxDetectedEdges.Size = new System.Drawing.Size(600, 600);
+            this.pictureBoxDetectedEdges.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxDetectedEdges.TabIndex = 5;
+            this.pictureBoxDetectedEdges.TabStop = false;
+            this.pictureBoxDetectedEdges.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBoxDetectedEdges_MouseClick);
             // 
             // progressBar1
             // 
@@ -237,17 +237,17 @@
             this.Controls.Add(this.radioButton2Image);
             this.Controls.Add(this.radioButton1Comb);
             this.Controls.Add(this.progressBar1);
-            this.Controls.Add(this.pictureBox2);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.pictureBoxDetectedEdges);
+            this.Controls.Add(this.pictureBoxOriginalImage);
             this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonDetectEdges);
+            this.Controls.Add(this.buttonOpen);
             this.Name = "Form1";
             this.Text = "WFdetectEdges";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOriginalImage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDetectedEdges)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -256,12 +256,12 @@
 
     #endregion
 
-    private System.Windows.Forms.Button button1;
-    private System.Windows.Forms.Button button2;
+    private System.Windows.Forms.Button buttonOpen;
+    private System.Windows.Forms.Button buttonDetectEdges;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.NumericUpDown numericUpDown1;
-    public System.Windows.Forms.PictureBox pictureBox1;
-    public System.Windows.Forms.PictureBox pictureBox2;
+    public System.Windows.Forms.PictureBox pictureBoxOriginalImage;
+    public System.Windows.Forms.PictureBox pictureBoxDetectedEdges;
     public System.Windows.Forms.ProgressBar progressBar1;
     private System.Windows.Forms.RadioButton radioButton1Comb;
     private System.Windows.Forms.RadioButton radioButton2Image;
