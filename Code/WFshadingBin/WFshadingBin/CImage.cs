@@ -284,9 +284,9 @@ namespace WFshadingBin
             nC = new int[width];
             for (int i = 0; i < width; i++) ColSum[i] = nC[i] = 0;
 
-            int hWind = (int)fm1.numericUpDown1.Value * width / 200;
-            fm1.numericUpDown1.Increment = 5;
-            if (fm1.numericUpDown1.Value < 10) fm1.numericUpDown1.Increment = 1;
+            int hWind = (int)fm1.numericUpDownWindow.Value * width / 200;
+            fm1.numericUpDownWindow.Increment = 5;
+            if (fm1.numericUpDownWindow.Value < 10) fm1.numericUpDownWindow.Increment = 1;
 
             int nS = 0, Sum = 0;
             for (int y = 0; y < height + hWind; y++)
