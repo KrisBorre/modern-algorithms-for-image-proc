@@ -20,12 +20,13 @@ namespace WFedgeDetect
         public Bitmap BmpPictBox1;
         public Bitmap BmpPictBox2;
         public Bitmap BmpPictBox3;
+
         public CImage OrigIm;  // copy of original image
 
-        private CImage SigmaIm;  // local mean
-        private CImage ExtremIm;  // shading corrected image and the result
-        private CImage CombIm;  // shading corrected image and the result
-        private CImage EdgeIm;  // shading corrected image and the result
+        private CImage sigmaIm;  // local mean
+        private CImage extremeFilteredImage;  // shading corrected image and the result
+        private CImage combIm;  // shading corrected image and the result
+        private CImage edgeIm;  // shading corrected image and the result
 
         private int nBit;
         private bool OPEN = false;
@@ -117,10 +118,10 @@ namespace WFedgeDetect
             }
 
             OrigIm = new CImage(origBmp.Width, origBmp.Height, nBit, grid);
-            SigmaIm = new CImage(origBmp.Width, origBmp.Height, nBit, grid);
-            ExtremIm = new CImage(origBmp.Width, origBmp.Height, nBit, grid);
-            CombIm = new CImage(1 + 2 * origBmp.Width, 1 + 2 * origBmp.Height, 8);
-            EdgeIm = new CImage(origBmp.Width, origBmp.Height, 8, grid);
+            sigmaIm = new CImage(origBmp.Width, origBmp.Height, nBit, grid);
+            extremeFilteredImage = new CImage(origBmp.Width, origBmp.Height, nBit, grid);
+            combIm = new CImage(1 + 2 * origBmp.Width, 1 + 2 * origBmp.Height, 8);
+            edgeIm = new CImage(origBmp.Width, origBmp.Height, 8, grid);
 
             double ScaleX = (double)pictureBoxOriginalImage.Width / (double)OrigIm.width;
             double ScaleY = (double)pictureBoxOriginalImage.Height / (double)OrigIm.height;
@@ -395,25 +396,26 @@ namespace WFedgeDetect
             progressBar1.Visible = true;
             progressBar1.Value = 0;
 
-            SigmaIm.SigmaFilterSimpleUni(OrigIm, 1, 30, this);
+            sigmaIm.SigmaFilterSimpleUniversal(input: OrigIm, hWind: 1, toleranz: 30, fm1: this);
+
             if (OrigIm.N_Bits == 24)
             {
-                ExtremIm.ExtremLightColor(SigmaIm, 2, 1, this);
+                extremeFilteredImage.ExtremeFilterLightColor(input: sigmaIm, hWind: 2, th: 1, fm1: this);
             }
             else
             {
-                ExtremIm.ExtremeFilterVar(SigmaIm, 2, this);
+                extremeFilteredImage.ExtremeFilterGrayscale(input: sigmaIm, hWind: 2, fm1: this);
             }
 
-            threshold = (int)numericUpDown1.Value;
-            int NX = OrigIm.width;
+            this.threshold = (int)numericUpDown1.Value;
+            //int NX = OrigIm.width;
 
             int rv;
-            rv = CombIm.LabelCellsSign(threshold, ExtremIm, this);
-            rv = CombIm.CleanCombNew(16, this);
-            EdgeIm.CracksToPixel(CombIm, this);
+            rv = combIm.LabelCellsSign(this.threshold, extremeFilteredImage, this);
+            rv = combIm.CleanCombNew(16, this);
+            edgeIm.CracksToPixel(combIm, this);
 
-            GridToBitmapOld(BmpPictBox2, EdgeIm.Grid);
+            GridToBitmapOld(BmpPictBox2, edgeIm.Grid);
 
             radioButton1Comb.Visible = true;
             radioButton2Image.Visible = true;
@@ -427,7 +429,7 @@ namespace WFedgeDetect
 
         private void pictureBoxDetectedEdges_MouseClick(object sender, MouseEventArgs e) // DrawComb
         {
-            int StandX, StandY;
+            int standX, standY;
             if (!radioButton1Comb.Checked && !radioButton2Image.Checked)
             {
                 MessageBox.Show("Please click one of the right radio buttons");
@@ -437,22 +439,22 @@ namespace WFedgeDetect
             {
                 pictureBoxOriginalImage.Image = origBmp;
                 radioButton1Comb.Checked = false;
-                StandX = (int)((e.X - marginX) / Scale1);
-                StandY = (int)((e.Y - marginY) / Scale1);
+                standX = (int)((e.X - marginX) / Scale1);
+                standY = (int)((e.Y - marginY) / Scale1);
                 label2.Visible = true;
                 label3.Visible = true;
                 pictureBox3.Visible = true;
-                ExtremIm.DrawImageLine(StandY, StandX, threshold, SigmaIm, CombIm.Grid, this);
+                extremeFilteredImage.DrawImageLine(Y: standY, xStart: standX, threshold: this.threshold, sigmaImage: sigmaIm, grid2: combIm.Grid, fm1: this);
             }
 
             if (radioButton1Comb.Checked)
             {
-                StandX = (int)((e.X - marginX) / Scale1);
-                StandY = (int)((e.Y - marginY) / Scale1);
+                standX = (int)((e.X - marginX) / Scale1);
+                standY = (int)((e.Y - marginY) / Scale1);
                 label2.Visible = false;
                 label3.Visible = false;
                 pictureBox3.Visible = false;
-                CombIm.DrawComb(StandX, StandY, this);
+                combIm.DrawComb(standX: standX, standY: standY, fm1: this);
             }
 
             if (BmpGraph)
