@@ -93,6 +93,7 @@ namespace WFedgeDetect
                 Grid[i] = inp.Grid[i];
         }
 
+        // MaxC returns the lightness of the color of a pixel.
         public int MaxC(int R, int G, int B)
         {
             int max;
@@ -154,7 +155,7 @@ namespace WFedgeDetect
         // Sigma filter with doubled calculation of the output values for gray value images.
         {
             N_Bits = 8; width = Inp.width; height = Inp.height;
-            int gv, y1, yEnd, yStart;
+            int gray_value, y1, yEnd, yStart;
             Grid = new byte[width * height * N_Bits / 8];
             int[] hist = new int[256];
             int yy = 1 + nLoop * height / denomProg;
@@ -167,7 +168,7 @@ namespace WFedgeDetect
                 {
                     if (x == 0) //-----------------------------------------------
                     {
-                        for (gv = 0; gv < 256; gv++) hist[gv] = 0;
+                        for (gray_value = 0; gray_value < 256; gray_value++) hist[gray_value] = 0;
                         for (y1 = yStart; y1 <= yEnd; y1++)
                             for (int xx = 0; xx <= hWind; xx++) hist[Inp.Grid[xx + y1 * width]]++;
                     }
@@ -186,9 +187,9 @@ namespace WFedgeDetect
                     int Sum = 0, nPixel = 0, prov;
                     int gvMin = Math.Max(0, Inp.Grid[x + width * y] - Toleranz),
                         gvMax = Math.Min(255, Inp.Grid[x + width * y] + Toleranz);
-                    for (gv = gvMin; gv <= gvMax; gv++) // First loop through the histogram
+                    for (gray_value = gvMin; gray_value <= gvMax; gray_value++) // First loop through the histogram
                     {
-                        Sum += gv * hist[gv]; nPixel += hist[gv];
+                        Sum += gray_value * hist[gray_value]; nPixel += hist[gray_value];
                     }
                     if (nPixel > 0) prov = (Sum + nPixel / 2) / nPixel;
                     else prov = Inp.Grid[x + width * y];  // "prov" is the provisional average
@@ -196,9 +197,9 @@ namespace WFedgeDetect
                     Sum = nPixel = 0;
                     gvMin = Math.Max(0, prov - Toleranz);
                     gvMax = Math.Min(255, prov + Toleranz);
-                    for (gv = gvMin; gv <= gvMax; gv++) // Second loop through the histogram
+                    for (gray_value = gvMin; gray_value <= gvMax; gray_value++) // Second loop through the histogram
                     {
-                        Sum += gv * hist[gv]; nPixel += hist[gv];
+                        Sum += gray_value * hist[gray_value]; nPixel += hist[gray_value];
                     }
                     if (nPixel > 0) Grid[x + width * y] = (byte)((Sum + nPixel / 2) / nPixel);
                     else Grid[x + width * y] = Inp.Grid[x + width * y];
@@ -210,8 +211,8 @@ namespace WFedgeDetect
         // not called
         public int SigmaColor(CImage Inp, int hWind, int Toleranz, Form1 fm1)
         {   // The sigma filter for color images with 3 bytes per pixel.
-            int gv, y1, yEnd, yStart;
-            int[] gvMin = new int[3], gvMax = new int[3], nPixel = new int[3], Sum = new int[3];
+            int gray_value, y1, yEnd, yStart;
+            int[] min_gray_value = new int[3], max_gray_vallue = new int[3], nPixel = new int[3], sum = new int[3];
             int[][] hist = new int[3][];
             for (int i = 0; i < 3; i++) hist[i] = new int[256];
             int c;
@@ -229,7 +230,7 @@ namespace WFedgeDetect
                     {
                         if (x == 0) //-----------------------------------------------
                         {
-                            for (gv = 0; gv < 256; gv++) hist[c][gv] = 0;
+                            for (gray_value = 0; gray_value < 256; gray_value++) hist[c][gray_value] = 0;
                             for (y1 = yStart; y1 <= yEnd; y1++)
                                 for (int xx = 0; xx <= hWind; xx++) hist[c][Inp.Grid[c + 3 * xx + y1 * width * 3]]++;
                         }
@@ -246,14 +247,14 @@ namespace WFedgeDetect
                                 }
                         } //---------------- end if (x==0) ------------------------
 
-                        Sum[c] = 0; nPixel[c] = 0;
-                        gvMin[c] = Math.Max(0, Inp.Grid[c + 3 * x + 3 * width * y] - Toleranz);
-                        gvMax[c] = Math.Min(255, Inp.Grid[c + 3 * x + 3 * width * y] + Toleranz);
-                        for (gv = gvMin[c]; gv <= gvMax[c]; gv++)
+                        sum[c] = 0; nPixel[c] = 0;
+                        min_gray_value[c] = Math.Max(0, Inp.Grid[c + 3 * x + 3 * width * y] - Toleranz);
+                        max_gray_vallue[c] = Math.Min(255, Inp.Grid[c + 3 * x + 3 * width * y] + Toleranz);
+                        for (gray_value = min_gray_value[c]; gray_value <= max_gray_vallue[c]; gray_value++)
                         {
-                            Sum[c] += gv * hist[c][gv]; nPixel[c] += hist[c][gv];
+                            sum[c] += gray_value * hist[c][gray_value]; nPixel[c] += hist[c][gray_value];
                         }
-                        if (nPixel[c] > 0) Grid[c + 3 * x + 3 * width * y] = (byte)((Sum[c] + nPixel[c] / 2) / nPixel[c]);
+                        if (nPixel[c] > 0) Grid[c + 3 * x + 3 * width * y] = (byte)((sum[c] + nPixel[c] / 2) / nPixel[c]);
                         else Grid[c + 3 * x + 3 * width * y] = Inp.Grid[c + 3 * x + 3 * width * y];
                     } //================ end for (c... ========================
                 } //================== end for (int x... ======================
@@ -265,7 +266,7 @@ namespace WFedgeDetect
         public int SigmaFilterSimpleUniversal(CImage input, int hWind, int toleranz, Form1 fm1)
         // Simple sigma filter for both gray value and color images. 
         {
-            int[] gvMin = new int[3], gvMax = new int[3], nPixel = new int[3], sum = new int[3];
+            int[] min_gray_value = new int[3], max_gray_value = new int[3], nPixel = new int[3], sum = new int[3];
             int c;
             N_Bits = input.N_Bits;
             int nbyte = N_Bits / 8;
@@ -279,29 +280,29 @@ namespace WFedgeDetect
             for (int y = 0; y < height; y++) // ==================================================
             {
                 if ((y % jump) == jump - 1) fm1.progressBar1.PerformStep();
-                int gv, y1, yStart = Math.Max(y - hWind, 0), yEnd = Math.Min(y + hWind, height - 1);
+                int yStart = Math.Max(y - hWind, 0), yEnd = Math.Min(y + hWind, height - 1);
 
                 for (int x = 0; x < width; x++) //===============================================
                 {
-                    int x1, xStart = Math.Max(x - hWind, 0), xEndB = Math.Min(x + hWind, width - 1);
+                    int xStart = Math.Max(x - hWind, 0), xEndB = Math.Min(x + hWind, width - 1);
 
                     for (c = 0; c < nbyte; c++)
                     {
                         sum[c] = 0; nPixel[c] = 0;
-                        gvMin[c] = Math.Max(0, input.Grid[c + nbyte * (x + width * y)] - toleranz);
-                        gvMax[c] = Math.Min(255, input.Grid[c + nbyte * (x + width * y)] + toleranz);
+                        min_gray_value[c] = Math.Max(0, input.Grid[c + nbyte * (x + width * y)] - toleranz);
+                        max_gray_value[c] = Math.Min(255, input.Grid[c + nbyte * (x + width * y)] + toleranz);
                     }
 
-                    for (y1 = yStart; y1 <= yEnd; y1++)
+                    for (int y1 = yStart; y1 <= yEnd; y1++)
                     {
-                        for (x1 = xStart; x1 <= xEndB; x1++)
+                        for (int x1 = xStart; x1 <= xEndB; x1++)
                         {
                             for (c = 0; c < nbyte; c++)
                             {
-                                gv = input.Grid[c + nbyte * (x1 + y1 * width)];
-                                if (gv >= gvMin[c] && gv <= gvMax[c])
+                                int gray_value = input.Grid[c + nbyte * (x1 + y1 * width)];
+                                if (gray_value >= min_gray_value[c] && gray_value <= max_gray_value[c])
                                 {
-                                    sum[c] += gv;
+                                    sum[c] += gray_value;
                                     nPixel[c]++;
                                 }
                             }
@@ -330,7 +331,7 @@ namespace WFedgeDetect
         // Extrem filter for gray value images with variable window size of 2*hWind+1.
         {
             N_Bits = 8; width = input.width; height = input.height;
-            int gv, y1, yEnd, yStart;
+            int gray_value, y1, yEnd, yStart;
             this.Grid = new byte[width * height];
             int[] hist = new int[256];
             int jump, Len = height, nStep = 20;
@@ -347,7 +348,7 @@ namespace WFedgeDetect
                 {
                     if (x == 0) //------------------------------------------------------------
                     {
-                        for (gv = 0; gv < 256; gv++) hist[gv] = 0;
+                        for (gray_value = 0; gray_value < 256; gray_value++) hist[gray_value] = 0;
                         for (y1 = yStart; y1 <= yEnd; y1++)
                         {
                             for (int xx = 0; xx <= hWind; xx++)
@@ -373,33 +374,33 @@ namespace WFedgeDetect
 
                     } //---------------- end if (x==0) ---------------------------------------
 
-                    int gvMin = 0, gvMax = 255;
+                    int min_gray_value = 0, max_gray_value = 255;
 
-                    for (gv = gvMin; gv <= gvMax; gv++)
+                    for (gray_value = min_gray_value; gray_value <= max_gray_value; gray_value++)
                     {
-                        if (hist[gv] > 0)
+                        if (hist[gray_value] > 0)
                         {
-                            gvMin = gv;
+                            min_gray_value = gray_value;
                             break;
                         }
                     }
 
-                    for (gv = gvMax; gv >= 0; gv--)
+                    for (gray_value = max_gray_value; gray_value >= 0; gray_value--)
                     {
-                        if (hist[gv] > 0)
+                        if (hist[gray_value] > 0)
                         {
-                            gvMax = gv;
+                            max_gray_value = gray_value;
                             break;
                         }
                     }
 
-                    if (input.Grid[x + width * y] - gvMin < gvMax - input.Grid[x + width * y])
+                    if (input.Grid[x + width * y] - min_gray_value < max_gray_value - input.Grid[x + width * y])
                     {
-                        this.Grid[x + width * y] = (byte)gvMin;
+                        this.Grid[x + width * y] = (byte)min_gray_value;
                     }
                     else
                     {
-                        this.Grid[x + width * y] = (byte)gvMax;
+                        this.Grid[x + width * y] = (byte)max_gray_value;
                     }
                 } //================== end for (int x... =====================================
             } //==================== end for (int y... =======================================
@@ -513,7 +514,7 @@ namespace WFedgeDetect
                                 if (x + i >= 0 && x + i < width) // && (i > 0 || k > 0))
                                 {
                                     for (c = 0; c < 3; c++) Color[c] = Inp.Grid[c + 3 * (x + i) + (y + k) * width * 3];
-                                    int dist = ColorDifSign(Color, CenterColor);
+                                    int dist = ColorDifferenceWithSign(Color, CenterColor);
 
                                     if (dist < MinDist)
                                     {
@@ -532,7 +533,7 @@ namespace WFedgeDetect
                                 if (x + i >= 0 && x + i < width)
                                 {
                                     for (c = 0; c < 3; c++) Color[c] = Inp.Grid[c + 3 * (x + i) + (y + k) * width * 3];
-                                    int dist = ColorDifSign(Color, Color1);
+                                    int dist = ColorDifferenceWithSign(Color, Color1);
                                     if (dist > MaxDist)
                                     {
                                         MaxDist = dist;
@@ -542,8 +543,8 @@ namespace WFedgeDetect
                         //=============== end for (int i... ================================
                     } //================ end for (int k... =================================
                     int dist1 = 0, dist2 = 0;
-                    dist1 = Math.Abs(ColorDifSign(Color1, CenterColor));
-                    dist2 = Math.Abs(ColorDifSign(Color1, CenterColor));
+                    dist1 = Math.Abs(ColorDifferenceWithSign(Color1, CenterColor));
+                    dist2 = Math.Abs(ColorDifferenceWithSign(Color1, CenterColor));
                     if (dist1 < dist2) for (c = 0; c < 3; c++)
                             Grid[c + 3 * x + y * width * 3] = Color1[c];
                     else for (c = 0; c < 3; c++)
@@ -746,6 +747,7 @@ namespace WFedgeDetect
         }
 
         // not called
+        // page 106
         public int LabelCells(int th, CImage Image3)
         /* Looks in "Image3" (standard coord.) for all pairs of adjacent pixels with color differences greater
              than "th" and finds the maximum color differencew among adjacent pairs in the same line or in the same column.
@@ -899,20 +901,21 @@ namespace WFedgeDetect
             return 1;
         }
 
-        private int ColorDifSign(byte[] colp, byte[] colh)
+        private int ColorDifferenceWithSign(byte[] colorp, byte[] colorh)
         // Returns the sum of the absolut differences of the color components divided through 3
         // with the sign of MaxC(Colp) - MaxC(Colh).
         {
-            int Dif = 0;
+            int difference = 0;
             for (int c = 0; c < 3; c++)
             {
-                Dif += Math.Abs(colp[c] - colh[c]);
+                difference += Math.Abs(colorp[c] - colorh[c]);
             }
-            int Sign;
-            if (MaxC(colp[2], colp[1], colp[0]) - MaxC(colh[2], colh[1], colh[0]) > 0) Sign = 1;
-            else Sign = -1;
 
-            return (Sign * Dif) / 3;
+            int sign;
+            if (MaxC(colorp[2], colorp[1], colorp[0]) - MaxC(colorh[2], colorh[1], colorh[0]) > 0) sign = 1;
+            else sign = -1;
+
+            return (sign * difference) / 3;
         }
 
 
@@ -1033,8 +1036,9 @@ namespace WFedgeDetect
         } //************************************** end DrawComb *************************************************
 
 
-
-        public int LabelCellsSign(int th, CImage Image3, Form1 fm1)
+        // is called
+        // page 112
+        public int LabelCellsSign(int threshold, CImage input_image3, Form1 fm1)
         /* Looks in "Image3" (standard coord.) for all pairs of adjacent pixels with signed color  
           differences greater than "th" or less than "-th" and finds the maximum or minimum color  
           differences among pixels of adjacent pairs in the same line or in the same column.
@@ -1042,84 +1046,90 @@ namespace WFedgeDetect
           to the cracks are also provided with labels indicating the number of incident cracks. 
           This method works both for color and gray value images. ---*/
         {
-            int difH, difV, c, maxDif, minDif, nByte, NXB = Image3.width, x, y, xopt, yopt;
-            int Inp, State, Contr, xStartP, xStartM, yStartP, yStartM;
-            if (Image3.N_Bits == 24) nByte = 3;
+            int difHorizontal, difVertical, c, maxDif, minDif, nByte, NXB = input_image3.width, x, y, xopt, yopt;
+            int Inp, state, control, xStartP, xStartM, yStartP, yStartM;
+            
+            if (input_image3.N_Bits == 24) nByte = 3;
             else nByte = 1;
-            for (x = 0; x < width * height; x++) Grid[x] = 0;
-            byte[] Colorp = new byte[3], Colorh = new byte[3], Colorv = new byte[3];
+
+            for (x = 0; x < this.width * this.height; x++) this.Grid[x] = 0;
+            
+            byte[] colorp = new byte[3], colorh = new byte[3], colorv = new byte[3];
             maxDif = 0; minDif = 0;
-            int jump, Len = height / 2, nStep = 10;
+            int jump, Len = this.height / 2, nStep = 10;
+
             if (Len > 2 * nStep) jump = Len / nStep;
             else jump = 2;
 
-            for (y = 3; y < height; y += 2) //================ vertical cracks =====================
+            for (y = 3; y < this.height; y += 2) //================ vertical cracks =====================
             {
                 if (y % jump == jump - 1) fm1.progressBar1.PerformStep();
-                State = 0;
+                state = 0;
                 xopt = -1; xStartP = xStartM = -1;
 
-                for (x = 3; x < width; x += 2)  //====================================================
+                for (x = 3; x < this.width; x += 2)  //====================================================
                 {
                     for (c = 0; c < nByte; c++)
                     {
-                        Colorv[c] = Image3.Grid[c + nByte * ((x - 2) / 2) + nByte * NXB * (y / 2)];
-                        Colorp[c] = Image3.Grid[c + nByte * (x / 2) + nByte * NXB * (y / 2)];
+                        colorv[c] = input_image3.Grid[c + nByte * ((x - 2) / 2) + nByte * NXB * (y / 2)];
+                        colorp[c] = input_image3.Grid[c + nByte * (x / 2) + nByte * NXB * (y / 2)];
                     }
-                    if (nByte == 3) difV = ColorDifSign(Colorp, Colorv);
-                    else difV = Colorp[0] - Colorv[0];
-                    if (difV > th) Inp = 1;
+                    
+                    if (nByte == 3) difVertical = ColorDifferenceWithSign(colorp, colorv);
+                    else difVertical = colorp[0] - colorv[0];
+
+                    if (difVertical > threshold) Inp = 1;
                     else
-                      if (difV > -th) Inp = 0;
+                      if (difVertical > -threshold) Inp = 0;
                     else Inp = -1;
 
-                    Contr = State * 3 + Inp;
-                    switch (Contr) //:::::::::::::::::::::::::::::::::::::::::::::::::
+                    control = state * 3 + Inp;
+                    switch (control) //:::::::::::::::::::::::::::::::::::::::::::::::::
                     {
                         case 4:
-                            if (x > xStartP && difV > maxDif)
+                            if (x > xStartP && difVertical > maxDif)
                             {
-                                maxDif = difV;
+                                maxDif = difVertical;
                                 xopt = x;
                             }
                             break;
                         case 3:
-                            Grid[xopt - 1 + width * y] = 1; // vertical crack
-                            Grid[xopt - 1 + width * (y - 1)]++; // point above
-                            Grid[xopt - 1 + width * (y + 1)]++; // point below
-                            State = 0;
+                            this.Grid[xopt - 1 + width * y] = 1; // vertical crack
+                            this.Grid[xopt - 1 + width * (y - 1)]++; // point above
+                            this.Grid[xopt - 1 + width * (y + 1)]++; // point below
+                            state = 0;
                             break;
                         case 2:
-                            Grid[xopt - 1 + width * y] = 1; // vertical crack
-                            Grid[xopt - 1 + width * (y - 1)]++; // point above
-                            Grid[xopt - 1 + width * (y + 1)]++; // point below
-                            minDif = difV;
+                            this.Grid[xopt - 1 + width * y] = 1; // vertical crack
+                            this.Grid[xopt - 1 + width * (y - 1)]++; // point above
+                            this.Grid[xopt - 1 + width * (y + 1)]++; // point below
+                            minDif = difVertical;
                             xopt = x;
                             xStartM = x;
-                            State = -1;
+                            state = -1;
                             break;
-                        case 1: maxDif = difV; xopt = x; xStartP = x; State = 1; break;
+                        case 1: maxDif = difVertical; xopt = x; xStartP = x; state = 1; break;
                         case 0: break;
-                        case -1: minDif = difV; xopt = x; xStartM = x; State = -1; break;
+                        case -1: minDif = difVertical; xopt = x; xStartM = x; state = -1; break;
                         case -2:
-                            Grid[xopt - 1 + width * y] = 1;       // vertical crack
-                            Grid[xopt - 1 + width * (y - 1)]++; // point above
-                            Grid[xopt - 1 + width * (y + 1)]++; // point below
-                            maxDif = difV;
+                            this.Grid[xopt - 1 + width * y] = 1;       // vertical crack
+                            this.Grid[xopt - 1 + width * (y - 1)]++; // point above
+                            this.Grid[xopt - 1 + width * (y + 1)]++; // point below
+                            maxDif = difVertical;
                             xopt = x;
                             xStartP = x;
-                            State = 1;
+                            state = 1;
                             break;
                         case -3:
-                            Grid[xopt - 1 + width * y] = 1;       // vertical crack
-                            Grid[xopt - 1 + width * (y - 1)]++; // point above
-                            Grid[xopt - 1 + width * (y + 1)]++; // point below
-                            State = 0;
+                            this.Grid[xopt - 1 + width * y] = 1;       // vertical crack
+                            this.Grid[xopt - 1 + width * (y - 1)]++; // point above
+                            this.Grid[xopt - 1 + width * (y + 1)]++; // point below
+                            state = 0;
                             break;
                         case -4:
-                            if (x > xStartM && difV < minDif)
+                            if (x > xStartM && difVertical < minDif)
                             {
-                                minDif = difV;
+                                minDif = difVertical;
                                 xopt = x;
                             }
                             break;
@@ -1129,67 +1139,67 @@ namespace WFedgeDetect
 
             for (x = 1; x < width; x += 2) //================== horizontal cracks ==================
             {
-                State = 0;
+                state = 0;
                 minDif = 0; yopt = -1; yStartP = yStartM = 0;
                 for (y = 3; y < height; y += 2)  //====================================================
                 {
                     for (c = 0; c < nByte; c++)
                     {
-                        Colorh[c] = Image3.Grid[c + nByte * (x / 2) + nByte * NXB * ((y - 2) / 2)];
-                        Colorp[c] = Image3.Grid[c + nByte * (x / 2) + nByte * NXB * (y / 2)];
+                        colorh[c] = input_image3.Grid[c + nByte * (x / 2) + nByte * NXB * ((y - 2) / 2)];
+                        colorp[c] = input_image3.Grid[c + nByte * (x / 2) + nByte * NXB * (y / 2)];
                     }
 
-                    if (nByte == 3) difH = ColorDifSign(Colorp, Colorh);
-                    else difH = Colorp[0] - Colorh[0];
-                    if (difH > th)
+                    if (nByte == 3) difHorizontal = ColorDifferenceWithSign(colorp, colorh);
+                    else difHorizontal = colorp[0] - colorh[0];
+                    if (difHorizontal > threshold)
                         Inp = 1;
                     else
-                      if (difH > -th) Inp = 0;
+                      if (difHorizontal > -threshold) Inp = 0;
                     else Inp = -1;
 
-                    Contr = State * 3 + Inp;
-                    switch (Contr) //:::::::::::::::::::::::::::::::::::::::::::::::::
+                    control = state * 3 + Inp;
+                    switch (control) //:::::::::::::::::::::::::::::::::::::::::::::::::
                     {
                         case 4:
-                            if (y > yStartP && difH > maxDif)
+                            if (y > yStartP && difHorizontal > maxDif)
                             {
-                                maxDif = difH;
+                                maxDif = difHorizontal;
                                 yopt = y;
                             }
                             break;
                         case 3:
-                            Grid[x + width * (yopt - 1)] = 1;     // horizontal crack
-                            Grid[x - 1 + width * (yopt - 1)]++;  // left point
-                            Grid[x + 1 + width * (yopt - 1)]++;  // right point
-                            State = 0;
+                            this.Grid[x + width * (yopt - 1)] = 1;     // horizontal crack
+                            this.Grid[x - 1 + width * (yopt - 1)]++;  // left point
+                            this.Grid[x + 1 + width * (yopt - 1)]++;  // right point
+                            state = 0;
                             break;
                         case 2:
-                            Grid[x + width * (yopt - 1)] = 1;       // horizontal crack
-                            Grid[x - 1 + width * (yopt - 1)]++; // left point
-                            Grid[x + 1 + width * (yopt - 1)]++; // right point
+                            this.Grid[x + width * (yopt - 1)] = 1;       // horizontal crack
+                            this.Grid[x - 1 + width * (yopt - 1)]++; // left point
+                            this.Grid[x + 1 + width * (yopt - 1)]++; // right point
                             yopt = y;
-                            State = -1;
+                            state = -1;
                             break;
-                        case 1: maxDif = difH; yopt = y; yStartP = y; State = 1; break;
+                        case 1: maxDif = difHorizontal; yopt = y; yStartP = y; state = 1; break;
                         case 0: break;
-                        case -1: minDif = difH; yopt = y; yStartM = y; State = -1; break;
+                        case -1: minDif = difHorizontal; yopt = y; yStartM = y; state = -1; break;
                         case -2:
-                            Grid[x + width * (yopt - 1)] = 1;       // horizontal crack
-                            Grid[x - 1 + width * (yopt - 1)]++; // left point
-                            Grid[x + 1 + width * (yopt - 1)]++; // right point
+                            this.Grid[x + width * (yopt - 1)] = 1;       // horizontal crack
+                            this.Grid[x - 1 + width * (yopt - 1)]++; // left point
+                            this.Grid[x + 1 + width * (yopt - 1)]++; // right point
                             yopt = y;
-                            State = 1;
+                            state = 1;
                             break;
                         case -3:
-                            Grid[x + width * (yopt - 1)] = 1; // horizontal crack
-                            Grid[x - 1 + width * (yopt - 1)]++; // left point
-                            Grid[x + 1 + width * (yopt - 1)]++; // right point
-                            State = 0;
+                            this.Grid[x + width * (yopt - 1)] = 1; // horizontal crack
+                            this.Grid[x - 1 + width * (yopt - 1)]++; // left point
+                            this.Grid[x + 1 + width * (yopt - 1)]++; // right point
+                            state = 0;
                             break;
                         case -4:
-                            if (y > yStartM && difH < minDif)
+                            if (y > yStartM && difHorizontal < minDif)
                             {
-                                minDif = difH;
+                                minDif = difHorizontal;
                                 yopt = y;
                             }
                             break;
@@ -1203,8 +1213,8 @@ namespace WFedgeDetect
 
         public int Dist(int P, Point EP)
         {
-            int PY = P / width;
-            int PX = P - PY * width;
+            int PY = P / this.width;
+            int PX = P - PY * this.width;
             return Math.Abs(PX - EP.X) + Math.Abs(PX - EP.X);
         }
 
@@ -1892,7 +1902,7 @@ namespace WFedgeDetect
 
                 y = y01 - light2 / divider;
                 g3.DrawLine(whitePen, (x1 - 1) * Step, y1, x1 * Step - 1, y1); // y1 is old value of "y"
-                if (ColorDifSign(Colorp, ColorOld) > th)
+                if (ColorDifferenceWithSign(Colorp, ColorOld) > th)
                 {
                     if (Grid2[2 * x + (2 * width + 1) * (2 * YB + 1)] > 0)
                         g3.DrawLine(thickRedPen, x1 * Step, y1, x1 * Step, y);
@@ -1901,7 +1911,7 @@ namespace WFedgeDetect
                 }
                 else
                 {
-                    Dif = ColorDifSign(Colorp, ColorOld);
+                    Dif = ColorDifferenceWithSign(Colorp, ColorOld);
                     if (Dif > -th && Dif < th)
                         g3.DrawLine(whitePen, x1 * Step, y1, x1 * Step, y);
                     else // Dif < -th
