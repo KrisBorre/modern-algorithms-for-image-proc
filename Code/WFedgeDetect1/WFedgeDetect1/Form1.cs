@@ -23,7 +23,7 @@ namespace WFedgeDetect
 
         public CImage OrigIm;  // copy of original image
 
-        private CImage sigmaIm;  // local mean
+        private CImage sigmaFilteredImage;  // local mean
         private CImage extremeFilteredImage;  // shading corrected image and the result
         private CImage combIm;  // shading corrected image and the result
         private CImage edgeIm;  // shading corrected image and the result
@@ -33,7 +33,7 @@ namespace WFedgeDetect
         private int nLoop, denomProg;
 
         public double Scale1;
-        public int marginX, marginY;
+        public int MarginX, MarginY;
 
         private int threshold;
 
@@ -118,13 +118,13 @@ namespace WFedgeDetect
             }
 
             OrigIm = new CImage(origBmp.Width, origBmp.Height, nBit, grid);
-            sigmaIm = new CImage(origBmp.Width, origBmp.Height, nBit, grid);
+            sigmaFilteredImage = new CImage(origBmp.Width, origBmp.Height, nBit, grid);
             extremeFilteredImage = new CImage(origBmp.Width, origBmp.Height, nBit, grid);
             combIm = new CImage(1 + 2 * origBmp.Width, 1 + 2 * origBmp.Height, 8);
             edgeIm = new CImage(origBmp.Width, origBmp.Height, 8, grid);
 
-            double ScaleX = (double)pictureBoxOriginalImage.Width / (double)OrigIm.width;
-            double ScaleY = (double)pictureBoxOriginalImage.Height / (double)OrigIm.height;
+            double ScaleX = (double)pictureBoxOriginalImage.Width / (double)OrigIm.Width;
+            double ScaleY = (double)pictureBoxOriginalImage.Height / (double)OrigIm.Height;
 
             if (ScaleX < ScaleY)
             {
@@ -135,8 +135,8 @@ namespace WFedgeDetect
                 Scale1 = ScaleY;
             }
 
-            marginX = (pictureBoxOriginalImage.Width - (int)(Scale1 * OrigIm.width)) / 2;
-            marginY = (pictureBoxOriginalImage.Height - (int)(Scale1 * OrigIm.height)) / 2;
+            MarginX = (pictureBoxOriginalImage.Width - (int)(Scale1 * OrigIm.Width)) / 2;
+            MarginY = (pictureBoxOriginalImage.Height - (int)(Scale1 * OrigIm.Height)) / 2;
             OPEN = true;
         } //************************************** end Open image *********************************************
 
@@ -396,15 +396,23 @@ namespace WFedgeDetect
             progressBar1.Visible = true;
             progressBar1.Value = 0;
 
-            sigmaIm.SigmaFilterSimpleUniversal(input: OrigIm, hWind: 1, toleranz: 30, fm1: this);
+            // page 123
+            // Edges in Color Images
+            // Both the method of zero crossing of Laplacian and the Canny algorithm demand that a color image should be converted to a grayscale image.
+            // However, after this conversion some edges in the color image disappear.
+            // This occurs if two adjacent areas have different colors but the same lightness.
+            // The binarized gradient can detect true color edges between two areas with the same lightness but different colors.
+            // For this purpose one needs the sigma filter and the extreme filter suitable for color images.
+
+            sigmaFilteredImage.SigmaFilterSimpleUniversal(input: OrigIm, hWind: 1, toleranz: 30, fm1: this);
 
             if (OrigIm.N_Bits == 24)
             {
-                extremeFilteredImage.ExtremeFilterLightColor(input: sigmaIm, hWind: 2, th: 1, fm1: this);
+                extremeFilteredImage.ExtremeFilterLightColor(input: sigmaFilteredImage, hWind: 2, th: 1, fm1: this);
             }
             else
             {
-                extremeFilteredImage.ExtremeFilterGrayscale(input: sigmaIm, hWind: 2, fm1: this);
+                extremeFilteredImage.ExtremeFilterGrayscale(input: sigmaFilteredImage, hWind: 2, fm1: this);
             }
 
             this.threshold = (int)numericUpDown1.Value;
@@ -439,18 +447,18 @@ namespace WFedgeDetect
             {
                 pictureBoxOriginalImage.Image = origBmp;
                 radioButton1Comb.Checked = false;
-                standX = (int)((e.X - marginX) / Scale1);
-                standY = (int)((e.Y - marginY) / Scale1);
+                standX = (int)((e.X - MarginX) / Scale1);
+                standY = (int)((e.Y - MarginY) / Scale1);
                 label2.Visible = true;
                 label3.Visible = true;
                 pictureBox3.Visible = true;
-                extremeFilteredImage.DrawImageLine(Y: standY, xStart: standX, threshold: this.threshold, sigmaImage: sigmaIm, grid2: combIm.Grid, fm1: this);
+                extremeFilteredImage.DrawImageLine(Y: standY, xStart: standX, threshold: this.threshold, sigmaImage: sigmaFilteredImage, grid2: combIm.Grid, fm1: this);
             }
 
             if (radioButton1Comb.Checked)
             {
-                standX = (int)((e.X - marginX) / Scale1);
-                standY = (int)((e.Y - marginY) / Scale1);
+                standX = (int)((e.X - MarginX) / Scale1);
+                standY = (int)((e.Y - MarginY) / Scale1);
                 label2.Visible = false;
                 label3.Visible = false;
                 pictureBox3.Visible = false;
