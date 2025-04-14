@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
+// chapter 8: A new method of Image Compression
 // page 127
 namespace WFcompressPal
 {
@@ -179,14 +180,14 @@ namespace WFcompressPal
         } //****************************** end ImageToBitmap ****************************************
 
 
-        public int MessReturn(string s)
+        private int MessReturn(string s)
         {
             if (MessageBox.Show(s, "Return", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
                 return -1;
             return 1;
         }
 
-        public int BitmapToImage(Bitmap bmp, ref CImage Image)
+        private int BitmapToImage(Bitmap bmp, ref CImage Image)
         // Converts any bitmap to a color image.
         {
             int nbyteIm = 3, rv = 0, x, y;
@@ -253,13 +254,13 @@ namespace WFcompressPal
         } //****************************** end BitmapToImage ****************************************
 
         // not called
-        public int Round(double x)
+        private int Round(double x)
         {
             if (x < 0.0) return (int)(x - 0.5);
             return (int)(x + 0.5);
         }
 
-        public int MaxC(int R, int G, int B)
+        private int MaxC(int R, int G, int B)
         {
             int max;
             if (R * 0.713 > G) max = (int)(R * 0.713);
@@ -268,7 +269,7 @@ namespace WFcompressPal
             return max;
         }
 
-        public byte MaxC(byte R, byte G, byte B)
+        private byte MaxC(byte R, byte G, byte B)
         {
             byte max;
             if (R * 0.713 > G) max = (byte)(R * 0.713);
@@ -344,7 +345,8 @@ namespace WFcompressPal
             SEGMENTED = true;
         } //********************************* end Segment ******************************************
 
-        public int ImageToBitmapNew(CImage Image, Bitmap bmp)
+
+        private int ImageToBitmapNew(CImage Image, Bitmap bmp)
         // Any image and color bitmap.
         {
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
@@ -467,7 +469,7 @@ namespace WFcompressPal
         } //********************************* end impulse noise *************************************
 
 
-        public int ColorDifSign(int iColp, int iColh)
+        private int ColorDifSign(int iColp, int iColh)
         // Returns the sum of the absolut differences of the color components divided through 3
         // with the sign of MaxC(iColp) - MaxC(iColh).
         {

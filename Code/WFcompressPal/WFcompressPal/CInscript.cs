@@ -50,6 +50,7 @@ namespace WFcompressPal
         public Pen myPen;
         public CInscript() { } // default constructor
         //CInscript(Zoom, marginX, marginY, 1, Color.White);
+
         public CInscript(int picBoxInd, double scale, int marx, int mary, int width, Color color, Form1 fm1) // constructor
         {
             Zoom = scale;
@@ -62,7 +63,7 @@ namespace WFcompressPal
             myPen = new Pen(Color1);
         }
 
-        public int Minus(int x0, int y0)
+        private int Minus(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             int sizeV = 2;
@@ -83,7 +84,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         } //*************************** end Minus ****************************
 
-        public int Plus(int x0, int y0)
+        private int Plus(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             int sizeV = 5;
@@ -105,7 +106,7 @@ namespace WFcompressPal
         } //*************************** end Minus ****************************
 
 
-        public int Stop(int x0, int y0)
+        private int Stop(int x0, int y0)
         {
             int xmax = 0, xold, yold;
             xold = 4 - Width; yold = 18 - Width;
@@ -118,7 +119,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int Equal(int x0, int y0)
+        private int Equal(int x0, int y0)
         {
             int x, xmax = 0, xold, y, yold;
             const int sizeV = 4;
@@ -139,7 +140,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int Null(int x0, int y0)
+        private int Null(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 9;
@@ -163,7 +164,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 7));
         }
 
-        public int F1(int x0, int y0)
+        private int F1(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 5;
@@ -186,7 +187,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 7));
         }
 
-        public int F2(int x0, int y0)
+        private int F2(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 8;
@@ -208,7 +209,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int F3(int x0, int y0)
+        private int F3(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 13;
@@ -233,7 +234,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int F4(int x0, int y0)
+        private int F4(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 4;
@@ -253,7 +254,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int F5(int x0, int y0)
+        private int F5(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 9;
@@ -276,7 +277,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int F6(int x0, int y0)
+        private int F6(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 12;
@@ -300,7 +301,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int F7(int x0, int y0)
+        private int F7(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 4;
@@ -322,7 +323,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 7));
         }
 
-        public int F8(int x0, int y0)
+        private int F8(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 13;
@@ -348,7 +349,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int F9(int x0, int y0)
+        private int F9(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 12;
@@ -372,7 +373,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int A(int x0, int y0)
+        private int A(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             int sizeV = 5;
@@ -395,7 +396,7 @@ namespace WFcompressPal
 
 
 
-        public int B(int x0, int y0)
+        private int B(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 12;
@@ -419,7 +420,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int C(int x0, int y0)
+        private int C(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 8;
@@ -441,7 +442,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int E(int x0, int y0)
+        private int E(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 7;
@@ -463,7 +464,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int I(int x0, int y0)
+        private int I(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 6;
@@ -484,7 +485,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int K(int x0, int y0)
+        private int K(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 6;
@@ -505,7 +506,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int L(int x0, int y0)
+        private int L(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 3;
@@ -525,7 +526,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int M(int x0, int y0)
+        private int M(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 5;
@@ -546,7 +547,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int N(int x0, int y0)
+        private int N(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 4;
@@ -566,7 +567,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int R(int x0, int y0)
+        private int R(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             int sizeV = 9;
@@ -589,7 +590,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int T(int x0, int y0)
+        private int T(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 4;
@@ -610,7 +611,7 @@ namespace WFcompressPal
         }
 
 
-        public int U(int x0, int y0)
+        private int U(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 6;
@@ -631,7 +632,7 @@ namespace WFcompressPal
             return x0 + (int)(Zoom * (xmax + 6));
         }
 
-        public int W(int x0, int y0)
+        private int W(int x0, int y0)
         {
             int iv, x, xmax = 0, xold, y, yold;
             const int sizeV = 5;

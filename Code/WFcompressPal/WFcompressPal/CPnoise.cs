@@ -77,7 +77,7 @@ namespace WFcompressPal
 
 
 
-        public bool getCond(int i, int x, int y, double marginX, double marginY, double Scale, WFcompressPal.Form1 fm1)
+        private bool getCond(int i, int x, int y, double marginX, double marginY, double Scale, WFcompressPal.Form1 fm1)
         { // Calculates bounds of the rectangle defined by global "fm1.v" and returns the condition
           // that the point (x, y) lies inside the rectangle.
             double fxmin = (fm1.v[i].X - marginX) / Scale; // "marginX" is the space of pictureBox1 left of image (may be 0)
@@ -95,7 +95,7 @@ namespace WFcompressPal
             return Condition;
         } //******************************* end getCond **********************************
 
-        public int MaxC(int R, int G, int B)
+        private int MaxC(int R, int G, int B)
         {
             int max;
             if (R * 0.713 > G) max = (int)(R * 0.713);
@@ -154,7 +154,7 @@ namespace WFcompressPal
             return 1;
         } //******************************** end Sort *********************************************************
 
-        public int Neighb(CImage Image, int W, int n)
+        private int Neighb(CImage Image, int W, int n)
         // Returns the index of the nth neighboor of the pixel W. If the neighboor
         // is outside the grid, then it returns -1.
         {
@@ -176,7 +176,8 @@ namespace WFcompressPal
             return -1;
         }
 
-        private int Lumi(byte R, byte G, byte B) // not used
+        // not called
+        private int Lumi(byte R, byte G, byte B)
         {
             return (int)((R + G + B) / 3);
         }

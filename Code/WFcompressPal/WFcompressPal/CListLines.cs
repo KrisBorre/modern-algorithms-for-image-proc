@@ -174,7 +174,7 @@ namespace WFcompressPal
         } //****************************** end SearchLin ********************************
 
 
-        public int TraceLin(byte[] CGrid, int X, int Y, ref iVect2 Pterm, ref int dir)
+        private int TraceLin(byte[] CGrid, int X, int Y, ref iVect2 Pterm, ref int dir)
         /* This method traces a line in the image "Image" with combinatorial coordinates, where the cracks 
           and points of the edges are labeled: bits 0, 1 and 2 of a point contain the label 1 to 4 of the point.
           The label indicates the number of incident edge cracks. Labeled bit 6 indicates that the point 
@@ -268,7 +268,7 @@ namespace WFcompressPal
         } //***************************************** end TraceLin ***********************************************
 
 
-        public int ComponLin(byte[] CGrid, int X, int Y)
+        private int ComponLin(byte[] CGrid, int X, int Y)
         /* Encodes in "CListLines" the lines of the edge component with the point (X, Y) being
           a branch or an end point. Puts the starting point 'Pinp' into the queue and starts
           the 'while' loop. It tests each labeled crack incident with the point 'P' fetched from the queue.
@@ -350,7 +350,7 @@ namespace WFcompressPal
         } //************************************** end ComponLin ************************************************
 
 
-        public int FreqInds(int il)
+        private int FreqInds(int il)
         // Finds the most frequent indices in the two halfs of the arrays CListLines.IndPos and CListLines.IndNeg
         // and assigns these indices to the 'Ind*'-elements of the line 'il'.
         {
@@ -461,7 +461,7 @@ namespace WFcompressPal
         } //******************* end FreqInds **************************************************
 
 
-        public int AverageGray(int il)
+        private int AverageGray(int il)
         // Finds the average gray value ih the two halfs of the arrays CListLines.IndPos and CListLines.IndNeg
         // and assigns these values to the 'Ind*'-elements of the line 'il'.
         {
@@ -520,7 +520,7 @@ namespace WFcompressPal
         byte[] Byte;
         byte[] ByteNew;
         iVect2[] Step;
-        int nCodeAfterLine2;
+        //int nCodeAfterLine2;
 
         public CListCode() // Constructor
         {
@@ -576,7 +576,7 @@ namespace WFcompressPal
             nCode += 3 * 4;
             nLine1 = L.nLine1; nLine2 = L.nLine2; nByte = L.nByte;
             nCode += 3 * 4;
-            nCodeAfterLine2 = nCode;
+            //nCodeAfterLine2 = nCode;
             Palette = new int[256];
             for (i = 0; i < 256; i++) Palette[i] = Palet[i];
 

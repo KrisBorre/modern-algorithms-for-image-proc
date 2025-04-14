@@ -81,7 +81,7 @@ namespace WFcompressPal
             for (int i = 0; i < width * height * (N_Bits / 8); i++) Grid[i] = img[i];
         }
 
-        public int RGB(byte rot, byte gruen, byte blau)
+        private int RGB(byte rot, byte gruen, byte blau)
         {
             int color = rot | (gruen << 8) | (blau << 16);
             return color;
@@ -473,7 +473,7 @@ namespace WFcompressPal
 
 
 
-        public int MessReturn(string s)
+        private int MessReturn(string s)
         {
             if (MessageBox.Show(s, "Return", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
                 return -1;
@@ -481,7 +481,7 @@ namespace WFcompressPal
         }
 
 
-        int ColorDifSign(byte[] Colp, byte[] Colh)
+        private int ColorDifSign(byte[] Colp, byte[] Colh)
         // Returns the sum of the absolut differences of the color components divided through 3
         // with the sign of MaxC(Colp) - MaxC(Colh).
         {
@@ -1505,7 +1505,7 @@ namespace WFcompressPal
 
         } //******************************** end DrawImageLine ***********************
 
-        public byte MaxC(byte R, byte G, byte B)
+        private byte MaxC(byte R, byte G, byte B)
         {
             byte light = G;
             if (0.713 * R > G) light = (byte)(0.713 * R);
@@ -1513,7 +1513,7 @@ namespace WFcompressPal
             return light;
         }
 
-        public byte MaxC(int R, int G, int B)
+        private byte MaxC(int R, int G, int B)
         {
             byte light = (byte)G;
             if (0.713 * R > G) light = (byte)(0.713 * R);
@@ -1564,7 +1564,7 @@ namespace WFcompressPal
         } //************************ end CracksToPixel *************************************
 
 
-        public int Trace(byte[] GridCopy, int P, int[] Index, ref int SumCells, ref int Pterm, ref int dir, int Size)
+        private int Trace(byte[] GridCopy, int P, int[] Index, ref int SumCells, ref int Pterm, ref int dir, int Size)
         /* Traces a branch of a component, saves all cells in "Index"; "SumCells" is the number of saved cells.
          * If "SumCells" becomes greater than "Size", the tracing is interrupted, and the method return -1.
          * Otherwise it returns a positive number. --*/
@@ -1654,8 +1654,7 @@ namespace WFcompressPal
         } //***************************************** end Trace ***********************************************
 
 
-
-        public int ComponClean(byte[] GridCopy, int X, int Y, int[] Index, int Size) // member of CImage
+        private int ComponClean(byte[] GridCopy, int X, int Y, int[] Index, int Size) // member of CImage
         /* Traces a component starting at (X, Y), saves coordinates of cells in "Index", "SumCells" is the
          * number of traced cells. If "SumCells" becomes greater than "Size", then the saving of cells 
          * is interrupted but the counting in "SumCells" goes on.
@@ -1927,7 +1926,7 @@ namespace WFcompressPal
         } //*************************** end CheckComb ************************************
 
 
-        public int ColorToGrayMC(CImage inp, Form1 fm1)
+        private int ColorToGrayMC(CImage inp, Form1 fm1)
         /* Transforms the colors of the color image "inp" to MaxC(r,g,b) 
         and puts these values to this.Grid. --------- */
         {
@@ -1963,7 +1962,7 @@ namespace WFcompressPal
         /// <param name="hWind"></param>
         /// <param name="fm1"></param>
         /// <returns></returns>
-        public int FastAverageM(CImage Inp, int hWind, Form1 fm1)
+        private int FastAverageM(CImage Inp, int hWind, Form1 fm1)
         // Filters the gray scale image "Inp" and returns the result in 'Grid' of the
         // calling image.
         {
@@ -2184,8 +2183,6 @@ namespace WFcompressPal
                 } //============================ end for (x ... =======================================
             return 1;
         } //**************************** end ConnectShort **********************************
-
-
 
 
         public int ExtremeFilterLightUni(CImage Inp, int hWind, Form1 fm1)
