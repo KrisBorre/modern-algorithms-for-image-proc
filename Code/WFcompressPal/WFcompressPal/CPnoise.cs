@@ -80,16 +80,16 @@ namespace WFcompressPal
         private bool getCond(int i, int x, int y, double marginX, double marginY, double Scale, WFcompressPal.Form1 fm1)
         { // Calculates bounds of the rectangle defined by global "fm1.v" and returns the condition
           // that the point (x, y) lies inside the rectangle.
-            double fxmin = (fm1.v[i].X - marginX) / Scale; // "marginX" is the space of pictureBox1 left of image (may be 0)
+            double fxmin = (fm1.V[i].X - marginX) / Scale; // "marginX" is the space of pictureBox1 left of image (may be 0)
             int xmin = (int)fxmin;
 
-            double fxmax = (fm1.v[i + 1].X - marginX) / Scale; // Scale is the scale of the presentation of image
+            double fxmax = (fm1.V[i + 1].X - marginX) / Scale; // Scale is the scale of the presentation of image
             int xmax = (int)fxmax;
 
-            double fymin = (fm1.v[i].Y - marginY) / Scale; // "marginY" is the space of pictureBox1 above the image  (may be 0)
+            double fymin = (fm1.V[i].Y - marginY) / Scale; // "marginY" is the space of pictureBox1 above the image  (may be 0)
             int ymin = (int)fymin;
 
-            double fymax = (fm1.v[i + 1].Y - marginY) / Scale;
+            double fymax = (fm1.V[i + 1].Y - marginY) / Scale;
             int ymax = (int)fymax;
             bool Condition = (y >= ymin && y <= ymax && x >= xmin && x <= xmax);
             return Condition;

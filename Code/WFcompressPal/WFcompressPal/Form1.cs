@@ -15,26 +15,26 @@ namespace WFcompressPal
         }
 
         private Bitmap origBmp;
-        private Bitmap BmpPictBox2;
-        CImage OrigIm;  // copy of original image
-        CImage ImpulseIm;  // deleted impulse noise
-        CImage SigmaIm;  // Sigma filtered
-        CImage CombIm; // cell complex of the edges
-        CImage ExtremIm;  // result of the extrem filtering
-        CImage EdgeIm;  // shading corrected image and the result
-        CImage RestoreIm;  // shading corrected image and the result
-        CImage SegmentIm;  // shading corrected image and the result
-        CImage Pal;
-        int[] Palet;
+        private Bitmap bmpPictBox2;
+        CImage origIm;  // copy of original image
+        CImage impulseIm;  // deleted impulse noise
+        CImage sigmaIm;  // Sigma filtered
+        CImage combIm; // cell complex of the edges
+        CImage extremIm;  // result of the extrem filtering
+        CImage edgeIm;  // shading corrected image and the result
+        CImage restoreIm;  // shading corrected image and the result
+        CImage segmentIm;  // shading corrected image and the result
+        CImage pal;
+        int[] palet;
         public int nCode, fWidth, fHeight;
         bool OPEN = false, IMPULSE = false, SEGMENTED = false, DETECTED = false, CODED = false;
-        public iVect2[] v = new iVect2[200]; // corners of excluded rectangles, used in CPnoise Sort
+        public iVect2[] V = new iVect2[200]; // corners of excluded rectangles, used in CPnoise Sort
 
         public double Scale1;
         public int marginX, marginY, nbyteIm, nbyteBmp, Threshold, Version;
         public Graphics g2;
-        CListLines List;
-        CListCode LiCod;
+        CListLines list;
+        CListCode listCode;
 
 
         private void button1_Click(object sender, EventArgs e)  // Open image
@@ -95,7 +95,7 @@ namespace WFcompressPal
                 MessageBox.Show("Pixel format=" + origBmp.PixelFormat + " not used in this project");
                 return;
             }
-            nbyteIm = BitmapToImage(origBmp, ref OrigIm); // Defines OrigIm.
+            nbyteIm = BitmapToImage(origBmp, ref origIm); // Defines OrigIm.
 
             pictureBox1.Visible = true;
             pictureBox2.Visible = true;
@@ -103,18 +103,18 @@ namespace WFcompressPal
             label5.Text = "Original image";
             label3.Visible = false;
 
-            double ScaleX = (double)pictureBox1.Width / (double)OrigIm.width;
-            double ScaleY = (double)pictureBox1.Height / (double)OrigIm.height;
+            double ScaleX = (double)pictureBox1.Width / (double)origIm.width;
+            double ScaleY = (double)pictureBox1.Height / (double)origIm.height;
             if (ScaleX < ScaleY) Scale1 = ScaleX;
             else Scale1 = ScaleY;
-            marginX = (pictureBox1.Width - (int)(Scale1 * OrigIm.width)) / 2;
-            marginY = (pictureBox1.Height - (int)(Scale1 * OrigIm.height)) / 2;
+            marginX = (pictureBox1.Width - (int)(Scale1 * origIm.width)) / 2;
+            marginY = (pictureBox1.Height - (int)(Scale1 * origIm.height)) / 2;
             fWidth = origBmp.Width;
             fHeight = origBmp.Height;
-            BmpPictBox2 = new Bitmap(origBmp.Width, origBmp.Height, PixelFormat.Format24bppRgb);
+            bmpPictBox2 = new Bitmap(origBmp.Width, origBmp.Height, PixelFormat.Format24bppRgb);
 
-            g2 = Graphics.FromImage(BmpPictBox2);
-            pictureBox2.Image = BmpPictBox2;
+            g2 = Graphics.FromImage(bmpPictBox2);
+            pictureBox2.Image = bmpPictBox2;
             progressBar1.Visible = false;
             OPEN = true;
         } //***************************** end Open image ****************************************
@@ -294,43 +294,43 @@ namespace WFcompressPal
                 return;
             }
 
-            SigmaIm = new CImage(OrigIm.width, OrigIm.height, nbyteIm * 8);
+            sigmaIm = new CImage(origIm.width, origIm.height, nbyteIm * 8);
 
             progressBar1.Value = 0;
-            SigmaIm.SigmaFilterSimpleUni(ImpulseIm, 1, 30, this);
+            sigmaIm.SigmaFilterSimpleUni(impulseIm, 1, 30, this);
 
-            ExtremIm = new CImage(OrigIm.width, OrigIm.height, nbyteIm * 8);
-            if (nbyteBmp == 3) ExtremIm.ExtremeFilterVarColor(SigmaIm, 2, this);
-            else ExtremIm.ExtremeFilterLightUni(SigmaIm, 2, this);
+            extremIm = new CImage(origIm.width, origIm.height, nbyteIm * 8);
+            if (nbyteBmp == 3) extremIm.ExtremeFilterVarColor(sigmaIm, 2, this);
+            else extremIm.ExtremeFilterLightUni(sigmaIm, 2, this);
 
             int rv, x, y;
-            Palet = new int[256]; // This is a palette containing an RGB int color for each of 256 indices
-            Pal = new CImage(OrigIm.width, OrigIm.height, 8); // This is an indexed image
-            if (ExtremIm.N_Bits == 24) rv = Pal.MakePalette(ExtremIm, Palet, this);
+            palet = new int[256]; // This is a palette containing an RGB int color for each of 256 indices
+            pal = new CImage(origIm.width, origIm.height, 8); // This is an indexed image
+            if (extremIm.N_Bits == 24) rv = pal.MakePalette(extremIm, palet, this);
 
-            SegmentIm = new CImage(SigmaIm.width, SigmaIm.height, 24);
-            Bitmap bmp = new Bitmap(SigmaIm.width, SigmaIm.height, PixelFormat.Format24bppRgb);
+            segmentIm = new CImage(sigmaIm.width, sigmaIm.height, 24);
+            Bitmap bmp = new Bitmap(sigmaIm.width, sigmaIm.height, PixelFormat.Format24bppRgb);
             Color color;
 
             int PalColor, jump, value;
-            if (SigmaIm.height > 300) jump = SigmaIm.height / (100 / 6);
+            if (sigmaIm.height > 300) jump = sigmaIm.height / (100 / 6);
             else jump = 2;
             progressBar1.Visible = true;
-            for (y = 0; y < SigmaIm.height; y++)
+            for (y = 0; y < sigmaIm.height; y++)
             {
                 if (y % jump == jump - 1) progressBar1.PerformStep();
-                for (x = 0; x < SigmaIm.width; x++)
+                for (x = 0; x < sigmaIm.width; x++)
                 {
-                    value = Pal.Grid[x + SigmaIm.width * y];
-                    PalColor = Palet[value];
+                    value = pal.Grid[x + sigmaIm.width * y];
+                    PalColor = palet[value];
                     color = Color.FromArgb((PalColor) & 255, (PalColor >> 8) & 255, (PalColor >> 16) & 255);
-                    SegmentIm.Grid[2 + 3 * (x + SigmaIm.width * y)] = (byte)(PalColor & 255);
-                    SegmentIm.Grid[1 + 3 * (x + SigmaIm.width * y)] = (byte)((PalColor >> 8) & 255);
-                    SegmentIm.Grid[0 + 3 * (x + SigmaIm.width * y)] = (byte)((PalColor >> 16) & 255);
+                    segmentIm.Grid[2 + 3 * (x + sigmaIm.width * y)] = (byte)(PalColor & 255);
+                    segmentIm.Grid[1 + 3 * (x + sigmaIm.width * y)] = (byte)((PalColor >> 8) & 255);
+                    segmentIm.Grid[0 + 3 * (x + sigmaIm.width * y)] = (byte)((PalColor >> 16) & 255);
                 }
             }
 
-            ImageToBitmapNew(SegmentIm, BmpPictBox2); // SegmentIm is always color image but BmpPictBox2 can be indexed
+            ImageToBitmapNew(segmentIm, bmpPictBox2); // SegmentIm is always color image but BmpPictBox2 can be indexed
             pictureBox2.Refresh(); // Image = bmp;
 
             label3.Text = "Segmented image, table 'Palet'";
@@ -388,12 +388,12 @@ namespace WFcompressPal
 
         private void button2_Click(object sender, EventArgs e) // Impulse noise
         {
-            ImpulseIm = new CImage(OrigIm.width, OrigIm.height, 24);
+            impulseIm = new CImage(origIm.width, origIm.height, 24);
 
-            ImpulseIm.Copy(OrigIm);
+            impulseIm.Copy(origIm);
 
-            int nbyte = ImpulseIm.N_Bits / 8;
-            ImpulseIm.DeleteBit0(nbyte, this);
+            int nbyte = impulseIm.N_Bits / 8;
+            impulseIm.DeleteBit0(nbyte, this);
 
             int maxLight, minLight;
             int[] histo = new int[256];
@@ -406,20 +406,20 @@ namespace WFcompressPal
             progressBar1.Maximum = 100;
             progressBar1.Visible = true;
             int jump, nStep = 15;
-            if (ImpulseIm.height > 2 * nStep) jump = ImpulseIm.height / nStep;
+            if (impulseIm.height > 2 * nStep) jump = impulseIm.height / nStep;
             else jump = 2;
-            for (int y = 0; y < ImpulseIm.height; y++)
+            for (int y = 0; y < impulseIm.height; y++)
             {
                 if (y % jump == jump - 1) progressBar1.PerformStep();
-                for (int x = 0; x < ImpulseIm.width; x++) //======================================================
+                for (int x = 0; x < impulseIm.width; x++) //======================================================
                 {
-                    index = x + y * ImpulseIm.width; // Index of the pixel (x, y)
-                    if (nbyte == 1) light = ImpulseIm.Grid[index];
+                    index = x + y * impulseIm.width; // Index of the pixel (x, y)
+                    if (nbyte == 1) light = impulseIm.Grid[index];
                     else
                     {
-                        R = (byte)(ImpulseIm.Grid[nbyte * index + 2] & 254);
-                        G = (byte)(ImpulseIm.Grid[nbyte * index + 1] & 254);
-                        B = (byte)(ImpulseIm.Grid[nbyte * index + 0] & 254);
+                        R = (byte)(impulseIm.Grid[nbyte * index + 2] & 254);
+                        G = (byte)(impulseIm.Grid[nbyte * index + 1] & 254);
+                        B = (byte)(impulseIm.Grid[nbyte * index + 0] & 254);
                         light = MaxC(R, G, B);
                     }
 
@@ -435,15 +435,15 @@ namespace WFcompressPal
             int Number = 0;
             progressBar1.Visible = true;
 
-            PN.Sort(ImpulseIm, histo, Number, pictureBox1.Width, pictureBox1.Height, this);
+            PN.Sort(impulseIm, histo, Number, pictureBox1.Width, pictureBox1.Height, this);
 
             int maxSizeD = (int)numericUpDown1.Value;
             int maxSizeL = (int)numericUpDown2.Value;
 
-            PN.LightNoise(ref ImpulseIm, minLight, maxLight, maxSizeL, this);
-            ImpulseIm.DeleteBit0(nbyte, this);
+            PN.LightNoise(ref impulseIm, minLight, maxLight, maxSizeL, this);
+            impulseIm.DeleteBit0(nbyte, this);
 
-            PN.DarkNoise(ref ImpulseIm, minLight, maxLight, maxSizeD, this);
+            PN.DarkNoise(ref impulseIm, minLight, maxLight, maxSizeD, this);
 
             progressBar1.Step = 1;
             int Len = nbyte * origBmp.Width * origBmp.Height;
@@ -452,11 +452,11 @@ namespace WFcompressPal
             for (int i = 0; i < nbyte * origBmp.Width * origBmp.Height; i++)
             {
                 if ((i % jump) == jump - 1) progressBar1.PerformStep();
-                if (ImpulseIm.Grid[i] == 252 || ImpulseIm.Grid[i] == 254) ImpulseIm.Grid[i] = 255;
+                if (impulseIm.Grid[i] == 252 || impulseIm.Grid[i] == 254) impulseIm.Grid[i] = 255;
             }
 
-            ImageToBitmapNew(ImpulseIm, BmpPictBox2); // ImpulseIm is always color image but BmpPictBox2 can be indexed
-            pictureBox2.Image = BmpPictBox2;
+            ImageToBitmapNew(impulseIm, bmpPictBox2); // ImpulseIm is always color image but BmpPictBox2 can be indexed
+            pictureBox2.Image = bmpPictBox2;
 
             progressBar1.Visible = false;
             pictureBox2.Visible = true;
@@ -523,33 +523,33 @@ namespace WFcompressPal
             //pictureBox2.Visible = false;
             //label3.Visible = false;
 
-            int CombWidth = 2 * SigmaIm.width + 1, CombHeight = 2 * SigmaIm.height + 1;
-            CombIm = new CImage(CombWidth, CombHeight, 8);
+            int CombWidth = 2 * sigmaIm.width + 1, CombHeight = 2 * sigmaIm.height + 1;
+            combIm = new CImage(CombWidth, CombHeight, 8);
 
             int Threshold = (int)numericUpDown3.Value;
-            CombIm.LabelCellsSign(Threshold, ExtremIm, this);
+            combIm.LabelCellsSign(Threshold, extremIm, this);
 
             int jump, x, y;
-            if (ExtremIm.height > 300) jump = ExtremIm.height / 25;
+            if (extremIm.height > 300) jump = extremIm.height / 25;
             else jump = 3;
-            for (y = 0; y < ExtremIm.height; y++)
+            for (y = 0; y < extremIm.height; y++)
             {
                 if (y % jump == jump - 1) progressBar1.PerformStep();
-                for (x = 0; x < ExtremIm.width; x++)
-                    CombIm.Grid[2 * x + 1 + CombWidth * (2 * y + 1)] = Pal.Grid[x + fWidth * y];
+                for (x = 0; x < extremIm.width; x++)
+                    combIm.Grid[2 * x + 1 + CombWidth * (2 * y + 1)] = pal.Grid[x + fWidth * y];
             }
 
-            CombIm.CleanCombNew(20, this);
-            CombIm.CheckComb(7);
+            combIm.CleanCombNew(20, this);
+            combIm.CheckComb(7);
 
-            EdgeIm = new CImage(fWidth, fHeight, 8);
-            EdgeIm.CracksToPixel(CombIm, this);
-            Bitmap EdgeBmp = new Bitmap(OrigIm.width, OrigIm.height, PixelFormat.Format24bppRgb);
+            edgeIm = new CImage(fWidth, fHeight, 8);
+            edgeIm.CracksToPixel(combIm, this);
+            Bitmap EdgeBmp = new Bitmap(origIm.width, origIm.height, PixelFormat.Format24bppRgb);
 
-            ImageToBitmapNew(EdgeIm, BmpPictBox2); // EdgeIm is always color image but BmpPictBox2 can be indexed
-            pictureBox2.Image = BmpPictBox2;
+            ImageToBitmapNew(edgeIm, bmpPictBox2); // EdgeIm is always color image but BmpPictBox2 can be indexed
+            pictureBox2.Image = bmpPictBox2;
 
-            pictureBox2.Image = BmpPictBox2;
+            pictureBox2.Image = bmpPictBox2;
             label3.Text = "Detected edges";
             label3.Visible = true;
             button5.Visible = true;
@@ -567,9 +567,9 @@ namespace WFcompressPal
             if (MessReturn("MouseClick: Version=" + Version) < 0) return;
             switch (Version)
             {
-                case 1: CombIm.DrawComb(StandX, StandY, this); break;
-                case 2: CombIm.DrawCombPix(StandX, StandY, this); break;
-                case 3: ExtremIm.DrawImageLine(StandY, StandX, Threshold, SigmaIm, CombIm.Grid, this); break;
+                case 1: combIm.DrawComb(StandX, StandY, this); break;
+                case 2: combIm.DrawCombPix(StandX, StandY, this); break;
+                case 3: extremIm.DrawImageLine(StandY, StandX, Threshold, sigmaIm, combIm.Grid, this); break;
             }
         }
 
@@ -599,17 +599,17 @@ namespace WFcompressPal
                 return;
             }
 
-            List = new CListLines(200000, 200000, 2000000, CombIm.width, CombIm.height, ExtremIm.N_Bits);
+            list = new CListLines(200000, 200000, 2000000, combIm.width, combIm.height, extremIm.N_Bits);
 
-            int nByte = List.SearchLin(ref CombIm, this);
+            int nByte = list.SearchLin(ref combIm, this);
             if (nByte < 0) Application.Exit();
 
-            LiCod = new CListCode(OrigIm.width, OrigIm.height, OrigIm.N_Bits, List);
+            listCode = new CListCode(origIm.width, origIm.height, origIm.N_Bits, list);
 
-            nCode = LiCod.Transform(OrigIm.width, OrigIm.height, OrigIm.N_Bits, Palet, CombIm, List, this);
+            nCode = listCode.Transform(origIm.width, origIm.height, origIm.N_Bits, palet, combIm, list, this);
 
-            double CompressRate = (double)(OrigIm.width * OrigIm.height * (OrigIm.N_Bits / 8)) / (double)nCode;
-            MessageBox.Show("Image encoded. nLine2=" + LiCod.nLine2 + " Code length=" + nCode +
+            double CompressRate = (double)(origIm.width * origIm.height * (origIm.N_Bits / 8)) / (double)nCode;
+            MessageBox.Show("Image encoded. nLine2=" + listCode.nLine2 + " Code length=" + nCode +
               " bytes. Comression rate=" + Math.Round(CompressRate, 1));
             progressBar1.Visible = false;
             button6.Visible = true;
@@ -652,15 +652,15 @@ namespace WFcompressPal
             }
 
             CImage MaskIm = new CImage(origBmp.Width, origBmp.Height, 8);
-            RestoreIm = new CImage(origBmp.Width, origBmp.Height, 24);
-            LiCod.Restore(ref RestoreIm, ref MaskIm, this);
+            restoreIm = new CImage(origBmp.Width, origBmp.Height, 24);
+            listCode.Restore(ref restoreIm, ref MaskIm, this);
 
-            RestoreIm.Smooth(ref MaskIm, false, this);
+            restoreIm.Smooth(ref MaskIm, false, this);
 
-            ImageToBitmapNew(RestoreIm, BmpPictBox2); // RestoreIm is always color image but BmpPictBox2 can be indexed
-            pictureBox2.Image = BmpPictBox2;
+            ImageToBitmapNew(restoreIm, bmpPictBox2); // RestoreIm is always color image but BmpPictBox2 can be indexed
+            pictureBox2.Image = bmpPictBox2;
 
-            pictureBox2.Image = BmpPictBox2;
+            pictureBox2.Image = bmpPictBox2;
             pictureBox2.Refresh();
             progressBar1.Visible = false;
             label3.Text = "Restored image";
@@ -707,7 +707,7 @@ namespace WFcompressPal
             SaveFileDialog dialog = new SaveFileDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                LiCod.WriteCode(dialog.FileName, nCode);
+                listCode.WriteCode(dialog.FileName, nCode);
             }
 
         }//************************* end save result *****************

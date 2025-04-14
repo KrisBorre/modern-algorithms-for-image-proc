@@ -59,7 +59,7 @@ namespace WFcompressPal
     {
         public Byte[] Grid;
         public int width, height, N_Bits;
-        public int nLoop, denomProg;
+        //private int nLoop, denomProg;
 
         public CImage() { } // default constructor
 
@@ -68,7 +68,7 @@ namespace WFcompressPal
             width = nx;
             height = ny;
             N_Bits = nbits;
-            Grid = new byte[width * height * (N_Bits / 8)];
+            this.Grid = new byte[width * height * (N_Bits / 8)];
         }
 
         public CImage(int nx, int ny, int nbits, byte[] img) // constructor
@@ -76,9 +76,9 @@ namespace WFcompressPal
             width = nx;
             height = ny;
             N_Bits = nbits;
-            denomProg = 100;
-            Grid = new byte[width * height * (N_Bits / 8)];
-            for (int i = 0; i < width * height * (N_Bits / 8); i++) Grid[i] = img[i];
+            //denomProg = 100;
+            this.Grid = new byte[width * height * (N_Bits / 8)];
+            for (int i = 0; i < width * height * (N_Bits / 8); i++) this.Grid[i] = img[i];
         }
 
         private int RGB(byte rot, byte gruen, byte blau)
@@ -94,7 +94,9 @@ namespace WFcompressPal
             height = inp.height;
             N_Bits = inp.N_Bits;
             for (int i = 0; i < width * height * N_Bits / 8; i++)
-                Grid[i] = inp.Grid[i];
+            {
+                this.Grid[i] = inp.Grid[i];
+            }
         }
 
         public int SigmaFilterSimpleUni(CImage Inp, int hWind, int Toleranz, Form1 fm1)
@@ -140,8 +142,13 @@ namespace WFcompressPal
                     {
                         value = (byte)((Sum[c] + nPix0[c] / 2) / nPix0[c]);
                         if (nPix0[c] > 0)
-                            Grid[c + index] = value;
-                        else Grid[c + nbyte * (x + width * y)] = Inp.Grid[c + nbyte * (x + width * y)];
+                        {
+                            this.Grid[c + index] = value;
+                        }
+                        else
+                        {
+                            this.Grid[c + nbyte * (x + width * y)] = Inp.Grid[c + nbyte * (x + width * y)];
+                        }
                     }
                 } //================== end for (int x... =================================
             } //==================== end for (int y... ===================================
@@ -209,7 +216,7 @@ namespace WFcompressPal
             Color1 is assigned to the output pixel if its difference to the cental color is greater than that of Color2. 
             Otherwise Color 2 is assigned. --*/
 
-            int[] CenterColor = new int[3], Color = new int[3], Color1 = new int[3], Color2 = new int[3];
+            int[] centerColor = new int[3], color = new int[3], color1 = new int[3], color2 = new int[3];
             int c, k, x, y; //, xx=3, yy=1;
             fm1.progressBar1.Maximum = 100;
             fm1.progressBar1.Step = 1;
@@ -223,7 +230,7 @@ namespace WFcompressPal
                 if ((y % jump) == jump - 1) fm1.progressBar1.PerformStep();
                 for (x = 0; x < width; x++) //==============================================
                 {
-                    for (c = 0; c < 3; c++) Color2[c] = Color1[c] = Color[c] = CenterColor[c] = Inp.Grid[c + 3 * x + y * width * 3];
+                    for (c = 0; c < 3; c++) color2[c] = color1[c] = color[c] = centerColor[c] = Inp.Grid[c + 3 * x + y * width * 3];
                     int MaxDist = -1;
                     for (k = -hWind; k <= hWind; k++) //=========================================
                     {
@@ -235,13 +242,13 @@ namespace WFcompressPal
                                     int dist = 0;
                                     for (c = 0; c < 3; c++)
                                     {
-                                        Color[c] = Inp.Grid[c + 3 * (x + i) + (y + k) * width * 3];
-                                        dist += (Color[c] - CenterColor[c]) * (Color[c] - CenterColor[c]);
+                                        color[c] = Inp.Grid[c + 3 * (x + i) + (y + k) * width * 3];
+                                        dist += (color[c] - centerColor[c]) * (color[c] - centerColor[c]);
                                     }
 
                                     if (dist > MaxDist)
                                     {
-                                        for (c = 0; c < 3; c++) Color1[c] = Color[c];
+                                        for (c = 0; c < 3; c++) color1[c] = color[c];
                                         MaxDist = dist;
                                     }
                                 }
@@ -257,13 +264,13 @@ namespace WFcompressPal
                                     int dist = 0;
                                     for (c = 0; c < 3; c++)
                                     {
-                                        Color[c] = Inp.Grid[c + 3 * (x + i) + (y + k) * width * 3];
-                                        dist += (Color[c] - Color1[c]) * (Color[c] - Color1[c]);
+                                        color[c] = Inp.Grid[c + 3 * (x + i) + (y + k) * width * 3];
+                                        dist += (color[c] - color1[c]) * (color[c] - color1[c]);
                                     }
                                     if (dist > MaxDist)
                                     {
                                         MaxDist = dist;
-                                        for (c = 0; c < 3; c++) Color2[c] = Color[c];
+                                        for (c = 0; c < 3; c++) color2[c] = color[c];
                                     }
                                 }
                         //=============== end for (int i... ============================
@@ -271,11 +278,11 @@ namespace WFcompressPal
                     int dist1 = 0, dist2 = 0;
                     for (c = 0; c < 3; c++)
                     {
-                        dist1 += (Color1[c] - CenterColor[c]) * (Color1[c] - CenterColor[c]);
-                        dist2 += (Color2[c] - CenterColor[c]) * (Color2[c] - CenterColor[c]);
+                        dist1 += (color1[c] - centerColor[c]) * (color1[c] - centerColor[c]);
+                        dist2 += (color2[c] - centerColor[c]) * (color2[c] - centerColor[c]);
                     }
-                    if (dist1 < dist2) for (c = 0; c < 3; c++) Grid[c + 3 * x + y * width * 3] = (byte)Color1[c];
-                    else for (c = 0; c < 3; c++) Grid[c + 3 * x + y * width * 3] = (byte)Color2[c];
+                    if (dist1 < dist2) for (c = 0; c < 3; c++) this.Grid[c + 3 * x + y * width * 3] = (byte)color1[c];
+                    else for (c = 0; c < 3; c++) this.Grid[c + 3 * x + y * width * 3] = (byte)color2[c];
 
                 } //================== end for (int x... ================================
             } //==================== end for (int y... ==================================
@@ -283,15 +290,15 @@ namespace WFcompressPal
         } //********************** end ExtremVarColor *************************************
 
 
-        public int MakePalette(CImage Img, int[] Palet, Form1 fm1)
+        public int MakePalette(CImage image, int[] palet, Form1 fm1)
         // Produces a palette of up to 255 elements optimally representig the colors of the image "Img"
         {
-            int MaxN = 1000, ResIndex = 11000;
-            int[] Sum = new int[3 * MaxN];
-            int[] nPix = new int[MaxN]; // "nPix[Index]" is number of pixels in "Img" whose color has the index
-            double[] Mean = new double[3 * MaxN];
-            int[] Sum0 = new int[3 * ResIndex];
-            int[] nPix0 = new int[ResIndex];
+            int maxN = 1000, resIndex = 11000;
+            int[] Sum = new int[3 * maxN];
+            int[] nPix = new int[maxN]; // "nPix[Index]" is number of pixels in "Img" whose color has the index
+            double[] Mean = new double[3 * maxN];
+            int[] Sum0 = new int[3 * resIndex];
+            int[] nPix0 = new int[resIndex];
             int c, i, jump, nIndex, nIndexOld, n, MaxIndex;
             int[] iChan = new int[3], Div = new int[3], Weight = new int[3];
             int[] NumbInterv = { 11, 12, 9 };
@@ -300,15 +307,15 @@ namespace WFcompressPal
             int[] Min = { 256, 256, 256 }, Max = { 0, 0, 0 };
             fm1.progressBar1.Visible = true;
             fm1.progressBar1.Step = 1;
-            if (Img.width * Img.height > 300) jump = Img.width * Img.height / (100 / 11);
+            if (image.width * image.height > 300) jump = image.width * image.height / (100 / 11);
             else jump = 2;
-            for (i = 0; i < Img.width * Img.height; i++) //=============================
+            for (i = 0; i < image.width * image.height; i++) //=============================
             {
                 if (i % jump == jump - 1) fm1.progressBar1.PerformStep();
                 for (c = 0; c < 3; c++)
                 {
-                    if (Img.Grid[3 * i + c] < Min[c]) Min[c] = Img.Grid[3 * i + c];
-                    if (Img.Grid[3 * i + c] > Max[c]) Max[c] = Img.Grid[3 * i + c];
+                    if (image.Grid[3 * i + c] < Min[c]) Min[c] = image.Grid[3 * i + c];
+                    if (image.Grid[3 * i + c] > Max[c]) Max[c] = image.Grid[3 * i + c];
                 }
             } //=============================== end for (i... =============
             int nIndexMin = 218, nIndexMax = 255;
@@ -321,9 +328,9 @@ namespace WFcompressPal
                 Weight[1] = NumbInterv[0] + 1;
                 Weight[2] = NumbInterv[0] + Weight[1] * NumbInterv[1] + 1;
 
-                for (i = 0; i < ResIndex; i++) Sum0[i] = 0;
+                for (i = 0; i < resIndex; i++) Sum0[i] = 0;
 
-                for (i = 0; i < 3 * MaxN; i++)
+                for (i = 0; i < 3 * maxN; i++)
                 {
                     Sum[i] = 0;
                     Mean[i] = 0.0;
@@ -339,31 +346,31 @@ namespace WFcompressPal
                 MaxIndex = Weight[0] * NumbInterv[0] + Weight[1] * NumbInterv[1] + Weight[2] * NumbInterv[2];
 
                 int maxIndex = 0;
-                if (MaxIndex >= ResIndex)
+                if (MaxIndex >= resIndex)
                 {
-                    MessageBox.Show("MakePalette, Overflow: MaxIndex=" + MaxIndex + " > ResIndex=" + ResIndex
+                    MessageBox.Show("MakePalette, Overflow: MaxIndex=" + MaxIndex + " > ResIndex=" + resIndex
                     + "; return -1.");
                     return -1;
                 }
-                for (i = 0; i < ResIndex; i++) nPix0[i] = 0;
+                for (i = 0; i < resIndex; i++) nPix0[i] = 0;
 
                 int Index = 0;
-                for (i = 0; i < Img.width * Img.height; i++) //====================================
+                for (i = 0; i < image.width * image.height; i++) //====================================
                 {
                     Index = 0;
                     for (c = 0; c < 3; c++)
                     {
-                        iChan[c] = (Img.Grid[3 * i + c] - Min[c]) / Div[c];
+                        iChan[c] = (image.Grid[3 * i + c] - Min[c]) / Div[c];
                         Index += Weight[c] * iChan[c];
                     }
                     if (Index > maxIndex) maxIndex = Index;
 
-                    if (Index > ResIndex - 1)
+                    if (Index > resIndex - 1)
                     {
                         MessageBox.Show("MakePalette, Overflow: Index=" + Index + " is too great; return -1.");
                         return -1;
                     }
-                    for (c = 0; c < 3; c++) Sum0[3 * Index + c] += Img.Grid[3 * i + c];
+                    for (c = 0; c < 3; c++) Sum0[3 * Index + c] += image.Grid[3 * i + c];
 
                     nPix0[Index]++;
                 } //====================== end for (i = 0; ... =============================================
@@ -412,9 +419,9 @@ namespace WFcompressPal
                 if (nPix0[i] > 0) //---------------------------------------------------------------------------
                 {
                     n++;
-                    if (n > MaxN - 1)
+                    if (n > maxN - 1)
                     {
-                        MessageBox.Show("MakePalette: Overflow in Sum; n=" + n + "< MaxN=" + MaxN + ". return -1");
+                        MessageBox.Show("MakePalette: Overflow in Sum; n=" + n + "< MaxN=" + maxN + ". return -1");
                         return -1;
                     }
                     NewIndex[i] = n;
@@ -429,17 +436,17 @@ namespace WFcompressPal
             } //======================================= end for (i... =======================================
 
             int MaxNewIndex = n;
-            if (Img.width * Img.height > 300) jump = Img.width * Img.height / (100 / 11);
+            if (image.width * image.height > 300) jump = image.width * image.height / (100 / 11);
             else jump = 3;
 
             // Putting NewIndex into "Img.Grid":	
-            for (i = 0; i < Img.width * Img.height; i++) //=========================================================
+            for (i = 0; i < image.width * image.height; i++) //=========================================================
             {
                 if (i % jump == jump - 1) fm1.progressBar1.PerformStep();
                 int Index = 0;
                 for (c = 0; c < 3; c++)
                 {
-                    iChan[c] = (Img.Grid[3 * i + c] - Min[c]) / Div[c];
+                    iChan[c] = (image.Grid[3 * i + c] - Min[c]) / Div[c];
                     Index += Weight[c] * iChan[c];
                 }
                 if (Index >= MaxIndex) Index = MaxIndex - 1;
@@ -460,11 +467,11 @@ namespace WFcompressPal
                     if (Mean[3 * n + 2] < 255.0) R = (byte)Mean[3 * n + 2];
                     if (Mean[3 * n + 1] < 255.0) G = (byte)Mean[3 * n + 1];
                     if (Mean[3 * n + 0] < 255.0) B = (byte)Mean[3 * n + 0];
-                    Palet[n] = RGB(R, G, B);
+                    palet[n] = RGB(R, G, B);
                 }
                 else
                 {
-                    Palet[n] = 0;
+                    palet[n] = 0;
                 }
 
             }
@@ -521,7 +528,7 @@ namespace WFcompressPal
         }
 
 
-        public int LabelCellsSign(int th, CImage Image3, Form1 fm1)
+        public int LabelCellsSign(int th, CImage image3, Form1 fm1)
         /* Looks in "Image3" (standard coord.) for all pairs of adjacent pixels with signed color  
           differences greater than "th" or less than "-th" and finds the maximum or minimum color  
           differences among pixels of adjacent pairs in the same line or in the same column.
@@ -529,9 +536,9 @@ namespace WFcompressPal
           to the cracks are also provided with labels indicating the number of incident cracks. 
           This method works both for color and gray value images. ---*/
         {
-            int difH, difV, c, maxDif, minDif, nByte, NXB = Image3.width, x, y, xopt, yopt;
+            int difH, difV, c, maxDif, minDif, nByte, NXB = image3.width, x, y, xopt, yopt;
             int Inp, jump, State, Contr, xStartP, xStartM, yStartP, yStartM;
-            if (Image3.N_Bits == 24) nByte = 3;
+            if (image3.N_Bits == 24) nByte = 3;
             else nByte = 1;
             for (x = 0; x < width * height; x++) Grid[x] = 0;
             byte[] Colorp = new byte[3], Colorh = new byte[3], Colorv = new byte[3];
@@ -550,8 +557,8 @@ namespace WFcompressPal
                 {
                     for (c = 0; c < nByte; c++)
                     {
-                        Colorv[c] = Image3.Grid[c + nByte * ((x - 2) / 2) + nByte * NXB * (y / 2)];
-                        Colorp[c] = Image3.Grid[c + nByte * (x / 2) + nByte * NXB * (y / 2)];
+                        Colorv[c] = image3.Grid[c + nByte * ((x - 2) / 2) + nByte * NXB * (y / 2)];
+                        Colorp[c] = image3.Grid[c + nByte * (x / 2) + nByte * NXB * (y / 2)];
                     }
                     if (nByte == 3) difV = ColorDifSign(Colorp, Colorv);
                     else difV = 3 * (Colorp[0] - Colorv[0]);
@@ -622,8 +629,8 @@ namespace WFcompressPal
                 {
                     for (c = 0; c < nByte; c++)
                     {
-                        Colorh[c] = Image3.Grid[c + nByte * (x / 2) + nByte * NXB * ((y - 2) / 2)];
-                        Colorp[c] = Image3.Grid[c + nByte * (x / 2) + nByte * NXB * (y / 2)];
+                        Colorh[c] = image3.Grid[c + nByte * (x / 2) + nByte * NXB * ((y - 2) / 2)];
+                        Colorp[c] = image3.Grid[c + nByte * (x / 2) + nByte * NXB * (y / 2)];
                     }
                     if (nByte == 3) difH = ColorDifSign(Colorp, Colorh);
                     else difH = Colorp[0] - Colorh[0];
@@ -836,7 +843,7 @@ namespace WFcompressPal
         } //******************************** end LabelCellsSignAr *****************************************
 
 
-        public int Smooth(ref CImage Mask, bool Segmentation, Form1 fm1)
+        public int Smooth(ref CImage mask, bool segmentation, Form1 fm1)
         // Calculates the average colors between "gvbeg" and "gvend" and saves them in the image "this".
         // This is a digital automaton with the states S=1 at Mask>0 and S=2 at Mask==0, but S is not used.
         // The variable "mpre" has the value of "Mask" in the previouse pixel.
@@ -854,7 +861,7 @@ namespace WFcompressPal
 
             for (x = 0; x < width; x++) //==========================================================
             {
-                msk = Mask.Grid[x + width * y];
+                msk = mask.Grid[x + width * y];
                 if (mpre > 0 && msk == 0) //----------------------------------------
                 {
                     cnt = 1; xbeg = x - 1;
@@ -872,7 +879,7 @@ namespace WFcompressPal
                     {
                         for (c = 0; c < nComp; c++)
                             Grid[nComp * (xx + width * y) + c] = (byte)((ColBeg[c] * (xend - xx) + ColEnd[c] * (xx - xbeg)) / cnt);
-                        Mask.Grid[xx + width * y] = (byte)LabMask;
+                        mask.Grid[xx + width * y] = (byte)LabMask;
                     } //============== end for (xx... ========================================
                 }
                 mpre = msk;
@@ -883,7 +890,7 @@ namespace WFcompressPal
             for (c = 0; c < nComp; c++) ColBeg[c] = Grid[nComp * width * y + c];
             for (x = 0; x < width; x++) //==========================================================
             {
-                msk = Mask.Grid[x + width * y];
+                msk = mask.Grid[x + width * y];
                 if (mpre > 0 && msk == 0) //----------------------------------------
                 {
                     cnt = 1; xbeg = x - 1;
@@ -901,7 +908,7 @@ namespace WFcompressPal
                     {
                         for (c = 0; c < nComp; c++)
                             Grid[nComp * (xx + width * y) + c] = (byte)((ColBeg[c] * (xend - xx) + ColEnd[c] * (xx - xbeg)) / cnt);
-                        Mask.Grid[xx + width * y] = (byte)LabMask;
+                        mask.Grid[xx + width * y] = (byte)LabMask;
                     }
                 }
                 mpre = msk;
@@ -913,7 +920,7 @@ namespace WFcompressPal
             for (c = 0; c < nComp; c++) ColBeg[c] = Grid[nComp * (x + width * 0) + c];
             for (y = 0; y < height; y++) //=================================================
             {
-                msk = Mask.Grid[x + width * y];
+                msk = mask.Grid[x + width * y];
                 if (mpre > 0 && msk == 0) //----------------------------------------
                 {
                     cnt = 1; ybeg = y - 1;
@@ -934,7 +941,7 @@ namespace WFcompressPal
                             Col[c] = (ColBeg[c] * (yend - yy) + ColEnd[c] * (yy - ybeg)) / cnt;
                             Grid[nComp * (x + width * yy) + c] = (byte)Col[c];
                         }
-                        Mask.Grid[x + width * yy] = (byte)LabMask;
+                        mask.Grid[x + width * yy] = (byte)LabMask;
                     }
                 }
                 mpre = msk;
@@ -945,7 +952,7 @@ namespace WFcompressPal
             for (c = 0; c < nComp; c++) ColBeg[c] = Grid[nComp * (x + width * 0) + c];
             for (y = 0; y < height; y++) //=================================================
             {
-                msk = Mask.Grid[x + width * y];
+                msk = mask.Grid[x + width * y];
                 if (mpre > 0 && msk == 0) //----------------------------------------
                 {
                     cnt = 1; ybeg = y - 1;
@@ -966,7 +973,7 @@ namespace WFcompressPal
                             Col[c] = (ColBeg[c] * (yend - yy) + ColEnd[c] * (yy - ybeg)) / cnt;
                             Grid[nComp * (x + width * yy) + c] = (byte)Col[c];
                         }
-                        Mask.Grid[x + width * yy] = (byte)LabMask;
+                        mask.Grid[x + width * yy] = (byte)LabMask;
                     }
                 }
                 mpre = msk;
@@ -987,7 +994,7 @@ namespace WFcompressPal
                 for (c = 0; c < nComp; c++) ColBeg[c] = Grid[nComp * width * y + c];
                 for (x = 0; x < width; x++) //=====================================================
                 {
-                    msk = Mask.Grid[x + width * y];
+                    msk = mask.Grid[x + width * y];
                     if (mpre > 0 && msk == 0) //----------------------------------------
                     {
                         cnt = 1; xbeg = x - 1;
@@ -1024,7 +1031,7 @@ namespace WFcompressPal
                 for (c = 0; c < nComp; c++) ColBeg[c] = Grid[nComp * (x + width * 0) + c];
                 for (y = 0; y < height; y++) //=================================================
                 {
-                    msk = Mask.Grid[x + width * y];
+                    msk = mask.Grid[x + width * y];
                     if (mpre > 0 && msk == 0) //----------------------------------------
                     {
                         cnt = 1; ybeg = y - 1;
@@ -1055,7 +1062,7 @@ namespace WFcompressPal
                 } //=============== end for (y=0; ... ===================================================
             } //================= end for (x=0; ... =====================================================
 
-            if (Segmentation) return 0;
+            if (segmentation) return 0;
 
             // Solving the Laplace's equation:
             int i;
@@ -1070,7 +1077,7 @@ namespace WFcompressPal
                 for (y = 1; y < height - 1; y++)
                     for (x = 1; x < width - 1; x++)
                     {
-                        if (Mask.Grid[x + width * y] == 0 && Math.Abs((x - y)) % 2 == 0)
+                        if (mask.Grid[x + width * y] == 0 && Math.Abs((x - y)) % 2 == 0)
                             for (c = 0; c < nComp; c++)
                             {
                                 Lap[c] = 0.0;
@@ -1089,7 +1096,7 @@ namespace WFcompressPal
                 for (y = 1; y < height - 1; y++)
                     for (x = 1; x < width - 1; x++)
                     {
-                        if (Mask.Grid[x + width * y] == 0 && Math.Abs((x - y)) % 2 == 1)
+                        if (mask.Grid[x + width * y] == 0 && Math.Abs((x - y)) % 2 == 1)
                             for (c = 0; c < nComp; c++)
                             {
                                 Lap[c] = 0.0;
@@ -1109,7 +1116,7 @@ namespace WFcompressPal
                 for (y = 1; y < height - 1; y++)
                     for (x = 1; x < width - 1; x++) //===================================
                     {
-                        if (Mask.Grid[x + width * y] == 0) //----------------------------
+                        if (mask.Grid[x + width * y] == 0) //----------------------------
                         {
                             for (c = 0; c < nComp; c++) //==========================
                             {
@@ -1138,12 +1145,12 @@ namespace WFcompressPal
         } //************************************* end Smooth ***********************************************
 
 
-        public void DrawComb(int StandX, int StandY, Form1 fm1)
+        public void DrawComb(int standX, int standY, Form1 fm1)
         // Draws in the pictureBox1 the cracks of the image "Comb".
         {
-            if (StandX < 0) StandX = 0;
-            if (StandY < 0) StandY = 0;
-            MessageBox.Show("Comb. coord. of the left upper corner =(" + 2 * StandX + "; " + 2 * StandY + ")");
+            if (standX < 0) standX = 0;
+            if (standY < 0) standY = 0;
+            MessageBox.Show("Comb. coord. of the left upper corner =(" + 2 * standX + "; " + 2 * standY + ")");
             int PointSize = 3, SizeX = 2 * 75, SizeY = 2 * 75, Step = 4; // Step is the scaled unit of "Comb"
             if (width < 50)
             {
@@ -1164,24 +1171,24 @@ namespace WFcompressPal
 
 
             Graphics g2 = fm1.pictureBox2.CreateGraphics();
-            int X = (int)(fm1.Scale1 * (StandX)) + fm1.marginX;
-            int Y = (int)(fm1.Scale1 * (StandY)) + fm1.marginY;
+            int X = (int)(fm1.Scale1 * (standX)) + fm1.marginX;
+            int Y = (int)(fm1.Scale1 * (standY)) + fm1.marginY;
             rect2 = new Rectangle(X, Y, (int)(fm1.Scale1 * (SizeX / 2)), (int)(fm1.Scale1 * (SizeY / 2)));
             g2.DrawRectangle(whitePen, rect2);
 
             int xpB, ypB;
-            int NX = Math.Min(width, 2 * (StandX + SizeX));
-            int NY = Math.Min(height, 2 * (StandY + SizeY));
+            int NX = Math.Min(width, 2 * (standX + SizeX));
+            int NY = Math.Min(height, 2 * (standY + SizeY));
             byte Mask = 7;
 
-            for (int y = 2 * StandY; y < NY; y++) //===================================================
+            for (int y = 2 * standY; y < NY; y++) //===================================================
             {
                 if ((y & 1) == 0) //---------------------------------------------------------------------------
                 {
-                    for (int x = 2 * StandX + 1; x < NX; x += 2) //==== over horizontal cracks ==========
+                    for (int x = 2 * standX + 1; x < NX; x += 2) //==== over horizontal cracks ==========
                     {
-                        xpB = x - 2 * StandX; // (x, y) are comb. coord. of a horiz. crack
-                        ypB = y - 2 * StandY; // (xpB, ypB) are coord. in pictureBox
+                        xpB = x - 2 * standX; // (x, y) are comb. coord. of a horiz. crack
+                        ypB = y - 2 * standY; // (xpB, ypB) are coord. in pictureBox
                         if (Grid[x + width * y] > 0) //--------------------------------------------------------
                         {
                             g.DrawLine(whitePen, (xpB - 1) * Step + 1, ypB * Step, (xpB + 1) * Step - 1, ypB * Step); // hor. crack
@@ -1214,10 +1221,10 @@ namespace WFcompressPal
                 }
                 else // (y & 1) != 0
                 {
-                    for (int x = 2 * StandX; x < NX; x += 2) //==== over vertical cracks ================
+                    for (int x = 2 * standX; x < NX; x += 2) //==== over vertical cracks ================
                     {
-                        xpB = x - 2 * StandX; // even
-                        ypB = y - 2 * StandY;         // odd
+                        xpB = x - 2 * standX; // even
+                        ypB = y - 2 * standY;         // odd
                         if (Grid[x + width * y] > 0) //--------------------------------------------------------
                         {
                             g.DrawLine(whitePen, xpB * Step, (ypB - 1) * Step + 1, xpB * Step, (ypB + 1) * Step - 1);
@@ -1254,15 +1261,15 @@ namespace WFcompressPal
 
 
 
-        public void DrawCombPix(int StandX, int StandY, Form1 fm1)
+        public void DrawCombPix(int standX, int standY, Form1 fm1)
         // Draws in the pictureBox1 the cracks of the image "Comb". "StandX" and "StandY" are the standard
         // coordinates of the left upper corner of the displayed fragment of the image containimg this method.
         {
             bool PIXELS = true;
             CInscript Ins1 = new CInscript(1, 0.3, -5, 30, width, Color.White, fm1);
-            if (StandX < 0) StandX = 0;
-            if (StandY < 0) StandY = 0;
-            MessageBox.Show("Comb. coord. of the left upper corner =(" + 2 * StandX + "; " + 2 * StandY + ")");
+            if (standX < 0) standX = 0;
+            if (standY < 0) standY = 0;
+            MessageBox.Show("Comb. coord. of the left upper corner =(" + 2 * standX + "; " + 2 * standY + ")");
             int PointSize = 3, Step = 8, SizeX = 10 * Step, SizeY = 10 * Step; // Step is the scaled unit of "Comb"
             if (width < 50)
             {
@@ -1282,24 +1289,24 @@ namespace WFcompressPal
             g.FillRectangle(blackBrush, rect);
 
             Graphics g2 = fm1.pictureBox2.CreateGraphics();
-            int X = (int)(fm1.Scale1 * (StandX)) + fm1.marginX;
-            int Y = (int)(fm1.Scale1 * (StandY)) + fm1.marginY;
+            int X = (int)(fm1.Scale1 * (standX)) + fm1.marginX;
+            int Y = (int)(fm1.Scale1 * (standY)) + fm1.marginY;
             rect2 = new Rectangle(X, Y, (int)(fm1.Scale1 * (SizeX / 2)), (int)(fm1.Scale1 * (SizeY / 2)));
             g2.DrawRectangle(whitePen, rect2);
 
             int Index = 0, xpB, ypB;
-            int NX = Math.Min(width, 2 * (StandX + SizeX));
-            int NY = Math.Min(height, 2 * (StandY + SizeY));
+            int NX = Math.Min(width, 2 * (standX + SizeX));
+            int NY = Math.Min(height, 2 * (standY + SizeY));
             byte Mask = 7;
 
-            for (int y = 2 * StandY; y < NY; y++) //===================================================
+            for (int y = 2 * standY; y < NY; y++) //===================================================
             {
                 if ((y & 1) == 0) //---------------------------------------------------------------------------
                 {
-                    for (int x = 2 * StandX + 1; x < NX; x += 2) //==== over horizontal cracks ==========
+                    for (int x = 2 * standX + 1; x < NX; x += 2) //==== over horizontal cracks ==========
                     {
-                        xpB = x - 2 * StandX; // (x, y) are comb. coord. of a horiz. crack
-                        ypB = y - 2 * StandY; // (xpB, ypB) are coord. in pictureBox
+                        xpB = x - 2 * standX; // (x, y) are comb. coord. of a horiz. crack
+                        ypB = y - 2 * standY; // (xpB, ypB) are coord. in pictureBox
                         if (Grid[x + width * y] > 0) //--------------------------------------------------------
                         {
                             g.DrawLine(whitePen, (xpB - 1) * Step + 1, ypB * Step, (xpB + 1) * Step - 1, ypB * Step); // hor. crack
@@ -1343,10 +1350,10 @@ namespace WFcompressPal
                 }
                 else // (y & 1) != 0
                 {
-                    for (int x = 2 * StandX; x < NX; x += 2) //==== over vertical cracks ================
+                    for (int x = 2 * standX; x < NX; x += 2) //==== over vertical cracks ================
                     {
-                        xpB = x - 2 * StandX; // even
-                        ypB = y - 2 * StandY;         // odd
+                        xpB = x - 2 * standX; // even
+                        ypB = y - 2 * standY;         // odd
                         if (Grid[x + width * y] > 0) //--------------------------------------------------------
                         {
                             g.DrawLine(whitePen, xpB * Step, (ypB - 1) * Step + 1, xpB * Step, (ypB + 1) * Step - 1);
@@ -1405,7 +1412,7 @@ namespace WFcompressPal
 
 
 
-        public void DrawImageLine(int Y, int xStart, int th, CImage Sigma, byte[] Grid2, Form1 fm1)
+        public void DrawImageLine(int Y, int xStart, int th, CImage sigma, byte[] Grid2, Form1 fm1)
         // This is a method of "ExtremIm".
         {
             if (MessReturn("Left end of the line in standard. coord.=(" + xStart + "; " + Y + ")") < 0) return;
@@ -1480,7 +1487,7 @@ namespace WFcompressPal
             }
 
             // Drawing the curve of "SigmaIm":
-            int nByteSigma = Sigma.N_Bits / 8;
+            int nByteSigma = sigma.N_Bits / 8;
             x1 = 0;
             y1 = y02;
             g1.DrawLine(greenPen, 0, y02, xEnd * Step, y02); // The level "y02"
@@ -1488,7 +1495,7 @@ namespace WFcompressPal
             {
                 x1 = x - xStart;
                 light1 = 0;
-                for (c = 0; c < nByteSigma; c++) light1 += Sigma.Grid[c + nByteSigma * (x + width * Y)];
+                for (c = 0; c < nByteSigma; c++) light1 += sigma.Grid[c + nByteSigma * (x + width * Y)];
                 y = y02 - light1 / divider;
                 g1.DrawLine(greenPen, (x1 - 1) * Step, y1, x1 * Step - 1, y1);
                 g1.DrawLine(greenPen, x1 * Step, y1, x1 * Step, y);
@@ -1564,7 +1571,7 @@ namespace WFcompressPal
         } //************************ end CracksToPixel *************************************
 
 
-        private int Trace(byte[] GridCopy, int P, int[] Index, ref int SumCells, ref int Pterm, ref int dir, int Size)
+        private int Trace(byte[] gridCopy, int P, int[] index, ref int sumCells, ref int Pterm, ref int dir, int Size)
         /* Traces a branch of a component, saves all cells in "Index"; "SumCells" is the number of saved cells.
          * If "SumCells" becomes greater than "Size", the tracing is interrupted, and the method return -1.
          * Otherwise it returns a positive number. --*/
@@ -1579,14 +1586,14 @@ namespace WFcompressPal
             StartLine = P;
             int[] Shift = { 0, 2, 4, 6 };
 
-            if (SumCells < Size) Index[SumCells] = P;
+            if (sumCells < Size) index[sumCells] = P;
             while (true) //====================================================================
             {
                 Crack = P + Step[dir];
-                if (SumCells < Size) Index[SumCells] = Crack;
-                SumCells++;
+                if (sumCells < Size) index[sumCells] = Crack;
+                sumCells++;
 
-                if (Crack >= 0 && Crack < width * height) LabCrack = GridCopy[Crack];
+                if (Crack >= 0 && Crack < width * height) LabCrack = gridCopy[Crack];
                 else LabCrack = 0;
                 if (LabCrack == 0)
                 {
@@ -1597,17 +1604,17 @@ namespace WFcompressPal
                     int cellY2 = P / width;
                     int cellX2 = P - cellY1 * width;
                     MessageBox.Show("Trace, error: dir=" + dir + " the Crack=(" + cellX + "; " + cellY +
-                    ") has label 0;  P=(" + cellX2 + "; " + cellY2 + "; Lab=" + (GridCopy[P] & Mask) + " iCrack=" +
+                    ") has label 0;  P=(" + cellX2 + "; " + cellY2 + "; Lab=" + (gridCopy[P] & Mask) + " iCrack=" +
                     iCrack + " Start=(" + cellX1 + "; " + cellY1 + ")");
                     Pterm = P;
-                    if ((GridCopy[P] & Mask) == 0) return -1;
+                    if ((gridCopy[P] & Mask) == 0) return -1;
                 }
 
                 P = Crack + Step[dir];
-                if (SumCells < Size) Index[SumCells] = P;
+                if (sumCells < Size) index[sumCells] = P;
 
-                Lab = GridCopy[P] & Mask;
-                if (Lab == 2) SumCells++;
+                Lab = gridCopy[P] & Mask;
+                if (Lab == 2) sumCells++;
 
                 switch (Lab)
                 {
@@ -1617,7 +1624,7 @@ namespace WFcompressPal
                     case 3: BP = true; END = false; rv = 3; break;
                     case 4: BP = true; END = false; rv = 3; break;
                 }
-                if (Lab == 2) GridCopy[P] = 0;
+                if (Lab == 2) gridCopy[P] = 0;
                 iCrack++;
                 atSt_P = (P == StartLine);
                 if (atSt_P)
@@ -1638,14 +1645,14 @@ namespace WFcompressPal
                 if (!BP && !END) //---------------------------
                 {
                     Crack = P + Step[(dir + 1) % 4];
-                    if (GridCopy[Crack] == 1)
+                    if (gridCopy[Crack] == 1)
                     {
                         dir = (dir + 1) % 4;
                     }
                     else
                     {
                         Crack = P + Step[(dir + 3) % 4];
-                        if (GridCopy[Crack] == 1) dir = (dir + 3) % 4;
+                        if (gridCopy[Crack] == 1) dir = (dir + 3) % 4;
                     }
                 }
                 else break;
@@ -1654,7 +1661,7 @@ namespace WFcompressPal
         } //***************************************** end Trace ***********************************************
 
 
-        private int ComponClean(byte[] GridCopy, int X, int Y, int[] Index, int Size) // member of CImage
+        private int ComponClean(byte[] gridCopy, int X, int Y, int[] index, int Size) // member of CImage
         /* Traces a component starting at (X, Y), saves coordinates of cells in "Index", "SumCells" is the
          * number of traced cells. If "SumCells" becomes greater than "Size", then the saving of cells 
          * is interrupted but the counting in "SumCells" goes on.
@@ -1667,77 +1674,77 @@ namespace WFcompressPal
             CQueInd pQ = new CQueInd(1000); // necessary to find connected components
 
             Pinp = X + width * Y;
-            int SumCells = 0; // Number of cells in the component
+            int sumCells = 0; // Number of cells in the component
             pQ.Put(Pinp);
             while (!pQ.Empty()) //===========================================================================
             {
                 P = pQ.Get();
-                if (SumCells < Size) Index[SumCells] = P;
-                SumCells++;
-                if ((GridCopy[P] & 128) != 0) continue;
+                if (sumCells < Size) index[sumCells] = P;
+                sumCells++;
+                if ((gridCopy[P] & 128) != 0) continue;
 
                 // Hier is the label 128 of P equal to zero:
                 for (dir = 0; dir < 4; dir++) //================================================================
                 {
                     Crack = P + Step[dir];
                     if (Crack < 0 || Crack > height * width - 1) continue;
-                    if (GridCopy[Crack] == 1) //---- ------------ -----------
+                    if (gridCopy[Crack] == 1) //---- ------------ -----------
                     {
                         Pnext = Crack + Step[dir];
-                        LabNext = GridCopy[Pnext] & Mask; // changed on Nov. 1 2015
+                        LabNext = gridCopy[Pnext] & Mask; // changed on Nov. 1 2015
                         if (LabNext == 3 || LabNext == 4) pQ.Put(Pnext);
                         if (LabNext == 2) //-------------------------------------------------------------------------
                         {
                             dirT = dir;
-                            rv = Trace(GridCopy, P, Index, ref SumCells, ref Pterm, ref dirT, Size);
+                            rv = Trace(gridCopy, P, index, ref sumCells, ref Pterm, ref dirT, Size);
 
-                            if ((GridCopy[Pterm] & Mask) == 1)
+                            if ((gridCopy[Pterm] & Mask) == 1)
                             {
-                                if (SumCells < Size) Index[SumCells] = Pterm;
-                                SumCells++;
-                                GridCopy[Pterm] = 0;
+                                if (sumCells < Size) index[sumCells] = Pterm;
+                                sumCells++;
+                                gridCopy[Pterm] = 0;
                             }
 
-                            if ((GridCopy[Pterm] & 128) == 0 && rv >= 3) pQ.Put(Pterm);
+                            if ((gridCopy[Pterm] & 128) == 0 && rv >= 3) pQ.Put(Pterm);
                         }
                         else
                         {
-                            if (SumCells < Size)
+                            if (sumCells < Size)
                             {
-                                Index[SumCells] = Crack;
+                                index[sumCells] = Crack;
                             }
-                            SumCells++;
-                            if (SumCells < Size)
+                            sumCells++;
+                            if (sumCells < Size)
                             {
-                                Index[SumCells] = Pnext;
-                                SumCells++;
+                                index[sumCells] = Pnext;
+                                sumCells++;
                             }
 
-                            GridCopy[Pnext] = 0;
-                            GridCopy[P] = 0;
+                            gridCopy[Pnext] = 0;
+                            gridCopy[P] = 0;
 
 
-                            if ((GridCopy[Pnext] & Mask) >= 3 && (GridCopy[Pnext] & 128) == 0) SumCells++;
+                            if ((gridCopy[Pnext] & Mask) >= 3 && (gridCopy[Pnext] & 128) == 0) sumCells++;
                         } // ------------------------- end if (LabNest==2) -----------------------------------------------------
-                        if ((GridCopy[P] & Mask) == 1)
+                        if ((gridCopy[P] & Mask) == 1)
                         {
-                            GridCopy[P] = 0;
+                            gridCopy[P] = 0;
                             break; // The only crack with Lab == 1 alredy processed
                         }
                     } //--------------- end if (GridCopy[Crack  == 1) ------------------------------------------
                 } //================================== end for (dir ... ==========================================
-                GridCopy[P] |= 128;
+                gridCopy[P] |= 128;
             } //==================================== end while ===================================================
-            return SumCells;
+            return sumCells;
         } //************************************** end ComponClean ************************************************
 
 
-        public int CleanCombNew(int Size, Form1 fm1)
+        public int CleanCombNew(int size, Form1 fm1)
         // Delets one crack line at a brunch point and changes the label of this point to two.
         {
-            byte Mask = 7;
+            byte mask = 7;
             int cntSingles, cntCracks, x1, y1;
-            int[] Index = new int[Size + 20];
+            int[] Index = new int[size + 20];
             int SumCells = 0, Lab = 0, rv = 0;
 
             // Transforming small squares to corners:
@@ -1846,8 +1853,8 @@ namespace WFcompressPal
             } //==================================== end for (int y... ==========================
 
 
-            byte[] GridCopy = new byte[width * height];
-            for (int i = 0; i < width * height; i++) GridCopy[i] = Grid[i];
+            byte[] gridCopy = new byte[width * height];
+            for (int i = 0; i < width * height; i++) gridCopy[i] = Grid[i];
 
             SumCells = 0;
 
@@ -1857,13 +1864,13 @@ namespace WFcompressPal
             {
                 for (int x = 0; x < width; x += 2) //=========================================
                 {
-                    Lab = GridCopy[x + width * y] & (Mask | 128);
+                    Lab = gridCopy[x + width * y] & (mask | 128);
                     if (Lab == 1 || Lab == 3 || Lab == 4) //----------------------------------
                     {
-                        SumCells = ComponClean(GridCopy, x, y, Index, Size);
+                        SumCells = ComponClean(gridCopy, x, y, Index, size);
                         if (rv < 0) return -1;
                         if (SumCells < 0) return -1;
-                        if (SumCells < Size)
+                        if (SumCells < size)
                         {
                             for (int i = 0; i < SumCells; i++) Grid[Index[i]] = 0;
                         } //-------------------- end if (SumCells <= Size) -----------------------------------
@@ -1877,12 +1884,12 @@ namespace WFcompressPal
             {
                 for (int x = 0; x < width; x += 2) //=========================================
                 {
-                    Lab = GridCopy[x + width * y] & Mask;
+                    Lab = gridCopy[x + width * y] & mask;
                     if (Lab == 2) //----------------------------------
                     {
-                        SumCells = ComponClean(GridCopy, x, y, Index, Size);
+                        SumCells = ComponClean(gridCopy, x, y, Index, size);
                         if (SumCells <
-                          Size)
+                          size)
                         {
                             for (int i = 0; i < SumCells; i++) Grid[Index[i]] = 0;
                         }
@@ -1894,14 +1901,14 @@ namespace WFcompressPal
         } //************************************** end CleanCombNew ********************************************
 
 
-        public int CheckComb(int Mask)
+        public int CheckComb(int mask)
         {
             bool found = false;
             for (int y = 2; y < height - 1; y += 2)
             {
                 for (int x = 2; x < width - 1; x += 2)
                 {
-                    int cnt = 0, val = (Grid[x + width * y] & Mask);
+                    int cnt = 0, val = (Grid[x + width * y] & mask);
                     for (int dir = 0; dir < 4; dir++)
                     {
                         switch (dir)
@@ -1958,21 +1965,21 @@ namespace WFcompressPal
         /// <summary>
         /// chapter 2 Noise Reduction page 10
         /// </summary>
-        /// <param name="Inp"></param>
+        /// <param name="inp"></param>
         /// <param name="hWind"></param>
         /// <param name="fm1"></param>
         /// <returns></returns>
-        private int FastAverageM(CImage Inp, int hWind, Form1 fm1)
+        private int FastAverageM(CImage inp, int hWind, Form1 fm1)
         // Filters the gray scale image "Inp" and returns the result in 'Grid' of the
         // calling image.
         {
-            if (Inp.N_Bits != 8)
+            if (inp.N_Bits != 8)
             {
-                MessageBox.Show("FastAverageM cannot process an image with " + Inp.N_Bits +
+                MessageBox.Show("FastAverageM cannot process an image with " + inp.N_Bits +
                   " bits per pixel");
                 return -1;
             }
-            width = Inp.width; height = Inp.height;
+            width = inp.width; height = inp.height;
             Grid = new byte[width * height];
             int[] SumColmn; int[] nPixColmn;
             SumColmn = new int[width];
@@ -1993,12 +2000,12 @@ namespace WFcompressPal
                     int xout = x - hWind, xsub = x - 2 * hWind - 1; // 1. and 2. addition
                     if (y < height && x < width)
                     {
-                        SumColmn[x] += Inp.Grid[x + width * y];
+                        SumColmn[x] += inp.Grid[x + width * y];
                         nPixColmn[x]++;     // 3. and 4. addition
                     }
                     if (ysub >= 0 && x < width)
                     {
-                        SumColmn[x] -= Inp.Grid[x + width * ysub];
+                        SumColmn[x] -= inp.Grid[x + width * ysub];
                         nPixColmn[x]--;
                     }
                     if (yout >= 0 && x < width)
@@ -2185,14 +2192,14 @@ namespace WFcompressPal
         } //**************************** end ConnectShort **********************************
 
 
-        public int ExtremeFilterLightUni(CImage Inp, int hWind, Form1 fm1)
+        public int ExtremeFilterLightUni(CImage inp, int hWind, Form1 fm1)
         {   /* The extreme filter for color or grayscale images with variable hWind.
 	      The filter finds in the (2*hWind+1)-neighbourhood of the actual pixel (x,y) the color "Color1" with minimum and the color "Color2" with thge maximum lightness. 
             "Color1" is assigned to the output pixel if its lightniss is closer to the lightness of the cetral pixel than the lightness of "Color2". --*/
 
             byte[] CenterColor = new byte[3], Color = new byte[3], Color1 = new byte[3], Color2 = new byte[3];
             int c, k, nbyte = 3, x; //, xx=3, yy=1;
-            if (Inp.N_Bits == 8) nbyte = 1;
+            if (inp.N_Bits == 8) nbyte = 1;
             fm1.progressBar1.Visible = true;
             int jump;
             if (height > 300) jump = height / 33;
@@ -2203,7 +2210,7 @@ namespace WFcompressPal
                 for (x = 0; x < width; x++) //==============================================
                 {
                     for (c = 0; c < nbyte; c++) Color2[c] = Color1[c] = Color[c] = CenterColor[c] =
-                      Inp.Grid[c + nbyte * (x + y * width)];
+                      inp.Grid[c + nbyte * (x + y * width)];
 
                     int MinLight = 1000, MaxLight = 0;
                     for (k = -hWind; k <= hWind; k++) //=========================================
@@ -2213,7 +2220,7 @@ namespace WFcompressPal
                             {
                                 if (x + i >= 0 && x + i < width) // && (i > 0 || k > 0))
                                 {
-                                    for (c = 0; c < nbyte; c++) Color[c] = Inp.Grid[c + nbyte * (x + i + (y + k) * width)];
+                                    for (c = 0; c < nbyte; c++) Color[c] = inp.Grid[c + nbyte * (x + i + (y + k) * width)];
                                     int light;
                                     if (nbyte == 3) light = MaxC(Color[2], Color[1], Color[0]);
                                     else light = Color[0];

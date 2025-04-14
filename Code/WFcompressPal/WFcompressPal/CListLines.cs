@@ -78,13 +78,14 @@ namespace WFcompressPal
         unsafe
         public int nLine1, nLine2, nByte, MaxLine1, MaxLine2, MaxByte, CNX, CNY, nBits3;
 
-        public iVect2[] Step;
-        public iVect2[] Norm;
+        private iVect2[] Step;
+        private iVect2[] Norm;
 
         public CCrack[] Line1;
         public CLine[] Line;
         public byte[] Byte, IndPos, IndNeg;
-        public CQue pQ;
+
+        private CQue pQ;
 
         public CListLines() { } // Default constructor
 
@@ -510,26 +511,25 @@ namespace WFcompressPal
 
     public class CListCode // The class for the final list
     {
-        public
-          int width, height, nBits, nLine1, nLine2, nByte;
-        int[] Param;
-        int[] Palette;
-        byte[] Corner;
-        CCrack[] Line1;
-        CLine[] Line;
-        byte[] Byte;
-        byte[] ByteNew;
-        iVect2[] Step;
+        public int width, height, nBits, nLine1, nLine2, nByte;
+        int[] param;
+        int[] palette;
+        byte[] corner;
+        CCrack[] line1;
+        CLine[] line;
+        byte[] @byte;
+        byte[] byteNew;
+        iVect2[] step;
         //int nCodeAfterLine2;
 
         public CListCode() // Constructor
         {
-            this.Step = new iVect2[4];
-            for (int i = 0; i < 4; i++) Step[i] = new iVect2();
-            this.Step[0].X = 1; this.Step[0].Y = 0;
-            this.Step[1].X = 0; this.Step[1].Y = 1;
-            this.Step[2].X = -1; this.Step[2].Y = 0;
-            this.Step[3].X = 0; this.Step[3].Y = -1;
+            this.step = new iVect2[4];
+            for (int i = 0; i < 4; i++) step[i] = new iVect2();
+            this.step[0].X = 1; this.step[0].Y = 0;
+            this.step[1].X = 0; this.step[1].Y = 1;
+            this.step[2].X = -1; this.step[2].Y = 0;
+            this.step[3].X = 0; this.step[3].Y = -1;
         }
 
         public CListCode(int nx, int ny, int nbits, CListLines L) // Constructor
@@ -539,52 +539,52 @@ namespace WFcompressPal
             this.nBits = nbits;
 
             this.nLine1 = L.nLine1;
-            this.Line1 = new CCrack[nLine1];
-            for (int i = 0; i < nLine1; i++) Line1[i] = new CCrack();
+            this.line1 = new CCrack[nLine1];
+            for (int i = 0; i < nLine1; i++) line1[i] = new CCrack();
 
             this.nLine2 = L.nLine2;
-            this.Line = new CLine[nLine2];
-            for (int i = 0; i < nLine2; i++) Line[i] = new CLine();
+            this.line = new CLine[nLine2];
+            for (int i = 0; i < nLine2; i++) line[i] = new CLine();
 
             this.nByte = L.nByte;
-            this.Byte = new byte[nByte];
+            this.@byte = new byte[nByte];
 
-            this.Corner = new byte[4];
-            this.Param = new int[6];
-            this.Param[0] = nx;
-            this.Param[1] = ny;
-            this.Param[2] = nbits;
-            this.Param[3] = L.nLine1;
-            this.Param[4] = L.nLine2;
-            this.Param[5] = L.nByte;
+            this.corner = new byte[4];
+            this.param = new int[6];
+            this.param[0] = nx;
+            this.param[1] = ny;
+            this.param[2] = nbits;
+            this.param[3] = L.nLine1;
+            this.param[4] = L.nLine2;
+            this.param[5] = L.nByte;
 
-            this.Step = new iVect2[4];
-            for (int i = 0; i < 4; i++) Step[i] = new iVect2();
-            this.Step[0].X = 1; this.Step[0].Y = 0;
-            this.Step[1].X = 0; this.Step[1].Y = 1;
-            this.Step[2].X = -1; this.Step[2].Y = 0;
-            this.Step[3].X = 0; this.Step[3].Y = -1;
+            this.step = new iVect2[4];
+            for (int i = 0; i < 4; i++) step[i] = new iVect2();
+            this.step[0].X = 1; this.step[0].Y = 0;
+            this.step[1].X = 0; this.step[1].Y = 1;
+            this.step[2].X = -1; this.step[2].Y = 0;
+            this.step[3].X = 0; this.step[3].Y = -1;
         }
 
         ~CListCode() { } // Default destructor
 
-        public int Transform(int nx, int ny, int nbits, int[] Palet, CImage Image, CListLines L, Form1 fm1)
+        public int Transform(int nx, int ny, int nbits, int[] palet, CImage image, CListLines listLines, Form1 fm1)
         // Transforms the provisional list "L" to an object of the class "CListCode".
         {
             int i, ib, il, nCode = 0;
             width = nx; height = ny; nBits = nbits;
             nCode += 3 * 4;
-            nLine1 = L.nLine1; nLine2 = L.nLine2; nByte = L.nByte;
+            nLine1 = listLines.nLine1; nLine2 = listLines.nLine2; nByte = listLines.nByte;
             nCode += 3 * 4;
             //nCodeAfterLine2 = nCode;
-            Palette = new int[256];
-            for (i = 0; i < 256; i++) Palette[i] = Palet[i];
+            palette = new int[256];
+            for (i = 0; i < 256; i++) palette[i] = palet[i];
 
             nCode += 256 * 4;
-            Corner[0] = Image.Grid[1 + (2 * width + 1) * 1]; // this is a gray value or a palette index
-            Corner[1] = Image.Grid[2 * width - 1 + (2 * width + 1) * 1];
-            Corner[2] = Image.Grid[2 * width - 1 + (2 * width + 1) * (2 * height - 1)];
-            Corner[3] = Image.Grid[1 + (2 * width + 1) * (2 * height - 1)];
+            corner[0] = image.Grid[1 + (2 * width + 1) * 1]; // this is a gray value or a palette index
+            corner[1] = image.Grid[2 * width - 1 + (2 * width + 1) * 1];
+            corner[2] = image.Grid[2 * width - 1 + (2 * width + 1) * (2 * height - 1)];
+            corner[3] = image.Grid[1 + (2 * width + 1) * (2 * height - 1)];
 
             nCode += 4;
             int jump;
@@ -595,7 +595,7 @@ namespace WFcompressPal
             fm1.progressBar1.Visible = true;
             for (il = 0; il < nLine1; il++)
             {
-                Line1[il] = L.Line1[il];
+                line1[il] = listLines.Line1[il];
                 if ((il % jump) == jump - 1) fm1.progressBar1.PerformStep();
             }
 
@@ -606,7 +606,7 @@ namespace WFcompressPal
 
             for (il = 0; il < nLine2; il++)
             {
-                Line[il] = L.Line[il];
+                line[il] = listLines.Line[il];
                 if ((il % jump) == jump - 1) fm1.progressBar1.PerformStep();
             }
 
@@ -616,122 +616,122 @@ namespace WFcompressPal
             else jump = 2;
             for (ib = 0; ib < nByte; ib++)
             {
-                Byte[ib] = L.Byte[ib];
+                @byte[ib] = listLines.Byte[ib];
                 if ((ib % jump) == jump - 1) fm1.progressBar1.PerformStep();
             }
 
             nCode += nByte;
 
             // The following code is necessary to avoid "Serialize":
-            ByteNew = new byte[nCode + 4];
-            for (int ik = 0; ik < nCode + 4; ik++) ByteNew[ik] = 0;
+            byteNew = new byte[nCode + 4];
+            for (int ik = 0; ik < nCode + 4; ik++) byteNew[ik] = 0;
             int j = 0;
-            ByteNew[j] = (byte)(nCode & 255); j++;
-            ByteNew[j] = (byte)((nCode >> 8) & 255); j++;
-            ByteNew[j] = (byte)((nCode >> 16) & 255); j++;
-            ByteNew[j] = (byte)((nCode >> 24) & 255); j++;
+            byteNew[j] = (byte)(nCode & 255); j++;
+            byteNew[j] = (byte)((nCode >> 8) & 255); j++;
+            byteNew[j] = (byte)((nCode >> 16) & 255); j++;
+            byteNew[j] = (byte)((nCode >> 24) & 255); j++;
 
-            ByteNew[j] = (byte)(nx & 255); j++;
-            ByteNew[j] = (byte)((nx >> 8) & 255); j++;
-            ByteNew[j] = (byte)((nx >> 16) & 255); j++;
-            ByteNew[j] = (byte)((nx >> 24) & 255); j++;
+            byteNew[j] = (byte)(nx & 255); j++;
+            byteNew[j] = (byte)((nx >> 8) & 255); j++;
+            byteNew[j] = (byte)((nx >> 16) & 255); j++;
+            byteNew[j] = (byte)((nx >> 24) & 255); j++;
 
-            ByteNew[j] = (byte)(ny & 255); j++;
-            ByteNew[j] = (byte)((ny >> 8) & 255); j++;
-            ByteNew[j] = (byte)((ny >> 16) & 255); j++;
-            ByteNew[j] = (byte)((ny >> 24) & 255); j++;
+            byteNew[j] = (byte)(ny & 255); j++;
+            byteNew[j] = (byte)((ny >> 8) & 255); j++;
+            byteNew[j] = (byte)((ny >> 16) & 255); j++;
+            byteNew[j] = (byte)((ny >> 24) & 255); j++;
 
-            ByteNew[j] = (byte)(nbits & 255); j++;
-            ByteNew[j] = (byte)((nbits >> 8) & 255); j++;
-            ByteNew[j] = (byte)((nbits >> 16) & 255); j++;
-            ByteNew[j] = (byte)((nbits >> 24) & 255); j++;
+            byteNew[j] = (byte)(nbits & 255); j++;
+            byteNew[j] = (byte)((nbits >> 8) & 255); j++;
+            byteNew[j] = (byte)((nbits >> 16) & 255); j++;
+            byteNew[j] = (byte)((nbits >> 24) & 255); j++;
 
-            ByteNew[j] = (byte)(nLine1 & 255); j++;
-            ByteNew[j] = (byte)((nLine1 >> 8) & 255); j++;
-            ByteNew[j] = (byte)((nLine1 >> 16) & 255); j++;
-            ByteNew[j] = (byte)((nLine1 >> 24) & 255); j++;
+            byteNew[j] = (byte)(nLine1 & 255); j++;
+            byteNew[j] = (byte)((nLine1 >> 8) & 255); j++;
+            byteNew[j] = (byte)((nLine1 >> 16) & 255); j++;
+            byteNew[j] = (byte)((nLine1 >> 24) & 255); j++;
 
-            ByteNew[j] = (byte)(nLine2 & 255); j++;
-            ByteNew[j] = (byte)((nLine2 >> 8) & 255); j++;
-            ByteNew[j] = (byte)((nLine2 >> 16) & 255); j++;
-            ByteNew[j] = (byte)((nLine2 >> 24) & 255); j++;
+            byteNew[j] = (byte)(nLine2 & 255); j++;
+            byteNew[j] = (byte)((nLine2 >> 8) & 255); j++;
+            byteNew[j] = (byte)((nLine2 >> 16) & 255); j++;
+            byteNew[j] = (byte)((nLine2 >> 24) & 255); j++;
 
-            ByteNew[j] = (byte)(nByte & 255); j++;
-            ByteNew[j] = (byte)((nByte >> 8) & 255); j++;
-            ByteNew[j] = (byte)((nByte >> 16) & 255); j++;
-            ByteNew[j] = (byte)((nByte >> 24) & 255); j++;
+            byteNew[j] = (byte)(nByte & 255); j++;
+            byteNew[j] = (byte)((nByte >> 8) & 255); j++;
+            byteNew[j] = (byte)((nByte >> 16) & 255); j++;
+            byteNew[j] = (byte)((nByte >> 24) & 255); j++;
 
             for (int ii = 0; ii < 256; ii++)
             {
-                ByteNew[j] = (byte)(Palet[ii] & 255); j++;
-                ByteNew[j] = (byte)((Palet[ii] >> 8) & 255); j++;
-                ByteNew[j] = (byte)((Palet[ii] >> 16) & 255); j++;
-                ByteNew[j] = (byte)((Palet[ii] >> 24) & 255); j++;
+                byteNew[j] = (byte)(palet[ii] & 255); j++;
+                byteNew[j] = (byte)((palet[ii] >> 8) & 255); j++;
+                byteNew[j] = (byte)((palet[ii] >> 16) & 255); j++;
+                byteNew[j] = (byte)((palet[ii] >> 24) & 255); j++;
             }
 
-            for (int i1 = 0; i1 < 4; i1++) ByteNew[j + i1] = Corner[i1];
+            for (int i1 = 0; i1 < 4; i1++) byteNew[j + i1] = corner[i1];
             j += 4;
 
             for (int i2 = 0; i2 < nLine1; i2++)
             {
-                ByteNew[j] = (byte)(L.Line1[i2].x & 255); j++;
-                ByteNew[j] = (byte)((L.Line1[i2].x >> 8) & 255); j++;
-                ByteNew[j] = (byte)(L.Line1[i2].y & 255); j++;
-                ByteNew[j] = (byte)((L.Line1[i2].y >> 8) & 255); j++;
-                ByteNew[j] = L.Line1[i2].Ind0; j++;
-                ByteNew[j] = L.Line1[i2].Ind1; j++;
+                byteNew[j] = (byte)(listLines.Line1[i2].x & 255); j++;
+                byteNew[j] = (byte)((listLines.Line1[i2].x >> 8) & 255); j++;
+                byteNew[j] = (byte)(listLines.Line1[i2].y & 255); j++;
+                byteNew[j] = (byte)((listLines.Line1[i2].y >> 8) & 255); j++;
+                byteNew[j] = listLines.Line1[i2].Ind0; j++;
+                byteNew[j] = listLines.Line1[i2].Ind1; j++;
             }
 
             for (int i3 = 0; i3 < nLine2; i3++)
             {
-                ByteNew[j] = (byte)(L.Line[i3].EndByte & 255); j++;
-                ByteNew[j] = (byte)((L.Line[i3].EndByte >> 8) & 255); j++;
-                ByteNew[j] = (byte)((L.Line[i3].EndByte >> 16) & 255); j++;
-                ByteNew[j] = (byte)((L.Line[i3].EndByte >> 248) & 255); j++;
-                ByteNew[j] = (byte)(L.Line[i3].x & 255); j++;
-                ByteNew[j] = (byte)((L.Line[i3].x >> 8) & 255); j++;
-                ByteNew[j] = (byte)(L.Line[i3].y & 255); j++;
-                ByteNew[j] = (byte)((L.Line[i3].y >> 8) & 255); j++;
-                ByteNew[j] = (byte)(L.Line[i3].nCrack & 255); j++;
-                ByteNew[j] = (byte)((L.Line[i3].nCrack >> 8) & 255); j++;
-                ByteNew[j] = L.Line[i3].Ind0; j++;
-                ByteNew[j] = L.Line[i3].Ind1; j++;
-                ByteNew[j] = L.Line[i3].Ind2; j++;
-                ByteNew[j] = L.Line[i3].Ind3; j++;
+                byteNew[j] = (byte)(listLines.Line[i3].EndByte & 255); j++;
+                byteNew[j] = (byte)((listLines.Line[i3].EndByte >> 8) & 255); j++;
+                byteNew[j] = (byte)((listLines.Line[i3].EndByte >> 16) & 255); j++;
+                byteNew[j] = (byte)((listLines.Line[i3].EndByte >> 248) & 255); j++;
+                byteNew[j] = (byte)(listLines.Line[i3].x & 255); j++;
+                byteNew[j] = (byte)((listLines.Line[i3].x >> 8) & 255); j++;
+                byteNew[j] = (byte)(listLines.Line[i3].y & 255); j++;
+                byteNew[j] = (byte)((listLines.Line[i3].y >> 8) & 255); j++;
+                byteNew[j] = (byte)(listLines.Line[i3].nCrack & 255); j++;
+                byteNew[j] = (byte)((listLines.Line[i3].nCrack >> 8) & 255); j++;
+                byteNew[j] = listLines.Line[i3].Ind0; j++;
+                byteNew[j] = listLines.Line[i3].Ind1; j++;
+                byteNew[j] = listLines.Line[i3].Ind2; j++;
+                byteNew[j] = listLines.Line[i3].Ind3; j++;
             }
 
-            for (int i4 = 0; i4 < nByte; i4++) ByteNew[j + i4] = L.Byte[i4];
+            for (int i4 = 0; i4 < nByte; i4++) byteNew[j + i4] = listLines.Byte[i4];
             j += nByte;
             fm1.progressBar1.Visible = false;
             return nCode;
         } //**************************** end Transform ********************************************
 
 
-        public int Restore(ref CImage Image, ref CImage Mask, Form1 fm1)
+        public int Restore(ref CImage image, ref CImage mask, Form1 fm1)
         // Calculates the colors at the borders of the image and along the lines. Constructs the image Mask.
         {
-            int c, dir, i, il, LabMask = 250, nComp, x, y;
+            int c, dir, i, il, labMask = 250, nComp, x, y;
             if (nBits == 24) nComp = 3;
             else nComp = 1;
-            for (i = 0; i < width * height * nBits / 8; i++) Image.Grid[i] = 0;
-            for (i = 0; i < width * height; i++) Mask.Grid[i] = 0;
+            for (i = 0; i < width * height * nBits / 8; i++) image.Grid[i] = 0;
+            for (i = 0; i < width * height; i++) mask.Grid[i] = 0;
 
             // Setting the corners
             if (nBits == 24)
             {
-                for (c = 0; c < nComp; c++) Image.Grid[c] = (byte)((Palette[Corner[0]] >> 8 * (2 - c)) & 0XFF); // left below
-                for (c = 0; c < nComp; c++) Image.Grid[nComp * (width - 1) + c] = (byte)((Palette[Corner[1]] >> 8 * (2 - c)) & 0XFF); // right below
-                for (c = 0; c < nComp; c++) Image.Grid[nComp * width * height - nComp + c] = (byte)((Palette[Corner[2]] >> 8 * (2 - c)) & 0XFF); // right on top
-                for (c = 0; c < nComp; c++) Image.Grid[nComp * width * (height - 1) + c] = (byte)((Palette[Corner[3]] >> 8 * (2 - c)) & 0XFF); // left on top
+                for (c = 0; c < nComp; c++) image.Grid[c] = (byte)((palette[corner[0]] >> 8 * (2 - c)) & 0XFF); // left below
+                for (c = 0; c < nComp; c++) image.Grid[nComp * (width - 1) + c] = (byte)((palette[corner[1]] >> 8 * (2 - c)) & 0XFF); // right below
+                for (c = 0; c < nComp; c++) image.Grid[nComp * width * height - nComp + c] = (byte)((palette[corner[2]] >> 8 * (2 - c)) & 0XFF); // right on top
+                for (c = 0; c < nComp; c++) image.Grid[nComp * width * (height - 1) + c] = (byte)((palette[corner[3]] >> 8 * (2 - c)) & 0XFF); // left on top
             }
             else
             {
-                Image.Grid[0] = Corner[0];
-                Image.Grid[width - 1] = Corner[1];
-                Image.Grid[width * height - 1] = Corner[2];
-                Image.Grid[0 + width * (height - 1)] = Corner[3];
+                image.Grid[0] = corner[0];
+                image.Grid[width - 1] = corner[1];
+                image.Grid[width * height - 1] = corner[2];
+                image.Grid[0 + width * (height - 1)] = corner[3];
             }
-            Mask.Grid[0] = Mask.Grid[width - 1] = Mask.Grid[width * height - 1] = Mask.Grid[width * (height - 1)] = (byte)LabMask;
+            mask.Grid[0] = mask.Grid[width - 1] = mask.Grid[width * height - 1] = mask.Grid[width * (height - 1)] = (byte)labMask;
 
             // Short lines:
             fm1.progressBar1.Value = 0;
@@ -744,8 +744,8 @@ namespace WFcompressPal
             for (il = 0; il < nLine1; il++) //=====================================================
             {
                 if ((il % jump) == jump - 1) fm1.progressBar1.PerformStep();
-                dir = ((Line1[il].x >> 14) & 2) | (Line1[il].y >> 15);
-                x = Line1[il].x & 0X7FFF; y = Line1[il].y & 0X7FFF;
+                dir = ((line1[il].x >> 14) & 2) | (line1[il].y >> 15);
+                x = line1[il].x & 0X7FFF; y = line1[il].y & 0X7FFF;
                 if (nBits == 24)
                 {
                     switch (dir)
@@ -755,37 +755,37 @@ namespace WFcompressPal
                             {
                                 for (c = 0; c < nComp; c++)
                                 {
-                                    Image.Grid[nComp * (x + width * y) + 2 - c] = (byte)((Palette[Line1[il].Ind1] >> 8 * c) & 0XFF);
-                                    int ind = Line1[il].Ind0;
-                                    byte col = (byte)((Palette[ind] >> 8 * c) & 0XFF);
-                                    Image.Grid[nComp * (x + width * (y - 1)) + 2 - c] = col; //(byte)((Palette[Line1[il].Ind0]>>8*c) & 0XFF);
+                                    image.Grid[nComp * (x + width * y) + 2 - c] = (byte)((palette[line1[il].Ind1] >> 8 * c) & 0XFF);
+                                    int ind = line1[il].Ind0;
+                                    byte col = (byte)((palette[ind] >> 8 * c) & 0XFF);
+                                    image.Grid[nComp * (x + width * (y - 1)) + 2 - c] = col; //(byte)((Palette[Line1[il].Ind0]>>8*c) & 0XFF);
                                 }
-                                Mask.Grid[x + width * y] = Mask.Grid[x + width * (y - 1)] = (byte)LabMask;
+                                mask.Grid[x + width * y] = mask.Grid[x + width * (y - 1)] = (byte)labMask;
                             }
                             break;
                         case 1:
                             for (c = 0; c < nComp; c++)
                             {
-                                Image.Grid[nComp * (x + width * y) + 2 - c] = (byte)((Palette[Line1[il].Ind0] >> 8 * c) & 0XFF);
-                                Image.Grid[nComp * (x - 1 + width * y) + 2 - c] = (byte)((Palette[Line1[il].Ind1] >> 8 * c) & 0XFF);
+                                image.Grid[nComp * (x + width * y) + 2 - c] = (byte)((palette[line1[il].Ind0] >> 8 * c) & 0XFF);
+                                image.Grid[nComp * (x - 1 + width * y) + 2 - c] = (byte)((palette[line1[il].Ind1] >> 8 * c) & 0XFF);
                             }
-                            Mask.Grid[x + width * y] = Mask.Grid[x - 1 + width * y] = (byte)LabMask;
+                            mask.Grid[x + width * y] = mask.Grid[x - 1 + width * y] = (byte)labMask;
                             break;
                         case 2:
                             for (c = 0; c < nComp; c++)
                             {
-                                Image.Grid[nComp * (x - 1 + width * y) + 2 - c] = (byte)((Palette[Line1[il].Ind0] >> 8 * c) & 0XFF);
-                                Image.Grid[nComp * (x - 1 + width * (y - 1)) + 2 - c] = (byte)((Palette[Line1[il].Ind1] >> 8 * c) & 0XFF);
+                                image.Grid[nComp * (x - 1 + width * y) + 2 - c] = (byte)((palette[line1[il].Ind0] >> 8 * c) & 0XFF);
+                                image.Grid[nComp * (x - 1 + width * (y - 1)) + 2 - c] = (byte)((palette[line1[il].Ind1] >> 8 * c) & 0XFF);
                             }
-                            Mask.Grid[x - 1 + width * y] = Mask.Grid[x - 1 + width * (y - 1)] = (byte)LabMask;
+                            mask.Grid[x - 1 + width * y] = mask.Grid[x - 1 + width * (y - 1)] = (byte)labMask;
                             break;
                         case 3:
                             for (c = 0; c < nComp; c++)
                             {
-                                Image.Grid[nComp * (x + width * (y - 1)) + 2 - c] = (byte)((Palette[Line1[il].Ind1] >> 8 * c) & 0XFF);
-                                Image.Grid[nComp * (x - 1 + width * (y - 1)) + 2 - c] = (byte)((Palette[Line1[il].Ind0] >> 8 * c) & 0XFF);
+                                image.Grid[nComp * (x + width * (y - 1)) + 2 - c] = (byte)((palette[line1[il].Ind1] >> 8 * c) & 0XFF);
+                                image.Grid[nComp * (x - 1 + width * (y - 1)) + 2 - c] = (byte)((palette[line1[il].Ind0] >> 8 * c) & 0XFF);
                             }
-                            Mask.Grid[x + width * (y - 1)] = Mask.Grid[x - 1 + width * (y - 1)] = (byte)LabMask;
+                            mask.Grid[x + width * (y - 1)] = mask.Grid[x - 1 + width * (y - 1)] = (byte)labMask;
                             break;
                     }
                 }
@@ -794,24 +794,24 @@ namespace WFcompressPal
                     switch (dir)
                     {
                         case 0:
-                            Image.Grid[x + width * y] = Line1[il].Ind1;
-                            Image.Grid[x + width * (y - 1)] = Line1[il].Ind0;
-                            Mask.Grid[x + width * y] = Mask.Grid[x + width * (y - 1)] = (byte)LabMask;
+                            image.Grid[x + width * y] = line1[il].Ind1;
+                            image.Grid[x + width * (y - 1)] = line1[il].Ind0;
+                            mask.Grid[x + width * y] = mask.Grid[x + width * (y - 1)] = (byte)labMask;
                             break;
                         case 1:
-                            Image.Grid[x + width * y] = Line1[il].Ind0;
-                            Image.Grid[x - 1 + width * y] = Line1[il].Ind1;
-                            Mask.Grid[x + width * y] = Mask.Grid[x - 1 + width * y] = (byte)LabMask;
+                            image.Grid[x + width * y] = line1[il].Ind0;
+                            image.Grid[x - 1 + width * y] = line1[il].Ind1;
+                            mask.Grid[x + width * y] = mask.Grid[x - 1 + width * y] = (byte)labMask;
                             break;
                         case 2:
-                            Image.Grid[x - 1 + width * y] = Line1[il].Ind0;
-                            Image.Grid[x - 1 + width * (y - 1)] = Line1[il].Ind1;
-                            Mask.Grid[x - 1 + width * y] = Mask.Grid[x - 1 + width * (y - 1)] = (byte)LabMask;
+                            image.Grid[x - 1 + width * y] = line1[il].Ind0;
+                            image.Grid[x - 1 + width * (y - 1)] = line1[il].Ind1;
+                            mask.Grid[x - 1 + width * y] = mask.Grid[x - 1 + width * (y - 1)] = (byte)labMask;
                             break;
                         case 3:
-                            Image.Grid[x + width * (y - 1)] = Line1[il].Ind1;
-                            Image.Grid[x - 1 + width * (y - 1)] = Line1[il].Ind0;
-                            Mask.Grid[x + width * (y - 1)] = Mask.Grid[x - 1 + width * (y - 1)] = (byte)LabMask;
+                            image.Grid[x + width * (y - 1)] = line1[il].Ind1;
+                            image.Grid[x - 1 + width * (y - 1)] = line1[il].Ind0;
+                            mask.Grid[x + width * (y - 1)] = mask.Grid[x - 1 + width * (y - 1)] = (byte)labMask;
                             break;
                     }
                 }
@@ -827,10 +827,10 @@ namespace WFcompressPal
             {
                 if ((il % jump) == jump - 1) fm1.progressBar1.PerformStep();
                 if (il == 0) first = 0;
-                else first = Line[il - 1].EndByte + 1;
-                last = Line[il].EndByte;
-                x = Line[il].x;
-                y = Line[il].y;
+                else first = line[il - 1].EndByte + 1;
+                last = line[il].EndByte;
+                x = line[il].x;
+                y = line[il].y;
                 int iByte = first, iShift = 0;
                 iVect2 V0 = new iVect2(0, 0);
                 iVect2 P = V0, P1, PixelP = V0, PixelN = V0; // comb. coordinates
@@ -843,32 +843,32 @@ namespace WFcompressPal
                 {
                     for (c = 0; c < nComp; c++)
                     {
-                        ColStartN[2 - c] = (byte)((Palette[Line[il].Ind0] >> 8 * c) & 255);
-                        ColStartP[2 - c] = (byte)((Palette[Line[il].Ind1] >> 8 * c) & 255);
-                        ColLastN[2 - c] = (byte)((Palette[Line[il].Ind2] >> 8 * c) & 255);
-                        ColLastP[2 - c] = (byte)((Palette[Line[il].Ind3] >> 8 * c) & 255);
+                        ColStartN[2 - c] = (byte)((palette[line[il].Ind0] >> 8 * c) & 255);
+                        ColStartP[2 - c] = (byte)((palette[line[il].Ind1] >> 8 * c) & 255);
+                        ColLastN[2 - c] = (byte)((palette[line[il].Ind2] >> 8 * c) & 255);
+                        ColLastP[2 - c] = (byte)((palette[line[il].Ind3] >> 8 * c) & 255);
                     }
                 }
                 else
                 {
-                    ColStartN[0] = Line[il].Ind0;
-                    ColStartP[0] = Line[il].Ind1;
-                    ColLastN[0] = Line[il].Ind2;
-                    ColLastP[0] = Line[il].Ind3;
+                    ColStartN[0] = line[il].Ind0;
+                    ColStartP[0] = line[il].Ind1;
+                    ColLastN[0] = line[il].Ind2;
+                    ColLastP[0] = line[il].Ind3;
                 }
 
-                P.X = Line[il].x; P.Y = Line[il].y;
-                int nCrack = Line[il].nCrack;
+                P.X = line[il].x; P.Y = line[il].y;
+                int nCrack = line[il].nCrack;
                 int iC, xx, yy;     // Interpolation along a line:
                 for (iC = 0; iC < nCrack; iC++) //=======================================================
                 {
-                    dir = (Byte[iByte] & (3 << Shift[iShift])) >> Shift[iShift];
+                    dir = (@byte[iByte] & (3 << Shift[iShift])) >> Shift[iShift];
                     switch (dir) // Standard coordinates
                     {
-                        case 0: PixelP = P; PixelN = P + Step[3]; break;
-                        case 1: PixelP = P + Step[2]; PixelN = P; break;
-                        case 2: PixelP = P + Step[2] + Step[3]; PixelN = P + Step[2]; break;
-                        case 3: PixelP = P + Step[3]; PixelN = P + Step[2] + Step[3]; break;
+                        case 0: PixelP = P; PixelN = P + step[3]; break;
+                        case 1: PixelP = P + step[2]; PixelN = P; break;
+                        case 2: PixelP = P + step[2] + step[3]; PixelN = P + step[2]; break;
+                        case 3: PixelP = P + step[3]; PixelN = P + step[2] + step[3]; break;
                     }
                     for (c = 0; c < nComp; c++) //===================================================
                     {
@@ -881,18 +881,18 @@ namespace WFcompressPal
 
                     if (xx + width * yy < width * height && xx + width * yy >= 0)
                     {
-                        for (c = 0; c < nComp; c++) Image.Grid[c + nComp * xx + nComp * width * yy] = ColP[c]; // Assertion
-                        Mask.Grid[xx + width * yy] = (byte)LabMask;
+                        for (c = 0; c < nComp; c++) image.Grid[c + nComp * xx + nComp * width * yy] = ColP[c]; // Assertion
+                        mask.Grid[xx + width * yy] = (byte)labMask;
                     }
                     xx = PixelN.X; yy = PixelN.Y;
 
                     if (xx + width * yy < width * height && xx + width * yy >= 0)
                     {
-                        for (c = 0; c < nComp; c++) Image.Grid[c + nComp * xx + nComp * width * yy] = ColN[c];
-                        Mask.Grid[xx + width * yy] = (byte)LabMask;
+                        for (c = 0; c < nComp; c++) image.Grid[c + nComp * xx + nComp * width * yy] = ColN[c];
+                        mask.Grid[xx + width * yy] = (byte)labMask;
                     }
                     P1 = P;
-                    P = P + Step[dir];
+                    P = P + step[dir];
 
                     iShift++;
                     if (iShift == 4)
@@ -904,25 +904,25 @@ namespace WFcompressPal
                 int nZero = 0;
                 if (P.X > 0 && P.Y > 0 && P.X < width && P.Y < height)
                 {
-                    if (Image.Grid[nComp * (P.X + width * P.Y) + 0] == 0) nZero++;
-                    if (Image.Grid[nComp * (P.X - 1 + width * P.Y) + 0] == 0) nZero++;
-                    if (Image.Grid[nComp * (P.X - 1 + width * (P.Y - 1)) + 0] == 0) nZero++;
-                    if (Image.Grid[nComp * (P.X + width * (P.Y - 1)) + 0] == 0) nZero++;
+                    if (image.Grid[nComp * (P.X + width * P.Y) + 0] == 0) nZero++;
+                    if (image.Grid[nComp * (P.X - 1 + width * P.Y) + 0] == 0) nZero++;
+                    if (image.Grid[nComp * (P.X - 1 + width * (P.Y - 1)) + 0] == 0) nZero++;
+                    if (image.Grid[nComp * (P.X + width * (P.Y - 1)) + 0] == 0) nZero++;
                     if (nZero == 2) cnt++;
                 }
             } //================================= end for (il... nLine2 ... ===========================
 
-            Mask.Grid[0] = Mask.Grid[width - 1] = Mask.Grid[width * height - 1] = Mask.Grid[width * (height - 1)] = (byte)LabMask;
+            mask.Grid[0] = mask.Grid[width - 1] = mask.Grid[width * height - 1] = mask.Grid[width * (height - 1)] = (byte)labMask;
             //fm1.progressBar1.Visible = false;
             return 1;
         } //*********************** end Restore **********************************************************
 
 
-        public void WriteCode(string Name, int nCode)
+        public void WriteCode(string name, int nCode)
         {
-            Stream stream = File.Open(Name, FileMode.Create);
+            Stream stream = File.Open(name, FileMode.Create);
             long rv = 0;
-            stream.Write(ByteNew, 0, nCode);
+            stream.Write(byteNew, 0, nCode);
             rv = stream.Length;
             stream.Close();
         } //****************************** end WriteCode ********************
