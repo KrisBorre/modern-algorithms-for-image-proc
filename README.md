@@ -28,4 +28,6 @@ See the file Contributing.md for more information on how you can contribute to t
 
 ![viking_helm_image_compression](https://github.com/user-attachments/assets/c8a6b881-2504-474a-96db-763009d66c8d)
 
+![compression_spartan_shield](https://github.com/user-attachments/assets/1262d897-aaf6-449d-bb33-5663a0df1fcf)
+
 ![segment_spartan_shield](https://github.com/user-attachments/assets/7e0f6a1e-dc4f-4362-ab33-eb8566077c03)
