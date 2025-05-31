@@ -1549,6 +1549,12 @@ namespace WFcompressPal
             return 1;
         } //********************* end DeleteBit0 ************************   
 
+        // page 129
+        /// <summary>
+        /// An edge consists of sequences of cracks and points.
+        /// </summary>
+        /// <param name="Comb"></param>
+        /// <param name="fm1"></param>
         public void CracksToPixel(CImage Comb, Form1 fm1)
         {
             int NX = Comb.width;

@@ -19,33 +19,43 @@ namespace WFcompressPal
         CImage origIm;  // copy of original image
         CImage impulseIm;  // deleted impulse noise
         CImage sigmaIm;  // Sigma filtered
+
+        // page 129
+        /// <summary>
+        /// We call this image an image in combinatorial coordinates or CombIm because the numbers of columns and of rows in this image considered as coordinates specify the positions of cells of all dimensions (zero, one, and two).
+        /// </summary>
         CImage combIm; // cell complex of the edges
+        
         CImage extremIm;  // result of the extrem filtering
         CImage edgeIm;  // shading corrected image and the result
         CImage restoreIm;  // shading corrected image and the result
         CImage segmentIm;  // shading corrected image and the result
         CImage pal;
         int[] palet;
+
         public int nCode, fWidth, fHeight;
+
         bool OPEN = false, IMPULSE = false, SEGMENTED = false, DETECTED = false, CODED = false;
+
         public iVect2[] V = new iVect2[200]; // corners of excluded rectangles, used in CPnoise Sort
 
         public double Scale1;
         public int marginX, marginY, nbyteIm, nbyteBmp, Threshold, Version;
         public Graphics g2;
+
         CListLines list;
         CListCode listCode;
 
 
-        private void button1_Click(object sender, EventArgs e)  // Open image
+        private void buttonOpenImage_Click(object sender, EventArgs e)  // Open image
         {
             pictureBox2.Visible = false;
             label3.Visible = false;
-            button2.Visible = false;
+            buttonImpulseNoise.Visible = false;
             label1.Visible = false;
             label2.Visible = false;
-            numericUpDown1.Visible = false;
-            numericUpDown2.Visible = false;
+            numericUpDownDark.Visible = false;
+            numericUpDownLight.Visible = false;
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -62,11 +72,11 @@ namespace WFcompressPal
             else return;
 
 
-            button2.Visible = true;
+            buttonImpulseNoise.Visible = true;
             label1.Visible = true;
             label2.Visible = true;
-            numericUpDown1.Visible = true;
-            numericUpDown2.Visible = true;
+            numericUpDownDark.Visible = true;
+            numericUpDownLight.Visible = true;
             label6.Text = "Opened file: " + openFileDialog1.FileName;
             label6.Visible = true;
             label5.Visible = true;
@@ -75,12 +85,12 @@ namespace WFcompressPal
 
             label3.Visible = false;
             label4.Visible = false;
-            button3.Visible = false;
-            numericUpDown3.Visible = false;
-            button4.Visible = false;
-            button5.Visible = false;
-            button6.Visible = false;
-            button7.Visible = false;
+            buttonSegment.Visible = false;
+            numericUpDownThreshold.Visible = false;
+            buttonDetectEdges.Visible = false;
+            buttonEncode.Visible = false;
+            buttonRestore.Visible = false;
+            buttonSave.Visible = false;
 
             progressBar1.Maximum = 100;
             progressBar1.Value = 0;
@@ -280,7 +290,7 @@ namespace WFcompressPal
 
 
 
-        private void button3_Click(object sender, EventArgs e) // Segment
+        private void buttonSegment_Click(object sender, EventArgs e) // Segment
         {
             if (!OPEN)
             {
@@ -337,9 +347,9 @@ namespace WFcompressPal
             label3.Visible = true;
             pictureBox2.Visible = true;
             progressBar1.Value = 0;
-            button4.Visible = true;
+            buttonDetectEdges.Visible = true;
             label4.Visible = true;
-            numericUpDown3.Visible = true;
+            numericUpDownThreshold.Visible = true;
             label7.Text = "Click 'Detect edges'";
             label7.Visible = true;
             SEGMENTED = true;
@@ -386,7 +396,7 @@ namespace WFcompressPal
 
 
 
-        private void button2_Click(object sender, EventArgs e) // Impulse noise
+        private void buttonImpulseNoise_Click(object sender, EventArgs e) // Impulse noise
         {
             impulseIm = new CImage(origIm.width, origIm.height, 24);
 
@@ -437,8 +447,8 @@ namespace WFcompressPal
 
             PN.Sort(impulseIm, histo, Number, pictureBox1.Width, pictureBox1.Height, this);
 
-            int maxSizeD = (int)numericUpDown1.Value;
-            int maxSizeL = (int)numericUpDown2.Value;
+            int maxSizeD = (int)numericUpDownDark.Value;
+            int maxSizeL = (int)numericUpDownLight.Value;
 
             PN.LightNoise(ref impulseIm, minLight, maxLight, maxSizeL, this);
             impulseIm.DeleteBit0(nbyte, this);
@@ -462,7 +472,7 @@ namespace WFcompressPal
             pictureBox2.Visible = true;
             label3.Visible = true;
             label3.Text = "Impulse noise suppressed";
-            button3.Visible = true;
+            buttonSegment.Visible = true;
             label7.Text = "Click 'Segment'";
             label7.Visible = true;
             IMPULSE = true;
@@ -501,7 +511,9 @@ namespace WFcompressPal
             return 1;
         }
 
-        private void button4_Click(object sender, EventArgs e) // Detect edges
+        // page 129
+        // An edge consists of sequences of cracks and points.
+        private void buttonDetectEdges_Click(object sender, EventArgs e) // Detect edges
         {
             if (!OPEN)
             {
@@ -523,10 +535,13 @@ namespace WFcompressPal
             //pictureBox2.Visible = false;
             //label3.Visible = false;
 
-            int CombWidth = 2 * sigmaIm.width + 1, CombHeight = 2 * sigmaIm.height + 1;
-            combIm = new CImage(CombWidth, CombHeight, 8);
+            // page 139
+            // The part of the project designed to detect edges defines the one byte per pixel image CombIm with combinatorial coordinates (see Chapter 7) and a greater size (2*width + 1) * (2*height + 1). 
+            // This is necessary because the representation of cracks and points in an image of standard size is difficult.
+            int combWidth = 2 * sigmaIm.width + 1, combHeight = 2 * sigmaIm.height + 1;
+            combIm = new CImage(combWidth, combHeight, 8);
 
-            int Threshold = (int)numericUpDown3.Value;
+            int Threshold = (int)numericUpDownThreshold.Value;
             combIm.LabelCellsSign(Threshold, extremIm, this);
 
             int jump, x, y;
@@ -536,7 +551,7 @@ namespace WFcompressPal
             {
                 if (y % jump == jump - 1) progressBar1.PerformStep();
                 for (x = 0; x < extremIm.width; x++)
-                    combIm.Grid[2 * x + 1 + CombWidth * (2 * y + 1)] = pal.Grid[x + fWidth * y];
+                    combIm.Grid[2 * x + 1 + combWidth * (2 * y + 1)] = pal.Grid[x + fWidth * y];
             }
 
             combIm.CleanCombNew(20, this);
@@ -544,15 +559,15 @@ namespace WFcompressPal
 
             edgeIm = new CImage(fWidth, fHeight, 8);
             edgeIm.CracksToPixel(combIm, this);
-            Bitmap EdgeBmp = new Bitmap(origIm.width, origIm.height, PixelFormat.Format24bppRgb);
+
+            // Bitmap EdgeBmp = new Bitmap(origIm.width, origIm.height, PixelFormat.Format24bppRgb);
 
             ImageToBitmapNew(edgeIm, bmpPictBox2); // EdgeIm is always color image but BmpPictBox2 can be indexed
             pictureBox2.Image = bmpPictBox2;
 
-            pictureBox2.Image = bmpPictBox2;
             label3.Text = "Detected edges";
             label3.Visible = true;
-            button5.Visible = true;
+            buttonEncode.Visible = true;
             label7.Text = "Click 'Encode'";
             label7.Visible = true;
             progressBar1.Visible = false;
@@ -573,7 +588,7 @@ namespace WFcompressPal
             }
         }
 
-        private void button5_Click(object sender, EventArgs e) // Encode
+        private void buttonEncode_Click(object sender, EventArgs e) // Encode
         {
             if (!OPEN)
             {
@@ -608,18 +623,21 @@ namespace WFcompressPal
 
             nCode = listCode.Transform(origIm.width, origIm.height, origIm.N_Bits, palet, combIm, list, this);
 
+            // page 149
+            // When the method Transform returns, the message "Image encoded" is shown and the length of the code and the value of the compression rate are presented.
+
             double CompressRate = (double)(origIm.width * origIm.height * (origIm.N_Bits / 8)) / (double)nCode;
             MessageBox.Show("Image encoded. nLine2=" + listCode.nLine2 + " Code length=" + nCode +
               " bytes. Comression rate=" + Math.Round(CompressRate, 1));
             progressBar1.Visible = false;
-            button6.Visible = true;
+            buttonRestore.Visible = true;
             label7.Text = "Click 'Restore'";
             label7.Visible = true;
             CODED = true;
         } //**************************** end Encode ************************************************
 
 
-        private void button6_Click(object sender, EventArgs e) // Restore
+        private void buttonRestore_Click(object sender, EventArgs e) // Restore
         {
             if (!OPEN)
             {
@@ -667,11 +685,11 @@ namespace WFcompressPal
             label3.Visible = true;
             label7.Text = "Click 'Save code \\DAT'";
             label7.Visible = true;
-            button7.Visible = true;
+            buttonSave.Visible = true;
 
         } //********************************* end Restore *****************************
 
-        private void button7_Click(object sender, EventArgs e) // Save result
+        private void buttonSave_Click(object sender, EventArgs e) // Save result
         {
             if (!OPEN)
             {
@@ -713,20 +731,20 @@ namespace WFcompressPal
         }//************************* end save result *****************
 
 
-        private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
-        {
-            Version = 1;
-        }
+        //private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
+        //{
+        //    Version = 1;
+        //}
 
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
-        {
-            Version = 2;
-        }
+        //private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    Version = 2;
+        //}
 
-        private void radioButton3_CheckedChanged(object sender, EventArgs e)
-        {
-            Version = 3;
-        }
+        //private void radioButton3_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    Version = 3;
+        //}
 
         // This file is in "for GitHub"
     } //*************************** end class Form1 ******************

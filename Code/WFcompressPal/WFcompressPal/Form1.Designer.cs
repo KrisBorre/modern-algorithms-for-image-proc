@@ -28,15 +28,15 @@
     /// </summary>
     private void InitializeComponent()
     {
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            this.buttonOpenImage = new System.Windows.Forms.Button();
+            this.buttonImpulseNoise = new System.Windows.Forms.Button();
+            this.buttonSegment = new System.Windows.Forms.Button();
+            this.buttonDetectEdges = new System.Windows.Forms.Button();
+            this.buttonEncode = new System.Windows.Forms.Button();
+            this.buttonRestore = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
+            this.numericUpDownDark = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownLight = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
@@ -44,135 +44,135 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownThreshold = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDark)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThreshold)).BeginInit();
             this.SuspendLayout();
             // 
-            // button1
+            // buttonOpenImage
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(64, 72);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(108, 42);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Open image";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonOpenImage.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonOpenImage.Location = new System.Drawing.Point(64, 72);
+            this.buttonOpenImage.Name = "buttonOpenImage";
+            this.buttonOpenImage.Size = new System.Drawing.Size(108, 42);
+            this.buttonOpenImage.TabIndex = 0;
+            this.buttonOpenImage.Text = "Open image";
+            this.buttonOpenImage.UseVisualStyleBackColor = true;
+            this.buttonOpenImage.Click += new System.EventHandler(this.buttonOpenImage_Click);
             // 
-            // button2
+            // buttonImpulseNoise
             // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(243, 29);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(151, 42);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Impulse noise";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Visible = false;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.buttonImpulseNoise.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonImpulseNoise.Location = new System.Drawing.Point(243, 29);
+            this.buttonImpulseNoise.Name = "buttonImpulseNoise";
+            this.buttonImpulseNoise.Size = new System.Drawing.Size(151, 42);
+            this.buttonImpulseNoise.TabIndex = 1;
+            this.buttonImpulseNoise.Text = "Impulse noise";
+            this.buttonImpulseNoise.UseVisualStyleBackColor = true;
+            this.buttonImpulseNoise.Visible = false;
+            this.buttonImpulseNoise.Click += new System.EventHandler(this.buttonImpulseNoise_Click);
             // 
-            // button3
+            // buttonSegment
             // 
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(443, 72);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(108, 42);
-            this.button3.TabIndex = 2;
-            this.button3.Text = "Segment";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Visible = false;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.buttonSegment.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonSegment.Location = new System.Drawing.Point(443, 72);
+            this.buttonSegment.Name = "buttonSegment";
+            this.buttonSegment.Size = new System.Drawing.Size(108, 42);
+            this.buttonSegment.TabIndex = 2;
+            this.buttonSegment.Text = "Segment";
+            this.buttonSegment.UseVisualStyleBackColor = true;
+            this.buttonSegment.Visible = false;
+            this.buttonSegment.Click += new System.EventHandler(this.buttonSegment_Click);
             // 
-            // button4
+            // buttonDetectEdges
             // 
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button4.Location = new System.Drawing.Point(589, 29);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(139, 42);
-            this.button4.TabIndex = 3;
-            this.button4.Text = "Detect edges";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Visible = false;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.buttonDetectEdges.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonDetectEdges.Location = new System.Drawing.Point(589, 29);
+            this.buttonDetectEdges.Name = "buttonDetectEdges";
+            this.buttonDetectEdges.Size = new System.Drawing.Size(139, 42);
+            this.buttonDetectEdges.TabIndex = 3;
+            this.buttonDetectEdges.Text = "Detect edges";
+            this.buttonDetectEdges.UseVisualStyleBackColor = true;
+            this.buttonDetectEdges.Visible = false;
+            this.buttonDetectEdges.Click += new System.EventHandler(this.buttonDetectEdges_Click);
             // 
-            // button5
+            // buttonEncode
             // 
-            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button5.Location = new System.Drawing.Point(761, 29);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(108, 42);
-            this.button5.TabIndex = 4;
-            this.button5.Text = "Encode";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Visible = false;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.buttonEncode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonEncode.Location = new System.Drawing.Point(761, 29);
+            this.buttonEncode.Name = "buttonEncode";
+            this.buttonEncode.Size = new System.Drawing.Size(108, 42);
+            this.buttonEncode.TabIndex = 4;
+            this.buttonEncode.Text = "Encode";
+            this.buttonEncode.UseVisualStyleBackColor = true;
+            this.buttonEncode.Visible = false;
+            this.buttonEncode.Click += new System.EventHandler(this.buttonEncode_Click);
             // 
-            // button6
+            // buttonRestore
             // 
-            this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button6.Location = new System.Drawing.Point(910, 29);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(108, 42);
-            this.button6.TabIndex = 5;
-            this.button6.Text = "Restore";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Visible = false;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.buttonRestore.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonRestore.Location = new System.Drawing.Point(910, 29);
+            this.buttonRestore.Name = "buttonRestore";
+            this.buttonRestore.Size = new System.Drawing.Size(108, 42);
+            this.buttonRestore.TabIndex = 5;
+            this.buttonRestore.Text = "Restore";
+            this.buttonRestore.UseVisualStyleBackColor = true;
+            this.buttonRestore.Visible = false;
+            this.buttonRestore.Click += new System.EventHandler(this.buttonRestore_Click);
             // 
-            // button7
+            // buttonSave
             // 
-            this.button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button7.Location = new System.Drawing.Point(1066, 29);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(143, 42);
-            this.button7.TabIndex = 6;
-            this.button7.Text = "Save code \\DAT";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Visible = false;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
+            this.buttonSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonSave.Location = new System.Drawing.Point(1066, 29);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(143, 42);
+            this.buttonSave.TabIndex = 6;
+            this.buttonSave.Text = "Save code \\DAT";
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Visible = false;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
-            // numericUpDown1
+            // numericUpDownDark
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(233, 110);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.numericUpDownDark.Location = new System.Drawing.Point(233, 110);
+            this.numericUpDownDark.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(62, 20);
-            this.numericUpDown1.TabIndex = 7;
-            this.numericUpDown1.Value = new decimal(new int[] {
+            this.numericUpDownDark.Name = "numericUpDownDark";
+            this.numericUpDownDark.Size = new System.Drawing.Size(62, 20);
+            this.numericUpDownDark.TabIndex = 7;
+            this.numericUpDownDark.Value = new decimal(new int[] {
             20,
             0,
             0,
             0});
-            this.numericUpDown1.Visible = false;
+            this.numericUpDownDark.Visible = false;
             // 
-            // numericUpDown2
+            // numericUpDownLight
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(339, 110);
-            this.numericUpDown2.Maximum = new decimal(new int[] {
+            this.numericUpDownLight.Location = new System.Drawing.Point(339, 110);
+            this.numericUpDownLight.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(62, 20);
-            this.numericUpDown2.TabIndex = 8;
-            this.numericUpDown2.Value = new decimal(new int[] {
+            this.numericUpDownLight.Name = "numericUpDownLight";
+            this.numericUpDownLight.Size = new System.Drawing.Size(62, 20);
+            this.numericUpDownLight.TabIndex = 8;
+            this.numericUpDownLight.Value = new decimal(new int[] {
             20,
             0,
             0,
             0});
-            this.numericUpDown2.Visible = false;
+            this.numericUpDownLight.Visible = false;
             // 
             // label1
             // 
@@ -244,23 +244,23 @@
             this.label4.Text = "Threshold";
             this.label4.Visible = false;
             // 
-            // numericUpDown3
+            // numericUpDownThreshold
             // 
-            this.numericUpDown3.Location = new System.Drawing.Point(637, 110);
-            this.numericUpDown3.Maximum = new decimal(new int[] {
+            this.numericUpDownThreshold.Location = new System.Drawing.Point(637, 110);
+            this.numericUpDownThreshold.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
-            this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(62, 20);
-            this.numericUpDown3.TabIndex = 16;
-            this.numericUpDown3.Value = new decimal(new int[] {
+            this.numericUpDownThreshold.Name = "numericUpDownThreshold";
+            this.numericUpDownThreshold.Size = new System.Drawing.Size(62, 20);
+            this.numericUpDownThreshold.TabIndex = 16;
+            this.numericUpDownThreshold.Value = new decimal(new int[] {
             30,
             0,
             0,
             0});
-            this.numericUpDown3.Visible = false;
+            this.numericUpDownThreshold.Visible = false;
             // 
             // label5
             // 
@@ -303,7 +303,7 @@
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.numericUpDown3);
+            this.Controls.Add(this.numericUpDownThreshold);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.pictureBox2);
@@ -311,22 +311,22 @@
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.numericUpDown2);
-            this.Controls.Add(this.numericUpDown1);
-            this.Controls.Add(this.button7);
-            this.Controls.Add(this.button6);
-            this.Controls.Add(this.button5);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.numericUpDownLight);
+            this.Controls.Add(this.numericUpDownDark);
+            this.Controls.Add(this.buttonSave);
+            this.Controls.Add(this.buttonRestore);
+            this.Controls.Add(this.buttonEncode);
+            this.Controls.Add(this.buttonDetectEdges);
+            this.Controls.Add(this.buttonSegment);
+            this.Controls.Add(this.buttonImpulseNoise);
+            this.Controls.Add(this.buttonOpenImage);
             this.Name = "Form1";
             this.Text = "Image Compression";
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDark)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThreshold)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -334,15 +334,15 @@
 
     #endregion
 
-    private System.Windows.Forms.Button button1;
-    private System.Windows.Forms.Button button2;
-    private System.Windows.Forms.Button button3;
-    private System.Windows.Forms.Button button4;
-    private System.Windows.Forms.Button button5;
-    private System.Windows.Forms.Button button6;
-    private System.Windows.Forms.Button button7;
-    private System.Windows.Forms.NumericUpDown numericUpDown1;
-    private System.Windows.Forms.NumericUpDown numericUpDown2;
+    private System.Windows.Forms.Button buttonOpenImage;
+    private System.Windows.Forms.Button buttonImpulseNoise;
+    private System.Windows.Forms.Button buttonSegment;
+    private System.Windows.Forms.Button buttonDetectEdges;
+    private System.Windows.Forms.Button buttonEncode;
+    private System.Windows.Forms.Button buttonRestore;
+    private System.Windows.Forms.Button buttonSave;
+    private System.Windows.Forms.NumericUpDown numericUpDownDark;
+    private System.Windows.Forms.NumericUpDown numericUpDownLight;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label2;
     public System.Windows.Forms.ProgressBar progressBar1;
@@ -350,7 +350,7 @@
     public System.Windows.Forms.PictureBox pictureBox2;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.NumericUpDown numericUpDown3;
+    private System.Windows.Forms.NumericUpDown numericUpDownThreshold;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.Label label7;

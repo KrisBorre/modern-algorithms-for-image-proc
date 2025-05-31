@@ -415,8 +415,7 @@ namespace WFedgeDetect
                 extremeFilteredImage.ExtremeFilterGrayscale(input: sigmaFilteredImage, hWind: 2, fm1: this);
             }
 
-            this.threshold = (int)numericUpDown1.Value;
-            //int NX = OrigIm.width;
+            this.threshold = (int)numericUpDownThreshold.Value;            
 
             int rv;
             rv = combIm.LabelCellsSign(this.threshold, extremeFilteredImage, this);

@@ -31,7 +31,7 @@
             this.buttonOpen = new System.Windows.Forms.Button();
             this.buttonDetectEdges = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownThreshold = new System.Windows.Forms.NumericUpDown();
             this.pictureBoxOriginalImage = new System.Windows.Forms.PictureBox();
             this.pictureBoxDetectedEdges = new System.Windows.Forms.PictureBox();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
@@ -44,7 +44,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThreshold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOriginalImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDetectedEdges)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -79,23 +79,23 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Edges threshold";
             // 
-            // numericUpDown1
+            // numericUpDownThreshold
             // 
-            this.numericUpDown1.Increment = new decimal(new int[] {
+            this.numericUpDownThreshold.Increment = new decimal(new int[] {
             5,
             0,
             0,
             0});
-            this.numericUpDown1.Location = new System.Drawing.Point(408, 35);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.numericUpDownThreshold.Location = new System.Drawing.Point(408, 35);
+            this.numericUpDownThreshold.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(83, 20);
-            this.numericUpDown1.TabIndex = 3;
-            this.numericUpDown1.Value = new decimal(new int[] {
+            this.numericUpDownThreshold.Name = "numericUpDownThreshold";
+            this.numericUpDownThreshold.Size = new System.Drawing.Size(83, 20);
+            this.numericUpDownThreshold.TabIndex = 3;
+            this.numericUpDownThreshold.Value = new decimal(new int[] {
             25,
             0,
             0,
@@ -239,13 +239,13 @@
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.pictureBoxDetectedEdges);
             this.Controls.Add(this.pictureBoxOriginalImage);
-            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.numericUpDownThreshold);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonDetectEdges);
             this.Controls.Add(this.buttonOpen);
             this.Name = "Form1";
             this.Text = "WFdetectEdges";
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThreshold)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOriginalImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDetectedEdges)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
@@ -259,7 +259,7 @@
     private System.Windows.Forms.Button buttonOpen;
     private System.Windows.Forms.Button buttonDetectEdges;
     private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.NumericUpDown numericUpDown1;
+    private System.Windows.Forms.NumericUpDown numericUpDownThreshold;
     public System.Windows.Forms.PictureBox pictureBoxOriginalImage;
     public System.Windows.Forms.PictureBox pictureBoxDetectedEdges;
     public System.Windows.Forms.ProgressBar progressBar1;

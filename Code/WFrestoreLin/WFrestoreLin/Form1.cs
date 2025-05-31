@@ -4,8 +4,12 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
-// Image Compression
 // page 127
+// Chapter 8: Image Compression
+
+// page 150
+// This project serves to reconstruct the image from the saved code and to store the image on the disk.
+// The project starts with reading a chosen file with the extension *.dat.
 namespace WFrestoreLin
 {
     public partial class Form1 : Form
@@ -13,7 +17,7 @@ namespace WFrestoreLin
         public Form1()
         {
             InitializeComponent();
-            this.Text = "Image Compression";
+            this.Text = "Image Reconstruction";
         }
 
         private string OpenFileName;

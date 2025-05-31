@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
+// chapter 9: Image Segmentation and Connected Components
 // page 167
 namespace WFsegmentAndComp
 {
@@ -19,12 +20,14 @@ namespace WFsegmentAndComp
         private Bitmap SegmentBmp;
         private Bitmap BreadthBmp;
         private Bitmap RootBmp;
-        CImage OrigIm;
-        CImage ImpulseIm;
-        CImage SegmentIm;
-        CImageComp BreadthFirIm;
-        CImageComp RootIm;
+        private CImage OrigIm;
+        private CImage ImpulseIm;
+        private CImage SegmentIm;
+        private CImageComp BreadthFirstImage;
+        private CImageComp RootImage;
+
         public string OpenImageFile;
+
         int nbyte, width, height;
         int nLoop;
         int denomProg;
@@ -42,14 +45,14 @@ namespace WFsegmentAndComp
             label4.Visible = false;
             label5.Visible = false;
             label6.Visible = false;
-            button2.Visible = false;
-            button3.Visible = false;
-            button4.Visible = false;
-            button5.Visible = false;
-            button6.Visible = false;
-            button8.Visible = false;
-            numericUpDown1.Visible = false;
-            numericUpDown2.Visible = false;
+            buttonImpulseNoise.Visible = false;
+            buttonBreadthFirst.Visible = false;
+            buttonSegment.Visible = false;
+            buttonRootMethod.Visible = false;
+            buttonSaveImage6.Visible = false;
+            buttonSaveImage4.Visible = false;
+            numericUpDownDark.Visible = false;
+            numericUpDownLight.Visible = false;
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -69,7 +72,7 @@ namespace WFsegmentAndComp
             label1.Visible = true;
             label3.Text = "Opened image:" + openFileDialog1.FileName;
             label3.Visible = true;
-            button4.Visible = true;
+            buttonSegment.Visible = true;
             label6.Visible = true;
             label6.Text = "Click 'Segment'";
             width = OrigBmp.Width;
@@ -102,8 +105,8 @@ namespace WFsegmentAndComp
 
             ImpulseIm = new CImage(width, height, 8); //, Grid);
             SegmentIm = new CImage(width, height, 8);
-            BreadthFirIm = new CImageComp(width, height, 8);
-            RootIm = new CImageComp(width, height, 8);
+            BreadthFirstImage = new CImageComp(width, height, 8);
+            RootImage = new CImageComp(width, height, 8);
             progressBar1.Value = 0;
             label1.Text = "    Original image   ";
         } //****************************** end Open image ****************************************
@@ -136,11 +139,11 @@ namespace WFsegmentAndComp
             ImageToBitmap(SegmentBmp, SegmentIm);
             label2.Text = "   Segmented image   ";
             label2.Visible = true;
-            button2.Visible = true;
+            buttonImpulseNoise.Visible = true;
             label4.Visible = true;
             label5.Visible = true;
-            numericUpDown1.Visible = true;
-            numericUpDown2.Visible = true;
+            numericUpDownDark.Visible = true;
+            numericUpDownLight.Visible = true;
             label6.Text = "Click 'Impulse noise'";
             pictureBox2.Image = SegmentBmp;
             progressBar1.Visible = false;
@@ -211,8 +214,8 @@ namespace WFsegmentAndComp
 
             PN.Sort(ImpulseIm, histo, this);
 
-            int MADS = (int)numericUpDown1.Value;
-            int MALS = (int)numericUpDown2.Value;
+            int MADS = (int)numericUpDownDark.Value;
+            int MALS = (int)numericUpDownLight.Value;
             progressBar1.Step = 2;
 
             PN.DarkNoise(ref ImpulseIm, MinGV, MaxGV, MADS, this);
@@ -229,10 +232,10 @@ namespace WFsegmentAndComp
             progressBar1.Visible = false;
             pictureBox2.Image = ImpulseBmp;
             label2.Text = "Impulse noise suppressed";
-            button3.Visible = true;
-            button8.Visible = true;
-            button5.Visible = true;
-            button6.Visible = true;
+            buttonBreadthFirst.Visible = true;
+            buttonSaveImage4.Visible = true;
+            buttonRootMethod.Visible = true;
+            buttonSaveImage6.Visible = true;
             label6.Text = "Click 'Breadth First' or 'Root method'";
 
             IMPULSE = true;
@@ -262,12 +265,12 @@ namespace WFsegmentAndComp
             progressBar1.Value = 0;
             progressBar1.Visible = true;
             progressBar1.Step = 1;
-            BreadthFirIm.Copy(ImpulseIm, true);
-            int nComp = BreadthFirIm.LabelC(this);
+            BreadthFirstImage.Copy(ImpulseIm, true);
+            int nComp = BreadthFirstImage.LabelC(this);
             int nPal = 0;
-            BreadthFirIm.MakePalette(ref nPal);
+            BreadthFirstImage.MakePalette(ref nPal);
             BreadthBmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
-            LabToBitmap(BreadthBmp, BreadthFirIm);
+            LabToBitmap(BreadthBmp, BreadthFirstImage);
             pictureBox2.Image = BreadthBmp;
             progressBar1.Visible = false;
             BREAD = true;
@@ -294,16 +297,16 @@ namespace WFsegmentAndComp
                 MessageBox.Show("Please click 'Impulse noise'");
                 return;
             }
-            RootIm.Copy(ImpulseIm, true);
+            RootImage.Copy(ImpulseIm, true);
 
             progressBar1.Value = 0;
             progressBar1.Visible = true;
-            int nComp = RootIm.ComponentsE(this);
+            int nComp = RootImage.ComponentsE(this);
             int nPal = 0;
-            RootIm.MakePalette(ref nPal);
+            RootImage.MakePalette(ref nPal);
             progressBar1.Visible = false;
             RootBmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
-            LabToBitmap(RootBmp, RootIm);
+            LabToBitmap(RootBmp, RootImage);
             progressBar1.Visible = false;
             pictureBox2.Image = RootBmp;
             ROOT = true;

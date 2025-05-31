@@ -127,6 +127,13 @@ namespace WFcompressPal
         } //*************** end constructor *********************/
 
 
+        // page 140
+        /// <summary>
+        /// All lines of a connected component are traced and encoded by the method ComponLin called by SearchLin.
+        /// </summary>
+        /// <param name="Image"></param>
+        /// <param name="fm1"></param>
+        /// <returns></returns>
         public int SearchLin(ref CImage Image, Form1 fm1)
         {
             int Lab, rv, x, y;
@@ -268,7 +275,14 @@ namespace WFcompressPal
             return rv;
         } //***************************************** end TraceLin ***********************************************
 
-
+        // page 140
+        /// <summary>
+        /// All lines of a connected component are traced and encoded by the method ComponLin called by SearchLin.
+        /// </summary>
+        /// <param name="CGrid"></param>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <returns></returns>
         private int ComponLin(byte[] CGrid, int X, int Y)
         /* Encodes in "CListLines" the lines of the edge component with the point (X, Y) being
           a branch or an end point. Puts the starting point 'Pinp' into the queue and starts
@@ -568,6 +582,19 @@ namespace WFcompressPal
 
         ~CListCode() { } // Default destructor
 
+        // page 146
+        /// <summary>
+        /// This transformation is necessary to avoid using the method Serialize for saving the code on the disk because Serialize produces a disk file sometimes ten times longer than the file produced by the system method Write.
+        /// The method Serialize can thus destroy the compression, and therefore we do not use it.
+        /// </summary>
+        /// <param name="nx"></param>
+        /// <param name="ny"></param>
+        /// <param name="nbits"></param>
+        /// <param name="palet"></param>
+        /// <param name="image"></param>
+        /// <param name="listLines"></param>
+        /// <param name="fm1"></param>
+        /// <returns></returns>
         public int Transform(int nx, int ny, int nbits, int[] palet, CImage image, CListLines listLines, Form1 fm1)
         // Transforms the provisional list "L" to an object of the class "CListCode".
         {
