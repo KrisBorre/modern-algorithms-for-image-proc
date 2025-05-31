@@ -27,3 +27,5 @@ See the file Contributing.md for more information on how you can contribute to t
 ![EdgeDetection_2Apr2025](https://github.com/user-attachments/assets/943fd769-712a-4bda-8688-4654b8d58a12)
 
 ![viking_helm_image_compression](https://github.com/user-attachments/assets/c8a6b881-2504-474a-96db-763009d66c8d)
+
+![segment_spartan_shield](https://github.com/user-attachments/assets/7e0f6a1e-dc4f-4362-ab33-eb8566077c03)
