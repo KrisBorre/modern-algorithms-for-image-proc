@@ -253,3 +253,8 @@
 /Code/WFshadingBin/WFshadingBin/obj/x86/Debug/TempPE/Properties.Resources.Designer.cs.dll
 /Code/WFedgeDetect1/WFedgeDetect1/obj/x86/Debug/TempPE/Properties.Resources.Designer.cs.dll
 /Code/WFcompressPal/WFcompressPal/obj/x86/Debug/TempPE/Properties.Resources.Designer.cs.dll
+/Code/WFrestoreLin/WFrestoreLin/obj/x86/Debug/TempPE/Properties.Resources.Designer.cs.dll
+*.dll
+/Code/WFsegmentAndComp/WFsegmentAndComp/obj/x86/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+/Code/WFrestoreLin/WFrestoreLin/obj/x86/Debug/.NETFramework,Version=v4.8.AssemblyAttributes.cs
+/Code/WFsegmentAndComp/WFsegmentAndComp/obj/x86/Debug/.NETFramework,Version=v4.8.AssemblyAttributes.cs
